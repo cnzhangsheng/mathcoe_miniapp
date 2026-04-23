@@ -4,7 +4,9 @@ const app = getApp()
 Page({
   data: {
     loading: false,
-    isLoggedIn: false
+    isLoggedIn: false,
+    grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
+    gradeIndex: 0  // 默认一年级（G1）
   },
 
   onLoad() {
@@ -58,13 +60,16 @@ Page({
 
   // 发送 code 到后端登录
   loginWithCode(code, userInfo) {
+    // 微信默认昵称"微信用户"不使用，让后端设置默认昵称"数学小达人"
+    const nickname = userInfo.nickName === '微信用户' ? null : userInfo.nickName
     wx.request({
       url: app.globalData.baseUrl + '/auth/wx-login',
       method: 'POST',
       data: {
         code,
-        nickname: userInfo.nickName,
-        avatar_url: userInfo.avatarUrl
+        nickname,
+        avatar_url: userInfo.avatarUrl,
+        grade: "G" + (this.data.gradeIndex + 1)
       },
       success: (res) => {
         if (res.statusCode === 200 && res.data && res.data.token) {
@@ -78,8 +83,9 @@ Page({
           app.globalData.userInfo = {
             id: res.data.user_id,
             openid: res.data.openid,
-            nickname: res.data.nickname || userInfo.nickName,
-            avatar_url: res.data.avatar_url || userInfo.avatarUrl
+            nickname: res.data.nickname,
+            avatar_url: res.data.avatar_url,
+            grade: res.data.grade
           }
           app.globalData.isLoggedIn = true
 
@@ -119,5 +125,10 @@ Page({
     wx.switchTab({
       url: '/pages/topics/topics'
     })
+  },
+
+  // 年级选择变化
+  onGradeChange(e) {
+    this.setData({ gradeIndex: parseInt(e.detail.value) })
   }
 })

@@ -3,7 +3,7 @@ App({
   globalData: {
     userInfo: null,
     token: null,
-    baseUrl: 'http://localhost:8000/api/v1',  // 开发环境，生产环境改为实际域名
+    baseUrl: 'http://172.17.14.127:8000/api/v1',  // 开发环境（本机IP），生产环境改为实际域名
     isLoggedIn: false
   },
 

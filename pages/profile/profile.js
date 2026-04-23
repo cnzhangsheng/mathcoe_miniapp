@@ -32,6 +32,16 @@ Page({
 
   onLoad() {
     this.initCalendar()
+    // 优先从 globalData 获取年级信息
+    if (app.globalData.userInfo?.grade) {
+      const grade = app.globalData.userInfo.grade
+      const gradeIndex = parseInt(grade.replace('G', '')) - 1
+      this.setData({
+        gradeIndex,
+        selectedGrade: this.data.grades[gradeIndex],
+        userInfo: app.globalData.userInfo
+      })
+    }
     this.loadUserInfo()
   },
 
@@ -60,10 +70,23 @@ Page({
         header: { 'Authorization': `Bearer ${token}` },
         success: (res) => {
           if (res.data) {
-            this.setData({
-              userInfo: res.data,
-              loading: false
-            })
+            // 存入 globalData
+            app.globalData.userInfo = res.data
+            // 根据 grade 设置 gradeIndex
+            if (res.data.grade) {
+              const gradeIndex = parseInt(res.data.grade.replace('G', '')) - 1
+              this.setData({
+                userInfo: res.data,
+                gradeIndex,
+                selectedGrade: this.data.grades[gradeIndex],
+                loading: false
+              })
+            } else {
+              this.setData({
+                userInfo: res.data,
+                loading: false
+              })
+            }
           } else {
             this.setData({ loading: false })
           }
@@ -77,12 +100,56 @@ Page({
     }
   },
 
-  onGradeChange(e) {
-    const index = e.detail.value
-    this.setData({
-      gradeIndex: index,
-      selectedGrade: this.data.grades[index]
+  updateGrade(grade) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: app.globalData.baseUrl + '/users/me',
+        method: 'PATCH',
+        header: { 'Authorization': `Bearer ${wx.getStorageSync('token')}` },
+        data: { grade },
+        success: (res) => {
+          if (res.statusCode === 200) {
+            resolve(res.data)
+          } else {
+            reject(res)
+          }
+        },
+        fail: reject
+      })
     })
+  },
+
+  onGradeChange(e) {
+    const newIndex = e.detail.value
+    const oldIndex = this.data.gradeIndex
+    const oldGrade = this.data.selectedGrade
+
+    // 先更新本地状态
+    this.setData({
+      gradeIndex: newIndex,
+      selectedGrade: this.data.grades[newIndex]
+    })
+
+    // 计算 grade 值 (G1-G6)
+    const grade = `G${parseInt(newIndex) + 1}`
+
+    // 调用 API 保存
+    this.updateGrade(grade)
+      .then(() => {
+        // 成功后更新 globalData
+        if (app.globalData.userInfo) {
+          app.globalData.userInfo.grade = grade
+        }
+        wx.showToast({ title: '保存成功', icon: 'success' })
+      })
+      .catch(() => {
+        // 失败时回滚本地状态
+        this.setData({
+          gradeIndex: oldIndex,
+          selectedGrade: oldGrade
+        })
+        wx.showToast({ title: '保存失败', icon: 'error' })
+      })
   },
 
   goToRecords() {
