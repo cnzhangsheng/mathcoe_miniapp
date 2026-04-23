@@ -1,0 +1,203 @@
+<!--pages/practice/practice.wxml - 100%复刻 Practice.tsx-->
+<view class="practice-container">
+  <!-- 模考计时器 -->
+  <view class="timer-bar" wx:if="{{mode === 'exam'}}">
+    <view class="timer-inner">
+      <text class="timer-icon">⏱️</text>
+      <text class="timer-text text-bold">{{timeLeft > 0 ? formattedTime : '00:00'}}</text>
+    </view>
+  </view>
+
+  <!-- Main Practice Card -->
+  <view class="practice-card card">
+    <view class="question-header">
+      <text class="question-number text-small text-muted">第 {{currentIndex + 1}} 题</text>
+      <view class="question-tags">
+        <text class="diff-tag text-small text-bold">{{currentQuestion.difficulty || 'L2'}}</text>
+      </view>
+    </view>
+
+    <view class="question-title">
+      <text class="text-bold">{{currentQuestion.title || '下面哪个展开图可以拼成立方体？'}}</text>
+    </view>
+
+    <!-- Question Image Area -->
+    <view class="question-image-area">
+      <image class="question-image"
+        src="{{currentQuestion.content.image || 'https://picsum.photos/seed/cube_expansion/400/300'}}"
+        mode="aspectFit"></image>
+
+      <!-- 标记按钮 -->
+      <view class="image-actions">
+        <view class="flag-btn {{isFlagged ? 'flagged' : ''}}" bindtap="toggleFlag">
+          <text>{{isFlagged ? '🚩' : '⚐'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Social Actions (Like & Bookmark) -->
+    <view class="social-actions">
+      <view class="social-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+        <text class="social-icon">❤️</text>
+        <text class="social-label text-small text-bold">{{isLiked ? '2.4k' : '点赞'}}</text>
+      </view>
+      <view class="social-btn {{isBookmarked ? 'bookmarked' : ''}}" bindtap="toggleBookmark">
+        <text class="social-icon">⭐</text>
+        <text class="social-label text-small text-bold">{{isBookmarked ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+
+    <!-- Options Grid -->
+    <view class="options-grid">
+      <block wx:for="{{options}}" wx:key="id">
+        <view class="option-item {{selectedOption === item.id ? 'selected' : ''}} {{showFeedback && correctAnswer === item.id ? 'correct' : ''}}"
+          data-option="{{item.id}}"
+          bindtap="selectOption">
+          <view class="option-label-box {{selectedOption === item.id ? 'selected-label' : ''}} {{showFeedback && correctAnswer === item.id ? 'correct-label' : ''}}">
+            <text class="option-label text-bold">{{item.id}}</text>
+          </view>
+          <text class="option-text text-small text-bold {{selectedOption === item.id ? 'selected-text' : ''}}">{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Feedback Area -->
+  <view class="feedback-section" wx:if="{{showFeedback}}">
+    <view class="feedback-card card">
+      <view class="feedback-decorator"></view>
+      <view class="feedback-header flex-row">
+        <view class="feedback-icon-box {{isCorrect ? 'success-icon' : 'error-icon'}}">
+          <text class="feedback-icon">{{isCorrect ? '✓' : '✗'}}</text>
+        </view>
+        <view class="feedback-text">
+          <text class="feedback-title text-bold">{{isCorrect ? '回答正确！' : '回答错误'}}</text>
+          <text class="feedback-sub text-small text-muted">EXCELLENT WORK</text>
+        </view>
+      </view>
+
+      <view class="explanation-area">
+        <view class="explanation-marker"></view>
+        <view class="explanation-content">
+          <text class="explanation-label text-bold">解题思路：</text>
+          <text class="explanation-text">{{explanation || '袋鼠数学中常见的立方体展开规律为"1-4-1"。选项B完美契合，折叠后所有边刚好闭合。'}}</text>
+        </view>
+      </view>
+
+      <view class="tip-card">
+        <view class="tip-icon-box">
+          <text>💡</text>
+        </view>
+        <view class="tip-content">
+          <text class="tip-title text-small text-bold">竞赛考点：一共有 11 种合法展开图</text>
+          <text class="tip-sub text-xs text-muted">Level 2 Space Geometry</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="next-btn card dark" bindtap="nextQuestion">
+      <text class="next-label text-bold">{{currentIndex + 1 >= questions.length ? '结束并返回' : (isExamMode ? '下一题' : '结束并返回')}}</text>
+      <text class="next-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- Submit Button -->
+  <view class="submit-section" wx:if="{{!showFeedback}}">
+    <view class="submit-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="submitAnswer">
+      <text class="submit-label text-bold">确定提交</text>
+      <text class="submit-icon">🚀</text>
+    </view>
+  </view>
+
+  <!-- Bottom Actions -->
+  <view class="bottom-actions" wx:if="{{!showFeedback}}">
+    <view class="action-btn" bindtap="openAnswerSheet">
+      <text class="action-icon">📋</text>
+      <text class="action-label text-small text-bold">答题卡</text>
+    </view>
+    <view class="action-btn" bindtap="askAICoach">
+      <text class="action-icon">🧠</text>
+      <text class="action-label text-small text-bold">AI教练</text>
+    </view>
+  </view>
+
+  <!-- Answer Sheet Modal -->
+  <view class="modal-overlay" wx:if="{{showAnswerSheet}}" bindtap="closeAnswerSheet">
+    <view class="answer-sheet-modal" catchtap="preventClose">
+      <view class="modal-header">
+        <text class="modal-title text-bold">进度检查</text>
+        <view class="close-btn" bindtap="closeAnswerSheet">
+          <text>×</text>
+        </view>
+      </view>
+
+      <view class="answer-grid">
+        <block wx:for="{{30}}" wx:key="*this" wx:for-item="num">
+          <view class="answer-cell {{currentIndex + 1 === num ? 'current' : ''}} {{num < currentIndex + 1 ? 'done' : ''}}">
+            <text class="answer-num text-bold">{{num}}</text>
+          </view>
+        </block>
+      </view>
+
+      <view class="answer-legend">
+        <view class="legend-item">
+          <view class="legend-dot done-dot"></view>
+          <text class="legend-label text-small text-muted">已答</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot current-dot"></view>
+          <text class="legend-label text-small text-muted">当前</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot pending-dot"></view>
+          <text class="legend-label text-small text-muted">待完成</text>
+        </view>
+      </view>
+
+      <view class="modal-btn" bindtap="closeAnswerSheet">
+        <text class="text-bold">继续答题</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI Coach Modal -->
+  <view class="modal-overlay" wx:if="{{showAICoach}}" bindtap="closeAICoach">
+    <view class="ai-coach-modal" catchtap="preventClose">
+      <view class="modal-header">
+        <text class="modal-title text-bold">智趣教练 Kangaroo</text>
+        <view class="close-btn" bindtap="closeAICoach">
+          <text>×</text>
+        </view>
+      </view>
+
+      <view class="coach-card">
+        <view class="coach-header flex-row">
+          <view class="coach-icon-box">
+            <text>🧠</text>
+          </view>
+          <view class="coach-text">
+            <text class="coach-title text-bold">AI 学习诊断</text>
+            <text class="coach-sub text-small text-muted">Logic & Strategy Coach</text>
+          </view>
+        </view>
+
+        <view class="coach-message-area">
+          <view wx:if="{{aiLoading}}" class="ai-loading">
+            <view class="loading-spinner"></view>
+            <text class="loading-text text-small text-muted">正在深度分析解题思路...</text>
+          </view>
+          <text wx:else class="coach-message">{{aiMessage || '袋鼠数学中常见的立方体展开规律为"1-4-1"结构。试着观察选项中哪些图形符合这个结构特点吧！'}}</text>
+        </view>
+      </view>
+
+      <view class="coach-tip-card">
+        <text class="coach-tip-title text-small text-bold">教练小贴士：</text>
+        <text class="coach-tip-text text-small">"袋鼠数学不仅关注结果，更关注你推导的过程。试着把大问题拆解成几个小提示吧！"</text>
+      </view>
+
+      <view class="modal-btn primary-bg" bindtap="closeAICoach">
+        <text class="text-bold">谢谢教练，我懂了！</text>
+      </view>
+    </view>
+  </view>
+</view>

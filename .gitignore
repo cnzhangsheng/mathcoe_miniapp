@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+miniprogram_npm/
+
+# Build
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# WeChat
+project.private.config.json

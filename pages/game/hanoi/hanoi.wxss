@@ -1,0 +1,369 @@
+/* pages/game/hanoi/hanoi.wxss - 100%复刻 Hanoi.tsx样式 */
+
+.hanoi-container {
+  min-height: 100vh;
+  background-color: #F8F8F8;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 48rpx;
+}
+
+/* Header */
+.game-header {
+  justify-content: space-between;
+}
+
+.header-btn {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: rgba(0,0,0,0.6);
+  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
+  border: 2rpx solid rgba(0,0,0,0.05);
+}
+
+.header-title {
+  font-size: 18px;
+  color: rgba(0,0,0,0.9);
+}
+
+/* Game Card */
+.game-card {
+  padding: 48rpx;
+  border-radius: 64rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48rpx;
+}
+
+/* Stats */
+.game-stats {
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 16rpx;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-box.right {
+  align-items: flex-end;
+}
+
+.stat-label {
+  color: rgba(0,0,0,0.4);
+  letter-spacing: 4rpx;
+}
+
+.stat-value {
+  font-size: 20px;
+}
+
+/* Towers Area */
+.towers-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  width: 100%;
+  height: 384rpx;
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 32rpx;
+  border: 2rpx dashed rgba(0,0,0,0.05);
+  padding: 32rpx;
+  position: relative;
+}
+
+.tower-column {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  width: 192rpx;
+  height: 100%;
+}
+
+.tower-pole {
+  position: absolute;
+  bottom: 0;
+  width: 8rpx;
+  height: 256rpx;
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 8rpx;
+  transition: background-color 0.3s;
+}
+
+.tower-column.selected .tower-pole,
+.pole-selected {
+  background-color: #07C160;
+}
+
+.tower-base {
+  position: absolute;
+  bottom: 0;
+  width: 160rpx;
+  height: 8rpx;
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 8rpx;
+}
+
+.disks-container {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding-bottom: 8rpx;
+  z-index: 10;
+  width: 100%;
+}
+
+.disk {
+  height: 40rpx;
+  margin-bottom: 4rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid rgba(0,0,0,0.05);
+  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
+  background-color: #fff;
+}
+
+.disk-selected {
+  background-color: #07C160;
+  box-shadow: 0 16rpx 32rpx rgba(7, 193, 96, 0.2);
+}
+
+/* Controls */
+.controls-row {
+  width: 100%;
+  gap: 32rpx;
+}
+
+.level-control {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0,0,0,0.05);
+  padding: 16rpx 32rpx;
+  border-radius: 24rpx;
+}
+
+.level-btn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: rgba(0,0,0,0.4);
+}
+
+.level-text {
+  font-size: 14px;
+  color: rgba(0,0,0,0.8);
+}
+
+.reset-btn {
+  width: 96rpx;
+  height: 96rpx;
+  background-color: #fff;
+  border: 2rpx solid rgba(0,0,0,0.05);
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
+}
+
+/* Info Card */
+.info-card {
+  background-color: rgba(59, 130, 246, 0.05);
+  padding: 40rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid rgba(59, 130, 246, 0.1);
+}
+
+.info-title {
+  color: rgba(30, 64, 175, 1);
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.info-text {
+  color: rgba(30, 64, 175, 0.7);
+  line-height: 1.5;
+  font-size: 12px;
+}
+
+/* Win Modal */
+.win-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #F8F8F8;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.win-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64rpx;
+  gap: 64rpx;
+}
+
+.win-icon-box {
+  width: 256rpx;
+  height: 256rpx;
+  background-color: rgba(7, 193, 96, 0.1);
+  border-radius: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  box-shadow: 0 32rpx 64rpx rgba(7, 193, 96, 0.1);
+}
+
+.win-text {
+  text-align: center;
+}
+
+.win-title {
+  font-size: 30px;
+  display: block;
+}
+
+.win-sub {
+  letter-spacing: 4rpx;
+  display: block;
+  margin-top: 16rpx;
+}
+
+.win-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32rpx;
+  width: 100%;
+  max-width: 600rpx;
+}
+
+.win-stat-card {
+  padding: 40rpx;
+  border-radius: 48rpx;
+  text-align: center;
+}
+
+.win-stat-label {
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.win-stat-value {
+  font-size: 24px;
+}
+
+.tip-card.amber {
+  background-color: rgba(251, 191, 36, 0.05);
+  border-radius: 56rpx;
+  padding: 48rpx;
+  border: 2rpx solid rgba(251, 191, 36, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  width: 100%;
+  max-width: 600rpx;
+}
+
+.tip-icon-box {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.05);
+}
+
+.tip-text {
+  color: rgba(120, 53, 15, 0.6);
+  line-height: 1.5;
+}
+
+.win-footer {
+  padding: 48rpx;
+  background-color: #fff;
+  border-top: 2rpx solid rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.win-btn {
+  width: 100%;
+  padding: 40rpx;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 32rpx 64rpx rgba(7, 193, 96, 0.2);
+}
+
+.win-btn-secondary {
+  width: 100%;
+  padding: 32rpx;
+  color: rgba(0,0,0,0.4);
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Utility classes */
+.card {
+  background-color: #fff;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.05);
+  border: 2rpx solid rgba(0,0,0,0.05);
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.text-bold {
+  font-weight: 900;
+}
+
+.text-small {
+  font-size: 10px;
+}
+
+.text-muted {
+  color: rgba(0,0,0,0.4);
+}
+
+.primary-color {
+  color: #07C160;
+}
+
+.primary-bg {
+  background-color: #07C160;
+  color: #fff;
+}

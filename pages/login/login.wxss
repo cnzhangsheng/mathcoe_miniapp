@@ -1,0 +1,270 @@
+/* pages/login/login.wxss - 授权登录页面样式 */
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #F8F8F8;
+  padding: 60rpx 40rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.bg-decorator {
+  position: absolute;
+  top: -100rpx;
+  right: -100rpx;
+  width: 400rpx;
+  height: 400rpx;
+  background-color: rgba(7, 193, 96, 0.05);
+  border-radius: 50%;
+}
+
+.bg-decorator-2 {
+  position: absolute;
+  bottom: 100rpx;
+  left: -150rpx;
+  width: 500rpx;
+  height: 500rpx;
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 50%;
+}
+
+/* Logo 区域 */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60rpx;
+  margin-bottom: 48rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-box {
+  width: 160rpx;
+  height: 160rpx;
+  background-color: #fff;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 32rpx;
+}
+
+.logo-icon {
+  font-size: 64px;
+}
+
+.app-name {
+  font-size: 24px;
+  color: #1A1A1A;
+  margin-bottom: 12rpx;
+}
+
+.app-slogan {
+  color: rgba(0, 0, 0, 0.3);
+  letter-spacing: 6rpx;
+  margin-bottom: 16rpx;
+}
+
+.app-desc {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  max-width: 480rpx;
+}
+
+/* 特性展示 */
+.features-section {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 48rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.feature-card {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.feature-icon-box {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 24rpx;
+}
+
+.primary-bg {
+  background-color: rgba(7, 193, 96, 0.1);
+}
+
+.blue-bg {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.amber-bg {
+  background-color: rgba(251, 191, 36, 0.1);
+}
+
+.feature-title {
+  color: #1A1A1A;
+  margin-bottom: 8rpx;
+}
+
+.feature-desc {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* 登录区域 */
+.login-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.login-info {
+  background-color: #fff;
+  border-radius: 32rpx;
+  padding: 32rpx 48rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.login-info-title {
+  color: #1A1A1A;
+  display: block;
+  margin-bottom: 24rpx;
+}
+
+.login-info-desc {
+  color: rgba(0, 0, 0, 0.5);
+  display: block;
+  margin-bottom: 8rpx;
+  padding-left: 24rpx;
+}
+
+/* 登录按钮 */
+.login-btn {
+  width: 90%;
+  height: 96rpx;
+  background-color: #07C160;
+  color: #fff;
+  font-size: 18px;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 16rpx 32rpx rgba(7, 193, 96, 0.3);
+}
+
+.login-btn.loading {
+  background-color: rgba(7, 193, 96, 0.6);
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.btn-icon {
+  font-size: 20px;
+}
+
+.btn-text {
+  font-size: 17px;
+}
+
+/* 开发模式按钮 */
+.dev-login-btn {
+  width: 90%;
+  height: 72rpx;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  border-radius: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24rpx;
+  border: none;
+}
+
+/* 提示 */
+.tips-section {
+  margin-top: 24rpx;
+}
+
+.tip-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* 游客入口 */
+.guest-section {
+  margin-top: 48rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.guest-link {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* 隐私协议 */
+.privacy-section {
+  position: fixed;
+  bottom: 48rpx;
+  left: 0;
+  right: 0;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.privacy-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.privacy-link {
+  color: #07C160;
+}
+
+/* Utility classes */
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.text-bold {
+  font-weight: 900;
+}
+
+.text-small {
+  font-size: 12px;
+}
+
+.text-xs {
+  font-size: 10px;
+}

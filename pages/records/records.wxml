@@ -1,0 +1,63 @@
+<!--pages/records/records.wxml - 100%复刻 Records.tsx-->
+<view class="records-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- Header -->
+    <view class="records-header card">
+      <view class="header-icon-box blue-bg">
+        <text>🏆</text>
+      </view>
+      <view>
+        <text class="header-title text-bold">全真答题记录</text>
+        <text class="header-sub text-small text-muted">MY PERFORMANCE HISTORY</text>
+      </view>
+    </view>
+
+    <!-- Summary Stats -->
+    <view class="summary-stats card dark">
+      <view class="stat-box">
+        <text class="stat-label text-small">累计完成次数</text>
+        <text class="stat-value">{{stats.total}} <text class="stat-unit">次</text></text>
+      </view>
+      <view class="stat-box">
+        <text class="stat-label text-small">平均正确率</text>
+        <text class="stat-value primary-color">{{stats.avgRate}}%</text>
+      </view>
+      <view class="stat-decorator"></view>
+    </view>
+
+    <!-- Records List -->
+    <view class="records-list">
+      <block wx:for="{{records}}" wx:key="id">
+        <view class="record-item card" data-id="{{item.id}}" bindtap="goToDetail">
+          <view class="record-score-box">
+            <text class="record-type text-small">{{item.type}}</text>
+            <text class="record-score text-bold">{{item.score}}</text>
+          </view>
+
+          <view class="record-info">
+            <text class="record-title text-bold">{{item.title}}</text>
+            <view class="record-meta">
+              <text class="meta-item">⏱️ {{item.time}}</text>
+              <text class="meta-item">📊 {{item.score / item.total * 100}}%</text>
+              <text class="meta-item">{{item.date}}</text>
+            </view>
+          </view>
+
+          <view class="record-right">
+            <block wx:if="{{item.result === 'excellent'}}">
+              <view class="result-badge excellent">
+                <text>优异</text>
+              </view>
+            </block>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </block>
+</view>

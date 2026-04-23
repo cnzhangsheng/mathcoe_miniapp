@@ -1,0 +1,190 @@
+<!--pages/profile/profile.wxml - 100%复刻 Me.tsx-->
+<view class="me-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- Profile Header -->
+    <view class="profile-header card">
+      <view class="avatar-wrapper">
+        <image class="profile-avatar" src="{{userInfo.avatar_url || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="edit-btn" bindtap="openSettings">
+          <text class="edit-icon">✏️</text>
+        </view>
+      </view>
+      <view class="profile-info">
+        <view class="name-row">
+          <text class="profile-name">{{userInfo.nickname || '数学小达人'}}</text>
+          <view class="level-badge">
+            <text class="level-icon">🏆</text>
+            <text class="level-text">LV.12</text>
+          </view>
+        </view>
+        <picker mode="selector" range="{{grades}}" value="{{gradeIndex}}" bindchange="onGradeChange">
+          <view class="grade-picker">
+            <text class="grade-text">{{selectedGrade}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+      <view class="settings-btn" bindtap="openSettings">
+        <text class="settings-icon">⚡</text>
+      </view>
+    </view>
+
+    <!-- Stats Summary -->
+    <view class="stats-row">
+      <block wx:for="{{stats}}" wx:key="label">
+        <view class="stat-card card">
+          <text class="stat-value {{item.color === 'green' ? 'primary-color' : ''}}">{{item.value}}</text>
+          <text class="stat-label">{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- Calendar -->
+    <view class="calendar-card card">
+      <view class="calendar-header flex-between">
+        <view class="flex-row">
+          <text class="calendar-icon">📅</text>
+          <text class="calendar-title text-bold">备考日历</text>
+        </view>
+        <text class="calendar-sub text-muted">本月坚持 18 天</text>
+      </view>
+      <view class="calendar-grid">
+        <block wx:for="{{calendarDays}}" wx:key="day">
+          <view class="calendar-day {{item.active ? 'active' : ''}}">
+            <text>{{item.day}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- Honor Wall -->
+    <view class="honor-card card">
+      <view class="honor-header flex-between">
+        <view class="flex-row">
+          <view class="honor-icon-box">
+            <text>🏅</text>
+          </view>
+          <view>
+            <text class="honor-title text-bold">全景荣誉墙</text>
+            <text class="honor-sub text-small text-muted">KANGAROO HALL OF FAME</text>
+          </view>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+
+      <!-- Medals Grid -->
+      <view class="medals-grid">
+        <block wx:for="{{medals}}" wx:key="title">
+          <view class="medal-item {{item.unlocked ? 'unlocked' : 'locked'}}">
+            <view class="medal-box {{item.unlocked ? 'gradient-bg' : 'gray-bg'}}">
+              <text class="medal-emoji">{{item.unlocked ? '🔷' : '🔒'}}</text>
+              <view wx:if="{{item.level}}" class="level-tag">{{item.level}}</view>
+            </view>
+            <text class="medal-title">{{item.title}}</text>
+          </view>
+        </block>
+      </view>
+
+      <!-- Certificates -->
+      <view class="cert-section">
+        <text class="cert-header text-small text-muted">官方认证证书 (2)</text>
+        <block wx:for="{{certificates}}" wx:key="title">
+          <view class="cert-item">
+            <text class="cert-check">✓</text>
+            <text class="cert-title">{{item.title}}</text>
+            <text class="cert-badge">{{item.level}}</text>
+          </view>
+        </block>
+      </view>
+
+      <view class="view-all-btn">
+        <text>查看完整成长荣誉簿 (12) ›</text>
+      </view>
+    </view>
+
+    <!-- Menu -->
+    <view class="menu-card">
+      <view class="menu-item" bindtap="openSettings">
+        <view class="flex-row">
+          <view class="menu-icon-box gray-bg">
+            <text class="menu-icon">✏️</text>
+          </view>
+          <text class="menu-text">备考设置</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <!-- Logout -->
+    <view class="logout-btn" bindtap="logout">
+      <text>退出备考模式</text>
+    </view>
+  </block>
+
+  <!-- Settings Modal -->
+  <view wx:if="{{showSettings}}" class="settings-modal">
+    <view class="settings-header flex-between">
+      <view class="back-btn" bindtap="closeSettings">
+        <text>‹</text>
+      </view>
+      <text class="settings-title text-bold">备考设置</text>
+      <view class="placeholder"></view>
+    </view>
+
+    <view class="settings-content">
+      <!-- Daily Goal -->
+      <view class="setting-section">
+        <view class="flex-between">
+          <text class="setting-label text-bold">每日练习目标</text>
+          <text class="setting-value primary-color text-bold">{{dailyGoal}} 题</text>
+        </view>
+        <view class="goal-options">
+          <view class="goal-btn {{dailyGoal === 5 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{5}}">5</view>
+          <view class="goal-btn {{dailyGoal === 10 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{10}}">10</view>
+          <view class="goal-btn {{dailyGoal === 15 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{15}}">15</view>
+          <view class="goal-btn {{dailyGoal === 20 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{20}}">20</view>
+        </view>
+      </view>
+
+      <!-- Toggles -->
+      <view class="toggle-item card">
+        <view class="flex-row">
+          <view class="toggle-icon-box blue-bg">
+            <text>💡</text>
+          </view>
+          <view>
+            <text class="toggle-title text-bold">显示实时解析</text>
+            <text class="toggle-desc text-small text-muted">答对后立即查看思路</text>
+          </view>
+        </view>
+        <view class="toggle-switch {{showHints ? 'on' : 'off'}}" bindtap="toggleHints">
+          <view class="toggle-dot"></view>
+        </view>
+      </view>
+
+      <view class="toggle-item card">
+        <view class="flex-row">
+          <view class="toggle-icon-box rose-bg">
+            <text>⏱️</text>
+          </view>
+          <view>
+            <text class="toggle-title text-bold">开启压力模考</text>
+            <text class="toggle-desc text-small text-muted">自动隐藏干扰，限时挑战</text>
+          </view>
+        </view>
+        <view class="toggle-switch {{examPressure ? 'on' : 'off'}}" bindtap="togglePressure">
+          <view class="toggle-dot"></view>
+        </view>
+      </view>
+
+      <view class="save-btn" bindtap="saveSettings">
+        <text>保存并应用</text>
+      </view>
+    </view>
+  </view>
+</view>

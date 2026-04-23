@@ -1,0 +1,112 @@
+<!--pages/game/hanoi/hanoi.wxml - 100%复刻 Hanoi.tsx-->
+<view class="hanoi-container">
+  <!-- Header -->
+  <view class="game-header flex-row">
+    <view class="header-btn" bindtap="goBack">
+      <text>‹</text>
+    </view>
+    <text class="header-title text-bold">汉诺塔</text>
+    <view class="header-btn" bindtap="toggleInfo">
+      <text>{{showInfo ? '✕' : 'ℹ'}}</text>
+    </view>
+  </view>
+
+  <!-- Game Section -->
+  <view class="game-card card">
+    <!-- Stats -->
+    <view class="game-stats flex-row">
+      <view class="stat-box">
+        <text class="stat-label text-small text-bold">步数</text>
+        <text class="stat-value text-bold">{{moves}}</text>
+      </view>
+      <view class="stat-box right">
+        <text class="stat-label text-small text-bold">最佳步数</text>
+        <text class="stat-value primary-color text-bold">{{optimalMoves}}</text>
+      </view>
+    </view>
+
+    <!-- Towers -->
+    <view class="towers-area">
+      <block wx:for="{{towers}}" wx:key="*this" wx:for-item="tower" wx:for-index="towerIndex">
+        <view class="tower-column {{selectedTower === towerIndex ? 'selected' : ''}}"
+          data-index="{{towerIndex}}"
+          bindtap="handleTowerClick">
+          <!-- Tower pole -->
+          <view class="tower-pole {{selectedTower === towerIndex ? 'pole-selected' : ''}}"></view>
+          <!-- Tower base -->
+          <view class="tower-base"></view>
+          <!-- Disks -->
+          <view class="disks-container">
+            <block wx:for="{{tower}}" wx:key="*this" wx:for-item="diskSize" wx:for-index="diskIndex">
+              <view class="disk {{selectedTower === towerIndex && diskIndex === tower.length - 1 ? 'disk-selected' : ''}}"
+                style="width: {{(diskSize / numDisks) * 100}}%;"></view>
+            </block>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- Controls -->
+    <view class="controls-row flex-row">
+      <view class="level-control">
+        <view class="level-btn" bindtap="decreaseDisks">
+          <text>-</text>
+        </view>
+        <text class="level-text text-bold">{{numDisks}} 层</text>
+        <view class="level-btn" bindtap="increaseDisks">
+          <text>+</text>
+        </view>
+      </view>
+      <view class="reset-btn" bindtap="resetGame">
+        <text>🔄</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Info Section -->
+  <view class="info-card" wx:if="{{showInfo}}">
+    <text class="info-title text-small text-bold">规则介绍</text>
+    <text class="info-text">1. 每次只能移动一个圆盘。\n2. 圆盘可以插在任意塔上。\n3. 大圆盘不能叠在小圆盘上面。\n目标：将所有圆盘从第一座塔移到最后一座塔。</text>
+  </view>
+
+  <!-- Win Modal -->
+  <view class="win-modal" wx:if="{{isWin}}">
+    <view class="win-content">
+      <view class="win-icon-box">
+        <text>🏆</text>
+      </view>
+
+      <view class="win-text">
+        <text class="win-title text-bold">挑战成功！</text>
+        <text class="win-sub text-small text-muted">Level Complete</text>
+      </view>
+
+      <view class="win-stats-row">
+        <view class="win-stat-card card">
+          <text class="win-stat-label text-small text-muted">总步数</text>
+          <text class="win-stat-value text-bold">{{moves}}</text>
+        </view>
+        <view class="win-stat-card card">
+          <text class="win-stat-label text-small text-muted">最佳</text>
+          <text class="win-stat-value primary-color text-bold">{{optimalMoves}}</text>
+        </view>
+      </view>
+
+      <view class="tip-card amber">
+        <view class="tip-icon-box">
+          <text>✨</text>
+        </view>
+        <text class="tip-text text-small">手感火热！要不要尝试挑战更高级别的难度？</text>
+      </view>
+    </view>
+
+    <view class="win-footer">
+      <view class="win-btn primary-bg" bindtap="resetGame">
+        <text class="text-bold">再次挑战</text>
+      </view>
+      <view class="win-btn-secondary" bindtap="goBack">
+        <text class="text-bold">回到首页</text>
+      </view>
+    </view>
+  </view>
+</view>

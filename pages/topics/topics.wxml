@@ -1,0 +1,201 @@
+<!--pages/topics/topics.wxml - 100%复刻 TopicTraining.tsx-->
+<view class="topics-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- AI Mastery Insight -->
+    <view class="insight-card">
+      <view class="insight-decorator"></view>
+      <view class="insight-content">
+        <view class="insight-header flex-row">
+          <view class="insight-icon-box">
+            <text>✨</text>
+          </view>
+          <text class="insight-title text-small text-bold">AI 学习洞察</text>
+        </view>
+        <view class="insight-message">
+          <text class="text-bold">你在 <text class="highlight">逻辑推理</text> 模块表现略显吃力，建议本周重点突破。</text>
+        </view>
+        <view class="insight-footer flex-row">
+          <view class="insight-badge">
+            <text class="badge-icon">📈</text>
+            <text class="badge-text text-small text-bold">进度提升 12%</text>
+          </view>
+          <text class="insight-sub text-small text-muted">基于最近 50 道练习分析</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Filter Tabs -->
+    <view class="filter-tabs">
+      <block wx:for="{{filterTabs}}" wx:key="id">
+        <view class="filter-tab {{activeTab === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="setActiveTab">
+          <text class="filter-icon">{{item.icon}}</text>
+          <text class="filter-label text-small text-bold">{{item.label}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- Topics Grid -->
+    <view class="topics-list">
+      <block wx:for="{{filteredTopics}}" wx:key="id">
+        <view class="topic-card card" data-id="{{item.id}}" bindtap="selectTopic">
+          <!-- AI推荐标签 -->
+          <view class="ai-badge" wx:if="{{item.tag === 'ai-recommended'}}">
+            <text class="ai-badge-icon">✨</text>
+            <text class="ai-badge-text text-xs">AI 推荐突破</text>
+          </view>
+
+          <view class="topic-main flex-row">
+            <view class="topic-icon-box {{item.bgClass}}">
+              <text class="topic-icon">{{item.iconEmoji}}</text>
+            </view>
+            <view class="topic-info">
+              <view class="topic-header flex-row">
+                <view class="topic-title-area">
+                  <text class="topic-title text-bold">{{item.title}}</text>
+                  <view class="topic-tags flex-row">
+                    <text class="diff-tag text-small text-bold">{{item.difficulty}}</text>
+                    <text class="freq-tag text-small text-bold" wx:if="{{item.isHighFreq}}">必考高频</text>
+                  </view>
+                </view>
+                <view class="topic-progress-box">
+                  <text class="progress-value text-bold">{{item.progress}}%</text>
+                  <text class="progress-label text-small text-muted">完成度</text>
+                </view>
+              </view>
+
+              <text class="topic-desc text-small">{{item.desc}}</text>
+
+              <view class="topic-footer flex-row">
+                <view class="topic-progress-bar">
+                  <view class="progress-fill {{item.progressClass}}" style="width: {{item.progress}}%;"></view>
+                </view>
+                <view class="success-rate-box flex-row">
+                  <text class="rate-label text-small text-muted">准确率</text>
+                  <text class="rate-value text-small text-bold {{item.rateClass}}">{{item.successRate}}%</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- Continue Training Button -->
+    <view class="continue-btn card dark" bindtap="goToPractice">
+      <text class="continue-icon">▶</text>
+      <text class="continue-label text-bold">继续今日训练流程</text>
+    </view>
+
+    <!-- Topic Detail Modal -->
+    <view class="modal-overlay" wx:if="{{selectedTopic}}" bindtap="closeTopicDetail">
+      <view class="topic-detail-modal" catchtap="preventClose">
+        <!-- Header -->
+        <view class="modal-header-bar">
+          <view class="back-btn" bindtap="closeTopicDetail">
+            <text>‹</text>
+          </view>
+          <text class="modal-header-title text-bold">{{selectedTopic.title}}</text>
+        </view>
+
+        <!-- Detail Content -->
+        <scroll-view class="detail-scroll" scroll-y="true">
+          <!-- Header Card -->
+          <view class="detail-header-card card">
+            <view class="detail-decorator {{selectedTopic.progressClass}}"></view>
+            <view class="detail-center">
+              <view class="detail-icon-box {{selectedTopic.bgClass}}">
+                <text class="detail-icon">{{selectedTopic.iconEmoji}}</text>
+              </view>
+              <text class="detail-title text-bold">{{selectedTopic.title}}</text>
+              <text class="detail-desc text-small text-muted">{{selectedTopic.desc}}</text>
+            </view>
+
+            <view class="detail-stats">
+              <view class="stat-box">
+                <text class="stat-label text-small text-muted">完成进度</text>
+                <text class="stat-value text-bold">{{selectedTopic.progress}}%</text>
+              </view>
+              <view class="stat-box">
+                <text class="stat-label text-small text-muted">平均准率</text>
+                <text class="stat-value text-bold {{selectedTopic.rateClass}}">{{selectedTopic.successRate}}%</text>
+              </view>
+              <view class="stat-box">
+                <text class="stat-label text-small text-muted">已练题数</text>
+                <text class="stat-value text-bold">{{selectedTopic.questionsDone || 128}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- Learning Sections -->
+          <view class="learning-section">
+            <text class="section-title text-small text-bold">学习行动 Training Path</text>
+
+            <view class="learning-grid">
+              <view class="learning-card card">
+                <view class="learning-icon-box indigo-icon">
+                  <text>🎯</text>
+                </view>
+                <text class="learning-title text-small text-bold">错题溯源</text>
+                <text class="learning-sub text-xs text-muted">Review Errors</text>
+              </view>
+
+              <view class="learning-card card">
+                <view class="learning-icon-box amber-icon">
+                  <text>📖</text>
+                </view>
+                <text class="learning-title text-small text-bold">知识微课</text>
+                <text class="learning-sub text-xs text-muted">Cheat Sheet</text>
+              </view>
+            </view>
+
+            <view class="achievement-card card">
+              <view class="achievement-left flex-row">
+                <view class="achievement-icon-box emerald-icon">
+                  <text>🏆</text>
+                </view>
+                <view class="achievement-text">
+                  <text class="achievement-title text-small text-bold">专题挑战成就</text>
+                  <text class="achievement-sub text-small text-muted">已收集 3 个勋章 / 12</text>
+                </view>
+              </view>
+              <text class="achievement-arrow">›</text>
+            </view>
+          </view>
+
+          <!-- Knowledge Breakdown -->
+          <view class="knowledge-card card dark">
+            <text class="knowledge-title text-small text-bold">核心知识点分布</text>
+            <view class="knowledge-list">
+              <block wx:for="{{knowledgePoints}}" wx:key="label">
+                <view class="knowledge-item">
+                  <view class="knowledge-label-row flex-row">
+                    <text class="knowledge-label text-small">{{item.label}}</text>
+                    <text class="knowledge-value text-small">{{item.value}}%</text>
+                  </view>
+                  <view class="knowledge-bar">
+                    <view class="knowledge-fill {{item.barClass}}" style="width: {{item.value}}%;"></view>
+                  </view>
+                </view>
+              </block>
+            </view>
+          </view>
+        </scroll-view>
+
+        <!-- Footer Button -->
+        <view class="modal-footer">
+          <view class="practice-btn card dark" bindtap="startTopicPractice">
+            <text class="practice-icon">⚡</text>
+            <text class="practice-label text-bold">进入专注练习模式</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

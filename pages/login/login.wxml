@@ -1,0 +1,82 @@
+<!--pages/login/login.wxml - 授权登录页面-->
+<view class="login-container">
+  <!-- 背景装饰 -->
+  <view class="bg-decorator"></view>
+  <view class="bg-decorator-2"></view>
+
+  <!-- Logo 区域 -->
+  <view class="logo-section">
+    <view class="logo-box">
+      <text class="logo-icon">🦘</text>
+    </view>
+    <text class="app-name text-bold">袋鼠数学智练</text>
+    <text class="app-slogan text-small">KANGAROO MATH BRAIN</text>
+    <text class="app-desc">专为小学生设计的趣味数学逻辑训练</text>
+  </view>
+
+  <!-- 特性展示 -->
+  <view class="features-section">
+    <view class="feature-card">
+      <view class="feature-icon-box primary-bg">
+        <text>🎯</text>
+      </view>
+      <text class="feature-title text-small text-bold">每日挑战</text>
+      <text class="feature-desc text-xs">精准提升薄弱环节</text>
+    </view>
+    <view class="feature-card">
+      <view class="feature-icon-box blue-bg">
+        <text>📊</text>
+      </view>
+      <text class="feature-title text-small text-bold">能力雷达</text>
+      <text class="feature-desc text-xs">可视化学习进度</text>
+    </view>
+    <view class="feature-card">
+      <view class="feature-icon-box amber-bg">
+        <text>🏆</text>
+      </view>
+      <text class="feature-title text-small text-bold">真题训练</text>
+      <text class="feature-desc text-xs">历年真题全收录</text>
+    </view>
+  </view>
+
+  <!-- 登录区域 -->
+  <view class="login-section">
+    <view class="login-info">
+      <text class="login-info-title text-small text-bold">登录解锁完整功能</text>
+      <text class="login-info-desc text-xs">• 学习进度自动保存</text>
+      <text class="login-info-desc text-xs">• 错题收藏实时同步</text>
+      <text class="login-info-desc text-xs">• AI教练个性化指导</text>
+    </view>
+
+    <!-- 微信授权按钮 -->
+    <button
+      class="login-btn {{loading ? 'loading' : ''}}"
+      open-type="getUserInfo"
+      bindgetuserinfo="handleLogin"
+      disabled="{{loading}}"
+    >
+      <view class="btn-content flex-row">
+        <text class="btn-icon" wx:if="{{!loading}}">📱</text>
+        <text class="btn-text text-bold">{{loading ? '登录中...' : '微信授权登录'}}</text>
+      </view>
+    </button>
+
+    <!-- 提示 -->
+    <view class="tips-section">
+      <text class="tip-text text-xs">首次登录将自动创建账号</text>
+    </view>
+  </view>
+
+  <!-- 游客入口 -->
+  <view class="guest-section">
+    <text class="guest-link text-small" bindtap="handleGuest">暂不登录，先体验一下 →</text>
+  </view>
+
+  <!-- 隐私协议 -->
+  <view class="privacy-section flex-row">
+    <text class="privacy-text text-xs">登录即表示同意</text>
+    <text class="privacy-link text-xs text-bold">《用户协议》</text>
+    <text class="privacy-text text-xs">和</text>
+    <text class="privacy-link text-xs text-bold">《隐私政策》</text>
+  </view>
+</view>

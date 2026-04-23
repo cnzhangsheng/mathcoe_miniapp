@@ -1,0 +1,97 @@
+<!--pages/game/sudoku/sudoku.wxml - 100%复刻 Sudoku.tsx-->
+<view class="sudoku-container">
+  <!-- Header -->
+  <view class="game-header flex-row">
+    <view class="header-btn" bindtap="goBack">
+      <text>‹</text>
+    </view>
+    <text class="header-title text-bold">趣味数独</text>
+    <view class="header-btn" bindtap="toggleInfo">
+      <text>{{showInfo ? '✕' : 'ℹ'}}</text>
+    </view>
+  </view>
+
+  <!-- Sudoku Grid -->
+  <view class="sudoku-card card">
+    <view class="sudoku-grid">
+      <block wx:for="{{grid}}" wx:key="rowIndex" wx:for-item="row" wx:for-index="rowIndex">
+        <block wx:for="{{row}}" wx:key="colIndex" wx:for-item="cell" wx:for-index="colIndex">
+          <view class="sudoku-cell
+            {{selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex ? 'selected' : ''}}
+            {{initialGrid[rowIndex][colIndex] ? 'initial' : 'editable'}}
+            {{Math.floor(rowIndex / 2) + Math.floor(colIndex / 3) % 2 === 1 ? 'alt-block' : ''}}
+            {{rowIndex % 2 === 1 && rowIndex !== 5 ? 'row-border' : ''}}
+            {{colIndex % 3 === 2 && colIndex !== 5 ? 'col-border' : ''}}"
+            data-row="{{rowIndex}}"
+            data-col="{{colIndex}}"
+            bindtap="selectCell">
+            <text class="cell-text {{initialGrid[rowIndex][colIndex] ? 'text-bold' : 'text-blue'}}">{{cell}}</text>
+          </view>
+        </block>
+      </block>
+    </view>
+  </view>
+
+  <!-- Number Pad -->
+  <view class="number-pad">
+    <block wx:for="{{[1, 2, 3, 4, 5, 6]}}" wx:key="*this">
+      <view class="num-btn card"
+        data-num="{{item}}"
+        bindtap="handleNumberInput">
+        <text class="num-text text-bold">{{item}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- Action Buttons -->
+  <view class="action-row flex-row">
+    <view class="action-btn card" bindtap="eraseCell">
+      <text class="action-icon">🧹</text>
+      <text class="action-label text-small text-bold">擦除</text>
+    </view>
+    <view class="action-btn card" bindtap="resetGame">
+      <text class="action-icon">🔄</text>
+      <text class="action-label text-small text-bold">重排</text>
+    </view>
+  </view>
+
+  <!-- Win Modal -->
+  <view class="win-modal" wx:if="{{isWin}}">
+    <view class="win-content">
+      <view class="win-icon-box amber">
+        <text>🏆</text>
+        <view class="win-badge primary-bg">
+          <text class="text-bold">!</text>
+        </view>
+      </view>
+
+      <view class="win-text">
+        <text class="win-title text-bold">解谜成功！</text>
+        <text class="win-sub text-small text-muted">Logic Puzzle Mastered</text>
+      </view>
+
+      <view class="result-card card">
+        <view class="result-row flex-row">
+          <view class="level-badge">
+            <text class="text-small text-bold">L1</text>
+          </view>
+          <text class="result-label text-small text-bold">数独技巧级别</text>
+          <text class="result-tag primary-color text-small text-bold">极速完成</text>
+        </view>
+
+        <view class="divider"></view>
+
+        <text class="result-quote">"数独是培养逻辑专注力的绝佳方式。你刚才的推理非常严密，继续保持！"</text>
+      </view>
+    </view>
+
+    <view class="win-footer">
+      <view class="win-btn primary-bg" bindtap="resetGame">
+        <text class="text-bold">再来一关</text>
+      </view>
+      <view class="win-btn-secondary" bindtap="goBack">
+        <text class="text-bold">回到首页</text>
+      </view>
+    </view>
+  </view>
+</view>

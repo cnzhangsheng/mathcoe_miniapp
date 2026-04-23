@@ -1,0 +1,63 @@
+<!--pages/favorites/favorites.wxml - 100%复刻 Favorites.tsx-->
+<view class="favorites-container">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <text>加载中...</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- Header -->
+    <view class="favorites-header card">
+      <view class="header-icon-box pink-bg">
+        <text>❤️</text>
+      </view>
+      <view>
+        <text class="header-title text-bold">竞赛收藏夹</text>
+        <text class="header-sub text-small text-muted">MY FAVORITED CHALLENGES</text>
+      </view>
+    </view>
+
+    <!-- Favorites List -->
+    <view class="favorites-list">
+      <block wx:for="{{favorites}}" wx:key="id">
+        <view class="favorite-card card">
+          <view class="favorite-content flex-row">
+            <view class="favorite-img-wrapper">
+              <image class="favorite-img" src="{{item.img}}" mode="aspectFill"></image>
+            </view>
+
+            <view class="favorite-info">
+              <view class="fav-tags">
+                <view class="fav-category-tag">{{item.category}}</view>
+                <view class="fav-difficulty-tag">{{item.difficulty}}</view>
+              </view>
+              <text class="favorite-title text-bold">{{item.title}}</text>
+              <text class="favorite-date text-small text-muted">收藏于 {{item.date}}</text>
+            </view>
+          </view>
+
+          <view class="favorite-actions">
+            <view class="action-btn primary" data-id="{{item.id}}" bindtap="retryQuestion">
+              <text class="action-icon">▶</text>
+              <text>重新挑战</text>
+            </view>
+            <view class="delete-btn" data-id="{{item.id}}" bindtap="removeFavorite">
+              <text>🗑️</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- Empty State -->
+    <block wx:if="{{favorites.length === 0}}">
+      <view class="empty-state">
+        <view class="empty-icon-box">
+          <text>⭐</text>
+        </view>
+        <text class="empty-title">暂无收藏题目</text>
+        <text class="empty-sub">MARK QUESTIONS TO SEE THEM HERE</text>
+      </view>
+    </block>
+  </block>
+</view>

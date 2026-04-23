@@ -1,0 +1,676 @@
+/* pages/practice/practice.wxss - 100%复刻 Practice.tsx样式 */
+
+.practice-container {
+  padding: 20rpx;
+  padding-bottom: 200rpx;
+  background-color: #F8F8F8;
+  min-height: 100vh;
+}
+
+/* Timer Bar */
+.timer-bar {
+  background-color: #1A1A1A;
+  padding: 16rpx 24rpx;
+  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.timer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+}
+
+.timer-icon {
+  font-size: 14px;
+}
+
+.timer-text {
+  color: #07C160;
+  font-size: 14px;
+}
+
+/* Practice Card */
+.practice-card {
+  padding: 48rpx;
+  border-radius: 64rpx;
+  margin-bottom: 24rpx;
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.question-tags {
+  display: flex;
+  gap: 8rpx;
+}
+
+.diff-tag {
+  padding: 8rpx 12rpx;
+  background-color: rgba(0,0,0,0.05);
+  border-radius: 8rpx;
+  color: rgba(0,0,0,0.4);
+  letter-spacing: -1rpx;
+}
+
+.question-title {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 24rpx;
+}
+
+/* Question Image Area */
+.question-image-area {
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 48rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  border: 2rpx solid rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.question-image {
+  width: 100%;
+  height: 400rpx;
+  border-radius: 24rpx;
+}
+
+.image-actions {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+}
+
+.flag-btn {
+  width: 64rpx;
+  height: 64rpx;
+  background-color: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.flag-btn.flagged {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+/* Social Actions */
+.social-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
+  padding: 0 8rpx;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 48rpx;
+  background-color: rgba(0,0,0,0.05);
+}
+
+.social-btn.liked {
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 2rpx solid rgba(239, 68, 68, 0.1);
+}
+
+.social-btn.bookmarked {
+  background-color: rgba(251, 191, 36, 0.1);
+  border: 2rpx solid rgba(251, 191, 36, 0.1);
+}
+
+.social-icon {
+  font-size: 14px;
+}
+
+.social-btn.liked .social-label,
+.social-btn.bookmarked .social-label {
+  color: rgba(0,0,0,0.6);
+}
+
+/* Options Grid */
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+}
+
+.option-item {
+  height: 192rpx;
+  border-radius: 48rpx;
+  border: 4rpx solid rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  background-color: #fff;
+}
+
+.option-item.selected {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: #07C160;
+}
+
+.option-item.correct {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: #07C160;
+}
+
+.option-label-box {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 24rpx;
+  background-color: rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.option-label-box.selected-label {
+  background-color: #07C160;
+  color: #fff;
+}
+
+.option-label-box.correct-label {
+  background-color: #07C160;
+  color: #fff;
+}
+
+.option-label {
+  font-size: 14px;
+}
+
+.option-text {
+  color: rgba(0,0,0,0.3);
+}
+
+.option-item.selected .option-text {
+  color: #07C160;
+}
+
+/* Feedback Section */
+.feedback-section {
+  margin-top: 24rpx;
+}
+
+.feedback-card {
+  padding: 64rpx;
+  border-radius: 64rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.feedback-decorator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 128rpx;
+  height: 128rpx;
+  background-color: rgba(16, 185, 129, 0.05);
+  border-radius: 50%;
+  margin-top: -64rpx;
+  margin-right: -64rpx;
+}
+
+.feedback-header {
+  margin-bottom: 48rpx;
+}
+
+.feedback-icon-box {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 32rpx;
+  box-shadow: 0 16rpx 32rpx rgba(0,0,0,0.1);
+}
+
+.success-icon {
+  background-color: #07C160;
+  color: #fff;
+}
+
+.error-icon {
+  background-color: #EF4444;
+  color: #fff;
+}
+
+.feedback-icon {
+  font-size: 24px;
+}
+
+.feedback-title {
+  font-size: 18px;
+  display: block;
+}
+
+.feedback-sub {
+  letter-spacing: 4rpx;
+  display: block;
+  margin-top: 8rpx;
+}
+
+/* Explanation Area */
+.explanation-area {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.explanation-marker {
+  width: 8rpx;
+  height: 48rpx;
+  background-color: #07C160;
+  border-radius: 8rpx;
+  margin-top: 8rpx;
+}
+
+.explanation-content {
+  flex: 1;
+}
+
+.explanation-label {
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.explanation-text {
+  display: block;
+  color: rgba(0,0,0,0.7);
+  line-height: 1.6;
+}
+
+/* Tip Card */
+.tip-card {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-radius: 48rpx;
+  padding: 40rpx;
+  border: 2rpx solid rgba(99, 102, 241, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.tip-icon-box {
+  width: 112rpx;
+  height: 112rpx;
+  background-color: #fff;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 2rpx solid rgba(0,0,0,0.05);
+}
+
+.tip-title {
+  display: block;
+  color: rgba(67, 56, 202, 1);
+  margin-bottom: 8rpx;
+}
+
+.tip-sub {
+  letter-spacing: -1rpx;
+}
+
+/* Next Button */
+.next-btn {
+  background-color: #1A1A1A;
+  color: #fff;
+  padding: 40rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  box-shadow: 0 24rpx 48rpx rgba(0,0,0,0.2);
+  margin-top: 24rpx;
+}
+
+.next-label {
+  font-size: 16px;
+}
+
+.next-arrow {
+  font-size: 20px;
+}
+
+/* Submit Section */
+.submit-section {
+  margin-top: 24rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 40rpx;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  font-size: 17px;
+}
+
+.submit-btn.active {
+  background-color: #07C160;
+  color: #fff;
+  box-shadow: 0 16rpx 32rpx rgba(7, 193, 96, 0.2);
+}
+
+.submit-btn.disabled {
+  background-color: rgba(0,0,0,0.05);
+  color: rgba(0,0,0,0.1);
+}
+
+.submit-label {
+  font-size: 17px;
+}
+
+.submit-icon {
+  font-size: 18px;
+  transform: rotate(45deg);
+}
+
+/* Bottom Actions */
+.bottom-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 24rpx;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 24rpx 32rpx;
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.action-icon {
+  font-size: 16px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.answer-sheet-modal,
+.ai-coach-modal {
+  width: 90%;
+  max-height: 80vh;
+  background-color: #F8F8F8;
+  border-radius: 48rpx;
+  padding: 48rpx;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48rpx;
+}
+
+.modal-title {
+  font-size: 17px;
+}
+
+.close-btn {
+  width: 64rpx;
+  height: 64rpx;
+  background-color: rgba(0,0,0,0.05);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* Answer Grid */
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 32rpx;
+  margin-bottom: 48rpx;
+}
+
+.answer-cell {
+  aspect-ratio: 1;
+  border-radius: 40rpx;
+  border: 2rpx solid rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.answer-cell.current {
+  background-color: rgba(99, 102, 241, 1);
+  color: #fff;
+  border-color: rgba(99, 102, 241, 1);
+  box-shadow: 0 16rpx 32rpx rgba(99, 102, 241, 0.3);
+}
+
+.answer-cell.done {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #07C160;
+  border-color: rgba(16, 185, 129, 0.1);
+}
+
+.answer-num {
+  font-size: 15px;
+}
+
+.answer-legend {
+  display: flex;
+  justify-content: center;
+  gap: 48rpx;
+  padding-top: 32rpx;
+  border-top: 2rpx solid rgba(0,0,0,0.03);
+}
+
+.legend-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.legend-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+}
+
+.done-dot {
+  background-color: #07C160;
+}
+
+.current-dot {
+  background-color: rgba(99, 102, 241, 1);
+}
+
+.pending-dot {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 40rpx;
+  background-color: #1A1A1A;
+  color: #fff;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 16rpx 32rpx rgba(0,0,0,0.1);
+}
+
+/* AI Coach Modal */
+.coach-card {
+  background-color: #fff;
+  border-radius: 64rpx;
+  padding: 48rpx;
+  border: 2rpx solid rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 32rpx;
+}
+
+.coach-header {
+  margin-bottom: 48rpx;
+}
+
+.coach-icon-box {
+  width: 112rpx;
+  height: 112rpx;
+  background-color: #07C160;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 16rpx 32rpx rgba(7, 193, 96, 0.3);
+  margin-right: 32rpx;
+}
+
+.coach-title {
+  font-size: 20px;
+  display: block;
+}
+
+.coach-sub {
+  letter-spacing: 4rpx;
+  display: block;
+  margin-top: 8rpx;
+}
+
+.coach-message-area {
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 56rpx;
+  padding: 48rpx;
+  border: 2rpx solid rgba(0,0,0,0.05);
+  min-height: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 8rpx solid #07C160;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  letter-spacing: 4rpx;
+}
+
+.coach-message {
+  color: rgba(0,0,0,0.8);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.coach-tip-card {
+  background-color: rgba(99, 102, 241, 0.05);
+  border-radius: 64rpx;
+  padding: 48rpx;
+  border: 2rpx solid rgba(99, 102, 241, 0.1);
+  margin-bottom: 32rpx;
+}
+
+.coach-tip-title {
+  color: rgba(67, 56, 202, 1);
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.coach-tip-text {
+  color: rgba(67, 56, 202, 0.6);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.modal-btn.primary-bg {
+  background-color: #07C160;
+  box-shadow: 0 16rpx 32rpx rgba(7, 193, 96, 0.2);
+}
+
+/* Utility classes */
+.card {
+  background-color: #fff;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.05);
+  border: 2rpx solid rgba(0,0,0,0.05);
+}
+
+.card.dark {
+  background-color: #1A1A1A;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.text-bold {
+  font-weight: 900;
+}
+
+.text-small {
+  font-size: 10px;
+}
+
+.text-xs {
+  font-size: 9px;
+}
+
+.text-muted {
+  color: rgba(0,0,0,0.3);
+}
+
+.primary-bg {
+  background-color: #07C160;
+  color: #fff;
+}
