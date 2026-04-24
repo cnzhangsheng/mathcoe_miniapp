@@ -72,6 +72,11 @@
       </view>
     </button>
 
+    <!-- 开发测试登录（仅真机调试使用） -->
+    <button class="dev-login-btn" bindtap="handleDevLogin">
+      <text class="dev-btn-text text-small">测试登录（开发模式）</text>
+    </button>
+
     <!-- 提示 -->
     <view class="tips-section">
       <text class="tip-text text-xs">首次登录将自动创建账号</text>

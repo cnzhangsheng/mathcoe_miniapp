@@ -1,251 +1,529 @@
-// pages/practice/practice.js - 100%复刻 Practice.tsx
+// pages/practice/practice.js - 100%复刻 kangaroo-math-brain Practice.tsx
+const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
 
 Page({
   data: {
-    mode: 'normal',
+    // Mode
+    examPaperMode: false,
+
+    // Exam Paper Info
+    examPaper: null,
+
+    // Questions
     questions: [],
-    currentIndex: 0,
+    currentIndex: 1,
+    totalQuestions: 0,
     currentQuestion: {},
+    questionTypeText: '单选题',
+    options: [],
     selectedOption: null,
+
+    // Results
+    results: {},
+    progressPercent: 0,
+
+    // Timer
+    timeLeft: 0,
+    formattedTime: '0:00',
+    startTime: null,
+
+    // Feedback (Practice Mode)
     showFeedback: false,
     isCorrect: false,
-    correctAnswer: 'B',
+    correctAnswer: '',
     explanation: '',
-    sessionId: '',
-    timeLeft: 2700,
-    formattedTime: '45:00',
-    isExamMode: false,
 
-    // 标记状态
-    isFlagged: false,
-    isLiked: false,
-    isBookmarked: false,
-
-    // 弹窗状态
+    // Modals
     showAnswerSheet: false,
-    showAICoach: false,
-    aiLoading: false,
-    aiMessage: '',
+    isExamSubmitted: false,
 
-    // 选项数据
-    options: [
-      { id: 'A', label: '展开图 A' },
-      { id: 'B', label: '展开图 B' },
-      { id: 'C', label: '展开图 C' },
-      { id: 'D', label: '展开图 D' }
-    ]
+    // Result Report
+    estimatedScore: 0,
+    completionRate: 0,
+    correctCount: 0
   },
 
   onLoad(options) {
-    const mode = options.mode || 'normal'
+    const examPaperId = options.exam_paper_id
     const topicId = options.topic_id
-    const year = options.year
+    const title = options.title || ''
 
-    this.setData({
-      mode,
-      isExamMode: mode === 'exam'
-    })
+    // 设置初始标题（从URL参数获取）
+    if (title) {
+      this.setData({
+        examPaper: { title: decodeURIComponent(title) }
+      })
+    }
 
-    this.startPractice(topicId, mode, year)
-
-    if (mode === 'exam') {
-      this.startTimer()
+    if (examPaperId) {
+      this.setData({ examPaperMode: true })
+      wx.hideTabBar()
+      this.loadExamPaper(examPaperId)
+    } else if (topicId) {
+      wx.hideTabBar()
+      this.loadTopicPractice(topicId)
+    } else {
+      wx.showToast({ title: '缺少参数', icon: 'none' })
+      setTimeout(() => {
+        wx.showTabBar()
+        wx.switchTab({ url: '/pages/topics/topics' })
+      }, 1500)
     }
   },
 
-  async startPractice(topicId, mode, year) {
+  // Load Exam Paper
+  async loadExamPaper(examPaperId) {
     try {
-      const result = await practiceService.startPractice({
-        topic_id: topicId,
-        mode,
-        year
-      })
+      // Start test to get testId
+      const testStart = await examPaperService.startExamPaperTest(examPaperId)
+      if (!testStart) {
+        wx.showToast({ title: '请先登录', icon: 'none' })
+        setTimeout(() => {
+          wx.showTabBar()
+          wx.switchTab({ url: '/pages/topics/topics' })
+        }, 1500)
+        return
+      }
+      this.testId = testStart.id
 
-      // 模拟数据用于展示
-      const mockQuestion = {
-        id: 1,
-        title: '下面哪个展开图可以拼成立方体？',
-        difficulty: 'L2',
-        content: {
-          image: 'https://picsum.photos/seed/cube_expansion/400/300'
+      const examPaper = await examPaperService.getExamPaper(examPaperId)
+      if (examPaper && examPaper.questions && examPaper.questions.length > 0) {
+        // 确保 questions 是数组，提取 question 对象
+        let questions = []
+        if (Array.isArray(examPaper.questions)) {
+          questions = examPaper.questions.map(q => q.question || q)
+        }
+
+        // 确保 totalQuestions 是有效数字
+        const totalQuestions = Math.max(1, questions.length)
+        const firstQuestion = questions[0] || {}
+
+        this.setData({
+          examPaper,
+          questions,
+          totalQuestions: totalQuestions,
+          currentQuestion: this.formatQuestion(firstQuestion),
+          questionTypeText: this.getQuestionTypeText(firstQuestion),
+          startTime: Date.now()
+        })
+        this.buildOptions(firstQuestion)
+        this.updateProgress()
+        this.startTimer()
+      } else {
+        wx.showToast({ title: '考卷无题目', icon: 'none' })
+        setTimeout(() => {
+          wx.showTabBar()
+          wx.switchTab({ url: '/pages/topics/topics' })
+        }, 1500)
+      }
+    } catch (err) {
+      console.error('Load exam paper failed:', err)
+      wx.showToast({ title: '加载失败，请登录', icon: 'none' })
+      setTimeout(() => {
+        wx.showTabBar()
+        wx.switchTab({ url: '/pages/topics/topics' })
+      }, 1500)
+    }
+  },
+
+  // Load Topic Practice
+  async loadTopicPractice(topicId) {
+    try {
+      const result = await practiceService.startPractice({ topic_id: topicId })
+      if (!result) {
+        wx.showToast({ title: '请先登录', icon: 'none' })
+        setTimeout(() => {
+          wx.showTabBar()
+          wx.switchTab({ url: '/pages/topics/topics' })
+        }, 1500)
+        return
+      }
+      // 确保 questions 是数组
+      let questions = []
+      if (result.questions && Array.isArray(result.questions)) {
+        questions = result.questions
+      }
+
+      // 确保 totalQuestions 是有效数字
+      const totalQuestions = Math.max(1, questions.length)
+
+      if (questions.length > 0) {
+        const firstQuestion = questions[0] || {}
+        this.setData({
+          questions,
+          totalQuestions: totalQuestions,
+          currentQuestion: this.formatQuestion(firstQuestion),
+          questionTypeText: this.getQuestionTypeText(firstQuestion),
+          sessionId: result.session_id,
+          startTime: Date.now()
+        })
+        this.buildOptions(firstQuestion)
+        this.updateProgress()
+        this.startTimer()
+      } else {
+        wx.showToast({ title: '专题无题目', icon: 'none' })
+        setTimeout(() => {
+          wx.showTabBar()
+          wx.switchTab({ url: '/pages/topics/topics' })
+        }, 1500)
+      }
+    } catch (err) {
+      console.error('Load topic practice failed:', err)
+      wx.showToast({ title: '加载失败，请登录', icon: 'none' })
+      setTimeout(() => {
+        wx.showTabBar()
+        wx.switchTab({ url: '/pages/topics/topics' })
+      }, 1500)
+    }
+  },
+
+  // Format Question
+  formatQuestion(question) {
+    // 确保 question 有效
+    if (!question || typeof question !== 'object') {
+      return { contentHtml: '题目内容' }
+    }
+    // 从 content.text 提取 HTML 内容（数据结构：content = {"text": "<p>...</p>", "format": "html"})
+    let contentHtml = ''
+    if (question.content) {
+      if (typeof question.content === 'string') {
+        contentHtml = question.content
+      } else if (typeof question.content === 'object' && question.content.text) {
+        contentHtml = question.content.text
+      }
+    }
+    // 如果没有 content，fallback 到 title
+    if (!contentHtml) {
+      contentHtml = question.title || '题目内容'
+    }
+    return {
+      ...question,
+      contentHtml
+    }
+  },
+
+  // 获取题目类型文本
+  getQuestionTypeText(question) {
+    if (!question || !question.question_type) return '单选题'
+    const type = question.question_type.toLowerCase()
+    if (type === 'multiple') return '多选题'
+    if (type === 'single') return '单选题'
+    return '单选题'
+  },
+
+  // Build Options
+  buildOptions(question) {
+    // 确保 question 和 options 有效
+    if (!question || typeof question !== 'object') {
+      this.setData({ options: [] })
+      return
+    }
+    const opts = question.options || []
+    if (!Array.isArray(opts)) {
+      this.setData({ options: [] })
+      return
+    }
+    const formattedOptions = opts.map(opt => {
+      // 提取 textHtml（选项也可能是 {text: "...", format: "html"} 结构）
+      let textHtml = ''
+      let text = ''
+      if (opt && opt.content) {
+        if (typeof opt.content === 'string') {
+          textHtml = opt.content
+          text = this.stripHtml(opt.content)
+        } else if (typeof opt.content === 'object' && opt.content.text) {
+          textHtml = opt.content.text
+          text = this.stripHtml(opt.content.text)
         }
       }
-
-      this.setData({
-        questions: result.questions || [mockQuestion],
-        currentQuestion: result.questions ? result.questions[0] : mockQuestion,
-        sessionId: result.session_id,
-        timeLimit: result.time_limit
-      })
-    } catch (err) {
-      console.error('Start practice failed:', err)
-      // 使用模拟数据
-      this.setData({
-        currentQuestion: {
-          id: 1,
-          title: '下面哪个展开图可以拼成立方体？',
-          difficulty: 'L2',
-          content: {
-            image: 'https://picsum.photos/seed/cube_expansion/400/300'
-          }
-        },
-        questions: [{
-          id: 1,
-          title: '下面哪个展开图可以拼成立方体？',
-          difficulty: 'L2',
-          content: { image: 'https://picsum.photos/seed/cube_expansion/400/300' }
-        }]
-      })
-    }
+      if (!textHtml && opt && opt.text) {
+        textHtml = opt.text
+        text = this.stripHtml(opt.text)
+      }
+      return {
+        label: opt?.label || 'A',
+        text,
+        textHtml
+      }
+    })
+    this.setData({ options: formattedOptions })
   },
 
+  // 去除 HTML 标签（用于纯文本显示）
+  stripHtml(html) {
+    if (!html || typeof html !== 'string') return ''
+    return html.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
+  },
+
+  // Update Progress
+  updateProgress() {
+    let { currentIndex, totalQuestions } = this.data
+    // 确保 currentIndex 和 totalQuestions 是有效数字
+    currentIndex = Number(currentIndex) || 1
+    totalQuestions = Number(totalQuestions) || 0
+    if (totalQuestions === 0) {
+      this.setData({ progressPercent: 0 })
+      return
+    }
+    const percent = Math.floor((currentIndex / totalQuestions) * 100)
+    this.setData({ progressPercent: Math.max(0, Math.min(100, percent)) })
+  },
+
+  // Start Timer
   startTimer() {
+    this.startTime = Date.now()
     this.timer = setInterval(() => {
-      const timeLeft = this.data.timeLeft - 1
-      if (timeLeft <= 0) {
-        clearInterval(this.timer)
-        this.finishPractice()
-      }
+      const elapsed = Math.floor((Date.now() - this.startTime) / 1000)
+
       this.setData({
-        timeLeft,
-        formattedTime: this.formatTime(timeLeft)
+        timeLeft: elapsed,
+        formattedTime: this.formatTime(elapsed)
       })
     }, 1000)
   },
 
+  // Format Time
   formatTime(seconds) {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
   },
 
-  // 选择选项
+  // Select Option
   selectOption(e) {
     const option = e.currentTarget.dataset.option
-    if (!this.data.showFeedback) {
+    if (!this.data.showFeedback && !this.data.isExamSubmitted) {
       this.setData({ selectedOption: option })
-    }
-  },
-
-  // 切换标记
-  toggleFlag() {
-    this.setData({ isFlagged: !this.data.isFlagged })
-  },
-
-  toggleLike() {
-    this.setData({ isLiked: !this.data.isLiked })
-    if (this.data.isLiked) {
-      wx.showToast({ title: '已点赞', icon: 'success' })
-    }
-  },
-
-  toggleBookmark() {
-    this.setData({ isBookmarked: !this.data.isBookmarked })
-    if (this.data.isBookmarked) {
-      wx.showToast({ title: '已收藏', icon: 'success' })
-    }
-  },
-
-  // 提交答案
-  async submitAnswer() {
-    if (!this.data.selectedOption) return
-
-    const currentQuestion = this.data.currentQuestion
-
-    try {
-      const result = await practiceService.submitAnswer({
-        question_id: currentQuestion.id,
-        user_answer: this.data.selectedOption
-      })
-
-      this.setData({
-        showFeedback: true,
-        isCorrect: result.is_correct,
-        correctAnswer: result.correct_answer,
-        explanation: result.explanation
-      })
-    } catch (err) {
-      console.error('Submit answer failed:', err)
-      // 模拟正确答案
-      const isCorrect = this.data.selectedOption === 'B'
-      this.setData({
-        showFeedback: true,
-        isCorrect: isCorrect,
-        correctAnswer: 'B',
-        explanation: '袋鼠数学中常见的立方体展开规律为"1-4-1"。选项B完美契合，折叠后所有边刚好闭合。'
-      })
-    }
-  },
-
-  // 下一题
-  nextQuestion() {
-    const nextIndex = this.data.currentIndex + 1
-    if (nextIndex >= this.data.questions.length) {
-      this.finishPractice()
-    } else {
-      this.setData({
-        currentIndex: nextIndex,
-        currentQuestion: this.data.questions[nextIndex],
-        selectedOption: null,
-        showFeedback: false,
-        isCorrect: false,
-        correctAnswer: '',
-        explanation: '',
-        isFlagged: false,
-        isLiked: false,
-        isBookmarked: false
-      })
-    }
-  },
-
-  // 完成练习
-  finishPractice() {
-    clearInterval(this.timer)
-    wx.showModal({
-      title: '练习完成',
-      content: '恭喜你完成了本次练习！',
-      showCancel: false,
-      success: () => {
-        wx.navigateBack()
+      // 自动保存答案
+      if (this.data.examPaperMode) {
+        this.saveCurrentAnswer()
       }
+    }
+  },
+
+  // Go to Previous Question
+  goToPrevQuestion() {
+    const { currentIndex, questions } = this.data
+    if (currentIndex <= 1) return
+
+    const prevIndex = currentIndex - 1
+    if (questions[prevIndex - 1]) {
+      const prevQuestion = questions[prevIndex - 1]
+      this.setData({
+        currentIndex: prevIndex,
+        currentQuestion: this.formatQuestion(prevQuestion),
+        questionTypeText: this.getQuestionTypeText(prevQuestion),
+        selectedOption: this.data.results[prevIndex] || null,
+        showFeedback: false
+      })
+      this.buildOptions(prevQuestion)
+      this.updateProgress()
+    }
+  },
+
+  // Handle Next or Submit
+  handleNextOrSubmit() {
+    const { currentIndex, totalQuestions, selectedOption, examPaperMode } = this.data
+
+    if (!selectedOption) {
+      wx.showToast({ title: '请先选择答案', icon: 'none' })
+      return
+    }
+
+    if (currentIndex >= totalQuestions) {
+      // Last question, show answer sheet for confirmation
+      this.setData({ showAnswerSheet: true })
+    } else {
+      // Save current answer and go to next
+      this.saveCurrentAnswer()
+      this.goToNextQuestion()
+    }
+  },
+
+  // Save current answer
+  saveCurrentAnswer() {
+    const { currentIndex, selectedOption, results } = this.data
+    if (selectedOption) {
+      const newResults = { ...results }
+      newResults[currentIndex] = selectedOption
+      this.setData({ results: newResults })
+
+      // Submit to backend if testId exists
+      if (this.testId) {
+        examPaperService.submitTestAnswer(this.testId, currentIndex, selectedOption).catch(err => {
+          console.error('Submit answer failed:', err)
+        })
+      }
+    }
+  },
+
+  // Check Answer (Practice Mode)
+  checkAnswer() {
+    const { currentQuestion, selectedOption } = this.data
+    const correctAnswer = currentQuestion?.answer || ''
+    const isCorrect = selectedOption === correctAnswer
+
+    // 处理 explanation
+    let explanation = ''
+    if (currentQuestion?.explanation) {
+      if (typeof currentQuestion.explanation === 'string') {
+        explanation = currentQuestion.explanation
+      } else if (typeof currentQuestion.explanation === 'object' && currentQuestion.explanation.text) {
+        explanation = currentQuestion.explanation.text
+      }
+    }
+
+    this.setData({
+      showFeedback: true,
+      isCorrect,
+      correctAnswer,
+      explanation: explanation || '暂无解析'
     })
   },
 
-  // 答题卡弹窗
-  openAnswerSheet() {
+  // Go to Next Question
+  goToNextQuestion() {
+    let { currentIndex, questions, totalQuestions } = this.data
+    currentIndex = Number(currentIndex) || 1
+    totalQuestions = Number(totalQuestions) || 0
+
+    const nextIndex = currentIndex + 1
+
+    if (nextIndex <= totalQuestions && questions[nextIndex - 1]) {
+      const nextQuestion = questions[nextIndex - 1]
+      this.setData({
+        currentIndex: nextIndex,
+        currentQuestion: this.formatQuestion(nextQuestion),
+        questionTypeText: this.getQuestionTypeText(nextQuestion),
+        selectedOption: this.data.results[nextIndex] || null,
+        showFeedback: false
+      })
+      this.buildOptions(nextQuestion)
+      this.updateProgress()
+    }
+  },
+
+  // Show Answer Sheet
+  showAnswerSheet() {
     this.setData({ showAnswerSheet: true })
   },
 
+  // Close Answer Sheet
   closeAnswerSheet() {
     this.setData({ showAnswerSheet: false })
   },
 
-  preventClose() {
-    // 阻止点击内容区域关闭弹窗
+  // Jump to Question from Answer Sheet
+  jumpToQuestion(e) {
+    let index = e.currentTarget.dataset.index
+    index = Number(index) || 1
+
+    const { questions, results } = this.data
+    if (!questions || !questions[index - 1]) return
+
+    const targetQuestion = questions[index - 1]
+    this.setData({
+      currentIndex: index,
+      currentQuestion: this.formatQuestion(targetQuestion),
+      questionTypeText: this.getQuestionTypeText(targetQuestion),
+      selectedOption: results[index] || null,
+      showAnswerSheet: false,
+      showFeedback: false
+    })
+    this.buildOptions(targetQuestion)
+    this.updateProgress()
   },
 
-  // AI教练
-  askAICoach() {
+  // Submit Exam
+  async submitExam() {
+    clearInterval(this.timer)
+    let { results, totalQuestions, startTime } = this.data
+    // 确保 totalQuestions 是有效数字
+    totalQuestions = Number(totalQuestions) || 0
+
+    const answeredCount = Object.keys(results || {}).length
+    const completionRate = totalQuestions > 0
+      ? Math.floor((answeredCount / totalQuestions) * 100)
+      : 0
+
+    // Calculate time spent in seconds
+    const timeSpent = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
+
     this.setData({
-      showAICoach: true,
-      aiLoading: true
+      showAnswerSheet: false,
+      completionRate: Math.max(0, Math.min(100, completionRate))
     })
 
-    // 模拟AI响应
-    setTimeout(() => {
-      this.setData({
-        aiLoading: false,
-        aiMessage: '袋鼠数学中常见的立方体展开规律为"1-4-1"结构。试着观察选项中哪些图形符合这个结构特点吧！'
-      })
-    }, 2000)
+    // Submit to backend if testId exists
+    if (this.testId) {
+      try {
+        const submitResult = await examPaperService.submitExamPaperTest(this.testId, {
+          answers: results,
+          time_spent: timeSpent
+        })
+
+        this.setData({
+          isExamSubmitted: true,
+          estimatedScore: Number(submitResult.score) || 0,
+          correctCount: Number(submitResult.correct_count) || 0
+        })
+      } catch (err) {
+        console.error('Submit exam failed:', err)
+        wx.showToast({ title: '提交失败', icon: 'none' })
+        this.setData({ isExamSubmitted: true })
+      }
+    } else {
+      wx.showToast({ title: '无测试记录', icon: 'none' })
+      this.setData({ isExamSubmitted: true })
+    }
   },
 
-  closeAICoach() {
-    this.setData({ showAICoach: false })
+  // Review Errors
+  reviewErrors() {
+    this.setData({ isExamSubmitted: false })
+    wx.showToast({ title: '错题解析功能开发中', icon: 'none' })
+  },
+
+  // Go Back
+  goBack() {
+    if (this.data.isExamSubmitted) {
+      wx.showTabBar()
+      wx.switchTab({ url: '/pages/topics/topics' })
+    } else {
+      wx.showModal({
+        title: '确认退出',
+        content: '考试进度将会丢失，确定要退出吗？',
+        success: (res) => {
+          if (res.confirm) {
+            clearInterval(this.timer)
+            wx.showTabBar()
+            wx.switchTab({ url: '/pages/topics/topics' })
+          }
+        }
+      })
+    }
+  },
+
+  // Finish Practice
+  finishPractice() {
+    clearInterval(this.timer)
+    wx.showTabBar()
+    wx.switchTab({ url: '/pages/topics/topics' })
+  },
+
+  // Back to List (from result report)
+  backToList() {
+    wx.showTabBar()
+    wx.switchTab({ url: '/pages/topics/topics' })
+  },
+
+  preventClose() {
+    // Prevent close
   },
 
   onUnload() {
     clearInterval(this.timer)
+    wx.showTabBar()
   }
 })

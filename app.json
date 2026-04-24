@@ -4,6 +4,7 @@
     "pages/index/index",
     "pages/practice/practice",
     "pages/topics/topics",
+    "pages/topic-question-detail/topic-question-detail",
     "pages/review/review",
     "pages/profile/profile",
     "pages/favorites/favorites",

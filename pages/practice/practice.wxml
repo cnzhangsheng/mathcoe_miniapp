@@ -1,203 +1,238 @@
-<!--pages/practice/practice.wxml - 100%复刻 Practice.tsx-->
-<view class="practice-container">
-  <!-- 模考计时器 -->
-  <view class="timer-bar" wx:if="{{mode === 'exam'}}">
-    <view class="timer-inner">
-      <text class="timer-icon">⏱️</text>
-      <text class="timer-text text-bold">{{timeLeft > 0 ? formattedTime : '00:00'}}</text>
+<!--pages/practice/practice.wxml - 100%复刻 kangaroo-math-brain Practice.tsx -->
+<view class="practice-page">
+
+  <!-- Exam Status Bar (Back + Timer) -->
+  <view class="exam-status-bar" wx:if="{{examPaperMode}}">
+    <!-- 返回按钮 -->
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <!-- 题目编号和类型 -->
+    <view class="status-center">
+      <text class="question-badge text-bold">Q{{currentIndex || 1}}</text>
+      <text class="question-type-tag">{{questionTypeText}}</text>
+    </view>
+    <!-- 计时器 -->
+    <view class="timer-box {{timeLeft >= 300 ? '' : 'urgent'}}">
+      <text class="timer-text text-bold">{{formattedTime || '0:00'}}</text>
     </view>
   </view>
 
   <!-- Main Practice Card -->
-  <view class="practice-card card">
-    <view class="question-header">
-      <text class="question-number text-small text-muted">第 {{currentIndex + 1}} 题</text>
-      <view class="question-tags">
-        <text class="diff-tag text-small text-bold">{{currentQuestion.difficulty || 'L2'}}</text>
-      </view>
-    </view>
-
-    <view class="question-title">
-      <text class="text-bold">{{currentQuestion.title || '下面哪个展开图可以拼成立方体？'}}</text>
+  <view class="practice-card">
+    <!-- Question Content -->
+    <view class="question-content-box">
+      <rich-text class="question-content" nodes="{{currentQuestion.contentHtml || '题目内容'}}"></rich-text>
     </view>
 
     <!-- Question Image Area -->
-    <view class="question-image-area">
-      <image class="question-image"
-        src="{{currentQuestion.content.image || 'https://picsum.photos/seed/cube_expansion/400/300'}}"
-        mode="aspectFit"></image>
-
-      <!-- 标记按钮 -->
-      <view class="image-actions">
-        <view class="flag-btn {{isFlagged ? 'flagged' : ''}}" bindtap="toggleFlag">
-          <text>{{isFlagged ? '🚩' : '⚐'}}</text>
-        </view>
-      </view>
+    <view class="image-area" wx:if="{{currentQuestion.content && currentQuestion.content.images}}">
+      <block wx:for="{{currentQuestion.content.images}}" wx:key="*this">
+        <image class="question-image" src="{{item}}" mode="aspectFit"></image>
+      </block>
     </view>
 
-    <!-- Social Actions (Like & Bookmark) -->
-    <view class="social-actions">
-      <view class="social-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
-        <text class="social-icon">❤️</text>
-        <text class="social-label text-small text-bold">{{isLiked ? '2.4k' : '点赞'}}</text>
-      </view>
-      <view class="social-btn {{isBookmarked ? 'bookmarked' : ''}}" bindtap="toggleBookmark">
-        <text class="social-icon">⭐</text>
-        <text class="social-label text-small text-bold">{{isBookmarked ? '已收藏' : '收藏'}}</text>
-      </view>
-    </view>
-
-    <!-- Options Grid -->
+    <!-- Options Grid (One per row) -->
     <view class="options-grid">
-      <block wx:for="{{options}}" wx:key="id">
-        <view class="option-item {{selectedOption === item.id ? 'selected' : ''}} {{showFeedback && correctAnswer === item.id ? 'correct' : ''}}"
-          data-option="{{item.id}}"
+      <block wx:for="{{options}}" wx:key="label">
+        <view class="option-item {{selectedOption === item.label ? 'selected' : ''}} {{results[currentIndex] === item.label ? 'answered' : ''}} {{showFeedback && correctAnswer === item.label ? 'correct' : ''}}"
+          data-option="{{item.label}}"
           bindtap="selectOption">
-          <view class="option-label-box {{selectedOption === item.id ? 'selected-label' : ''}} {{showFeedback && correctAnswer === item.id ? 'correct-label' : ''}}">
-            <text class="option-label text-bold">{{item.id}}</text>
+          <view class="option-label-box {{selectedOption === item.label || results[currentIndex] === item.label ? 'active-label' : ''}} {{showFeedback && correctAnswer === item.label ? 'correct-label' : ''}}">
+            <text class="option-label text-bold">{{item.label}}</text>
           </view>
-          <text class="option-text text-small text-bold {{selectedOption === item.id ? 'selected-text' : ''}}">{{item.label}}</text>
+          <rich-text class="option-text {{selectedOption === item.label || results[currentIndex] === item.label ? 'active-text' : ''}}" nodes="{{item.textHtml}}"></rich-text>
         </view>
       </block>
     </view>
   </view>
 
-  <!-- Feedback Area -->
-  <view class="feedback-section" wx:if="{{showFeedback}}">
-    <view class="feedback-card card">
+  <!-- Control Buttons -->
+  <view class="control-section">
+    <view class="control-row">
+      <!-- 答题卡按钮 -->
+      <view class="sheet-btn" bindtap="showAnswerSheet">
+        <text class="sheet-icon">📋</text>
+        <text class="sheet-text text-bold">答题卡</text>
+      </view>
+
+      <!-- 上一题 / 下一题 按钮 -->
+      <view class="nav-buttons">
+        <view class="prev-btn {{currentIndex <= 1 ? 'disabled' : 'active'}}" bindtap="goToPrevQuestion">
+          <text class="nav-text text-bold">上一题</text>
+        </view>
+        <view class="next-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="handleNextOrSubmit">
+          <text class="nav-text text-bold">{{currentIndex >= totalQuestions ? '确认提交' : '下一题'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Answer Feedback (Practice Mode Only) -->
+  <view class="feedback-section" wx:if="{{!examPaperMode && showFeedback}}">
+    <view class="feedback-card">
       <view class="feedback-decorator"></view>
       <view class="feedback-header flex-row">
-        <view class="feedback-icon-box {{isCorrect ? 'success-icon' : 'error-icon'}}">
-          <text class="feedback-icon">{{isCorrect ? '✓' : '✗'}}</text>
+        <view class="feedback-icon-box success">
+          <text class="feedback-icon">✓</text>
         </view>
-        <view class="feedback-text">
-          <text class="feedback-title text-bold">{{isCorrect ? '回答正确！' : '回答错误'}}</text>
-          <text class="feedback-sub text-small text-muted">EXCELLENT WORK</text>
+        <view class="feedback-text-area">
+          <text class="feedback-title text-bold">回答正确！</text>
+          <text class="feedback-sub text-xs">Excellent Work</text>
         </view>
       </view>
 
-      <view class="explanation-area">
+      <!-- Explanation -->
+      <view class="explanation-box flex-row">
         <view class="explanation-marker"></view>
         <view class="explanation-content">
           <text class="explanation-label text-bold">解题思路：</text>
-          <text class="explanation-text">{{explanation || '袋鼠数学中常见的立方体展开规律为"1-4-1"。选项B完美契合，折叠后所有边刚好闭合。'}}</text>
+          <text class="explanation-text">{{explanation}}</text>
         </view>
       </view>
 
-      <view class="tip-card">
+      <!-- Tip Card -->
+      <view class="tip-card flex-row">
         <view class="tip-icon-box">
-          <text>💡</text>
+          <text class="tip-icon">💡</text>
         </view>
-        <view class="tip-content">
+        <view class="tip-info">
           <text class="tip-title text-small text-bold">竞赛考点：一共有 11 种合法展开图</text>
-          <text class="tip-sub text-xs text-muted">Level 2 Space Geometry</text>
+          <text class="tip-sub text-xs">Level 2 Space Geometry</text>
         </view>
       </view>
     </view>
 
-    <view class="next-btn card dark" bindtap="nextQuestion">
-      <text class="next-label text-bold">{{currentIndex + 1 >= questions.length ? '结束并返回' : (isExamMode ? '下一题' : '结束并返回')}}</text>
-      <text class="next-arrow">›</text>
-    </view>
-  </view>
-
-  <!-- Submit Button -->
-  <view class="submit-section" wx:if="{{!showFeedback}}">
-    <view class="submit-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="submitAnswer">
-      <text class="submit-label text-bold">确定提交</text>
-      <text class="submit-icon">🚀</text>
-    </view>
-  </view>
-
-  <!-- Bottom Actions -->
-  <view class="bottom-actions" wx:if="{{!showFeedback}}">
-    <view class="action-btn" bindtap="openAnswerSheet">
-      <text class="action-icon">📋</text>
-      <text class="action-label text-small text-bold">答题卡</text>
-    </view>
-    <view class="action-btn" bindtap="askAICoach">
-      <text class="action-icon">🧠</text>
-      <text class="action-label text-small text-bold">AI教练</text>
+    <view class="end-btn" bindtap="finishPractice">
+      <text class="end-text text-bold">结束并返回</text>
+      <text class="end-arrow">›</text>
     </view>
   </view>
 
   <!-- Answer Sheet Modal -->
-  <view class="modal-overlay" wx:if="{{showAnswerSheet}}" bindtap="closeAnswerSheet">
-    <view class="answer-sheet-modal" catchtap="preventClose">
-      <view class="modal-header">
-        <text class="modal-title text-bold">进度检查</text>
-        <view class="close-btn" bindtap="closeAnswerSheet">
-          <text>×</text>
+  <view class="answer-sheet-modal" wx:if="{{showAnswerSheet}}">
+    <view class="modal-header-bar">
+      <view class="modal-back-btn" bindtap="closeAnswerSheet">
+        <text class="modal-back-icon">‹</text>
+      </view>
+      <text class="modal-title text-bold">答题卡</text>
+    </view>
+
+    <scroll-view class="modal-scroll" scroll-y="true">
+      <view class="sheet-card">
+        <view class="sheet-header">
+          <text class="sheet-title text-bold">答题卡</text>
+        </view>
+
+        <view class="answer-grid" wx:if="{{totalQuestions > 0}}">
+          <block wx:for="{{totalQuestions}}" wx:key="*this" wx:for-item="num">
+            <view class="answer-cell {{currentIndex === num + 1 ? 'current' : ''}} {{results[num + 1] ? 'done' : ''}}"
+              data-index="{{num + 1}}"
+              bindtap="jumpToQuestion">
+              <text class="answer-num text-bold">{{num + 1}}</text>
+            </view>
+          </block>
+        </view>
+        <view class="answer-grid-empty" wx:else>
+          <text class="empty-text">暂无题目</text>
         </view>
       </view>
+    </scroll-view>
 
-      <view class="answer-grid">
-        <block wx:for="{{30}}" wx:key="*this" wx:for-item="num">
-          <view class="answer-cell {{currentIndex + 1 === num ? 'current' : ''}} {{num < currentIndex + 1 ? 'done' : ''}}">
-            <text class="answer-num text-bold">{{num}}</text>
-          </view>
-        </block>
-      </view>
-
-      <view class="answer-legend">
-        <view class="legend-item">
-          <view class="legend-dot done-dot"></view>
-          <text class="legend-label text-small text-muted">已答</text>
+    <view class="modal-footer">
+      <view class="footer-row">
+        <view class="continue-btn" bindtap="closeAnswerSheet">
+          <text class="continue-text text-bold">继续答题</text>
         </view>
-        <view class="legend-item">
-          <view class="legend-dot current-dot"></view>
-          <text class="legend-label text-small text-muted">当前</text>
+        <view class="submit-exam-btn" bindtap="submitExam">
+          <text class="submit-exam-text text-bold">确定交卷</text>
         </view>
-        <view class="legend-item">
-          <view class="legend-dot pending-dot"></view>
-          <text class="legend-label text-small text-muted">待完成</text>
-        </view>
-      </view>
-
-      <view class="modal-btn" bindtap="closeAnswerSheet">
-        <text class="text-bold">继续答题</text>
       </view>
     </view>
   </view>
 
-  <!-- AI Coach Modal -->
-  <view class="modal-overlay" wx:if="{{showAICoach}}" bindtap="closeAICoach">
-    <view class="ai-coach-modal" catchtap="preventClose">
-      <view class="modal-header">
-        <text class="modal-title text-bold">智趣教练 Kangaroo</text>
-        <view class="close-btn" bindtap="closeAICoach">
-          <text>×</text>
-        </view>
-      </view>
+  <!-- Exam Result Report -->
+  <view class="result-report" wx:if="{{isExamSubmitted}}">
+    <scroll-view class="result-scroll" scroll-y="true">
+      <view class="result-content">
 
-      <view class="coach-card">
-        <view class="coach-header flex-row">
-          <view class="coach-icon-box">
-            <text>🧠</text>
+        <!-- Trophy Header -->
+        <view class="result-header">
+          <view class="trophy-box">
+            <text class="trophy-icon">🏆</text>
           </view>
-          <view class="coach-text">
-            <text class="coach-title text-bold">AI 学习诊断</text>
-            <text class="coach-sub text-small text-muted">Logic & Strategy Coach</text>
-          </view>
+          <text class="result-title text-bold">测评圆满结束</text>
+          <text class="result-sub text-xs">Simulation Test Report</text>
         </view>
 
-        <view class="coach-message-area">
-          <view wx:if="{{aiLoading}}" class="ai-loading">
-            <view class="loading-spinner"></view>
-            <text class="loading-text text-small text-muted">正在深度分析解题思路...</text>
+        <!-- Score Card -->
+        <view class="score-card">
+          <view class="score-grid">
+            <view class="score-item">
+              <text class="score-label text-xs">预估得分</text>
+              <text class="score-value text-bold">{{estimatedScore || 0}}</text>
+            </view>
+            <view class="score-divider"></view>
+            <view class="score-item">
+              <text class="score-label text-xs">完成率</text>
+              <text class="score-value text-bold rate-high">{{completionRate || 0}}%</text>
+            </view>
           </view>
-          <text wx:else class="coach-message">{{aiMessage || '袋鼠数学中常见的立方体展开规律为"1-4-1"结构。试着观察选项中哪些图形符合这个结构特点吧！'}}</text>
+
+          <!-- AI Review -->
+          <view class="ai-review-card">
+            <view class="ai-header flex-row">
+              <text class="ai-icon">✨</text>
+              <text class="ai-title text-small text-bold">AI 测评综述</text>
+            </view>
+            <text class="ai-text text-small">你在算术部分表现非常出色，但在逻辑推理的"图形旋转"细分领域耗时较长。建议通过"专题训练"加强空间想象能力。</text>
+          </view>
+        </view>
+
+        <!-- Weak Topics -->
+        <view class="weak-card">
+          <text class="weak-title text-small text-bold">薄弱专题知识点</text>
+          <view class="weak-list">
+            <view class="weak-item">
+              <view class="weak-top flex-row">
+                <text class="weak-label text-small">逻辑推理 (L2)</text>
+                <text class="weak-val text-small">45%</text>
+              </view>
+              <view class="weak-bar">
+                <view class="weak-fill weak-rose" style="width: 45%;"></view>
+              </view>
+            </view>
+            <view class="weak-item">
+              <view class="weak-top flex-row">
+                <text class="weak-label text-small">几何空间 (L1)</text>
+                <text class="weak-val text-small">62%</text>
+              </view>
+              <view class="weak-bar">
+                <view class="weak-fill weak-amber" style="width: 62%;"></view>
+              </view>
+            </view>
+            <view class="weak-item">
+              <view class="weak-top flex-row">
+                <text class="weak-label text-small">应用数学</text>
+                <text class="weak-val text-small">92%</text>
+              </view>
+              <view class="weak-bar">
+                <view class="weak-fill weak-emerald" style="width: 92%;"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- Action Buttons -->
+        <view class="result-actions">
+          <view class="review-btn" bindtap="reviewErrors">
+            <text class="review-text text-bold">查看错题解析</text>
+          </view>
+          <view class="back-home-btn" bindtap="backToList">
+            <text class="back-home-text text-small">返回训练大本营</text>
+          </view>
         </view>
       </view>
-
-      <view class="coach-tip-card">
-        <text class="coach-tip-title text-small text-bold">教练小贴士：</text>
-        <text class="coach-tip-text text-small">"袋鼠数学不仅关注结果，更关注你推导的过程。试着把大问题拆解成几个小提示吧！"</text>
-      </view>
-
-      <view class="modal-btn primary-bg" bindtap="closeAICoach">
-        <text class="text-bold">谢谢教练，我懂了！</text>
-      </view>
-    </view>
+    </scroll-view>
   </view>
 </view>

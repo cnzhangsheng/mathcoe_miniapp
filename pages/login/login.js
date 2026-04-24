@@ -1,12 +1,17 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
 
+// 开发环境测试 token（仅用于真机调试测试）
+const DEV_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNjg5MzY5MzEzMjgiLCJleHAiOjE4MDg1Mzg3MTR9.Fs1uGh0mzR4Qq9iGZ5gdffF6hkWCk87WcrEsqXBOzuI'
+const DEV_USER_ID = '168936931328'
+
 Page({
   data: {
     loading: false,
     isLoggedIn: false,
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
-    gradeIndex: 0  // 默认一年级（G1）
+    gradeIndex: 0,  // 默认一年级（G1）
+    isDevMode: false  // 开发模式标记
   },
 
   onLoad() {
@@ -19,6 +24,18 @@ Page({
         url: '/pages/index/index'
       })
     }
+  },
+
+  // 开发模式测试登录（跳过微信授权）
+  handleDevLogin() {
+    wx.setStorageSync('token', DEV_TOKEN)
+    wx.setStorageSync('userId', DEV_USER_ID)
+    app.globalData.token = DEV_TOKEN
+    app.globalData.isLoggedIn = true
+    wx.showToast({ title: '测试登录成功', icon: 'success' })
+    setTimeout(() => {
+      wx.switchTab({ url: '/pages/index/index' })
+    }, 1500)
   },
 
   // 微信授权登录

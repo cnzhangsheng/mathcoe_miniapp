@@ -1,0 +1,127 @@
+<!--pages/topic-question-detail/topic-question-detail.wxml - 100%复刻 kangaroo-math-brain TopicDetail.tsx -->
+<view class="topic-detail-page">
+
+  <!-- 无题目提示 -->
+  <view class="empty-state" wx:if="{{noQuestions}}">
+    <view class="empty-card">
+      <view class="empty-icon-box">
+        <text class="empty-icon">📚</text>
+      </view>
+      <text class="empty-title text-bold">该专题暂无题目</text>
+      <text class="empty-sub text-small">请选择其他专题进行练习</text>
+      <view class="empty-btn" bindtap="goBack">
+        <text class="empty-btn-text text-bold">返回专题列表</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成全部题目提示 -->
+  <view class="empty-state" wx:if="{{isCompleted}}">
+    <view class="complete-card">
+      <view class="complete-icon-box">
+        <text class="complete-icon">🏆</text>
+      </view>
+      <text class="complete-title text-bold">恭喜完成全部题目！</text>
+      <text class="complete-sub text-small">已完成 {{totalQuestions}} 道题目</text>
+      <view class="complete-btn" bindtap="goBack">
+        <text class="complete-btn-text text-bold">返回专题列表</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 题目内容 -->
+  <block wx:if="{{!noQuestions && !isCompleted && question}}">
+    <!-- Question Card -->
+    <view class="question-card">
+      <!-- 题目内容使用 rich-text 渲染 -->
+      <view class="question-content-box">
+        <rich-text class="question-content" nodes="{{questionContentHtml || '题目内容'}}"></rich-text>
+      </view>
+
+      <!-- Question Image -->
+      <view class="image-area" wx:if="{{question.content && question.content.images}}">
+        <block wx:for="{{question.content.images}}" wx:key="*this">
+          <image class="question-image" src="{{item}}" mode="aspectFit"></image>
+        </block>
+      </view>
+
+      <!-- Options 使用 rich-text 渲染 -->
+      <view class="options-list">
+        <block wx:for="{{options}}" wx:key="id">
+          <view class="option-item {{selectedOption === item.id ? 'selected' : ''}} {{isSubmitted && correctAnswer === item.id ? 'correct' : ''}} {{isSubmitted && selectedOption === item.id && correctAnswer !== item.id ? 'wrong' : ''}}"
+            data-option="{{item.id}}"
+            bindtap="selectOption">
+            <view class="option-label-box {{selectedOption === item.id ? 'active' : ''}} {{isSubmitted && correctAnswer === item.id ? 'correct-label' : ''}} {{isSubmitted && selectedOption === item.id && correctAnswer !== item.id ? 'wrong-label' : ''}}">
+              <text class="option-label text-bold">{{item.id}}</text>
+            </view>
+            <rich-text class="option-text {{selectedOption === item.id ? 'active-text' : ''}}" nodes="{{item.labelHtml || item.label || ''}}"></rich-text>
+            <text class="option-status" wx:if="{{isSubmitted && correctAnswer === item.id}}">✓</text>
+            <text class="option-status wrong-status" wx:if="{{isSubmitted && selectedOption === item.id && correctAnswer !== item.id}}">✗</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- Action Bar: Like + Bookmark + View Answer -->
+    <view class="action-bar" wx:if="{{!isSubmitted}}">
+      <view class="action-icons">
+        <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+          <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
+          <text class="action-count">{{likeCount || 0}}</text>
+        </view>
+        <view class="action-icon-btn {{isBookmarked ? 'bookmarked' : ''}}" bindtap="toggleBookmark">
+          <text class="action-icon">{{isBookmarked ? '⭐' : '☆'}}</text>
+          <text class="action-text">{{isBookmarked ? '已收藏' : '收藏'}}</text>
+        </view>
+      </view>
+      <view class="view-answer-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="handleSubmit">
+        <text class="view-answer-text text-bold">查看答案</text>
+      </view>
+    </view>
+
+    <!-- Analysis Section (after submission) -->
+    <view class="analysis-section" wx:if="{{isSubmitted}}">
+      <view class="analysis-header flex-row">
+        <text class="analysis-icon">💡</text>
+        <text class="analysis-title text-small text-bold">答案解析</text>
+      </view>
+
+      <view class="analysis-card">
+        <!-- Correct Answer -->
+        <view class="answer-row flex-row">
+          <view class="answer-box">
+            <text class="answer-letter text-bold">{{correctAnswer}}</text>
+          </view>
+          <view class="answer-info">
+            <text class="answer-title text-bold">正确答案：选项 {{correctAnswer}}</text>
+          </view>
+        </view>
+
+        <!-- Logic -->
+        <view class="logic-box">
+          <text class="logic-label text-xs text-bold">解题思路</text>
+          <text class="logic-text">{{analysis.logic}}</text>
+        </view>
+
+        <!-- Key Point -->
+        <view class="key-point-box">
+          <view class="key-icon-box">
+            <text class="key-icon">⭐</text>
+          </view>
+          <view class="key-content">
+            <text class="key-label text-xs text-bold">核心考点：</text>
+            <text class="key-text text-xs">{{analysis.point}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Next Button -->
+      <view class="next-section">
+        <view class="next-btn" bindtap="handleNext">
+          <text class="next-text text-bold">{{currentIndex >= totalQuestions ? '完成并返回' : '下一题挑战'}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+</view>

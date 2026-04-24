@@ -1,4 +1,4 @@
-<!--pages/game/sudoku/sudoku.wxml - 100%复刻 Sudoku.tsx-->
+<!--pages/game/sudoku/sudoku.wxml-->
 <view class="sudoku-container">
   <!-- Header -->
   <view class="game-header flex-row">
@@ -16,15 +16,7 @@
     <view class="sudoku-grid">
       <block wx:for="{{grid}}" wx:key="rowIndex" wx:for-item="row" wx:for-index="rowIndex">
         <block wx:for="{{row}}" wx:key="colIndex" wx:for-item="cell" wx:for-index="colIndex">
-          <view class="sudoku-cell
-            {{selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex ? 'selected' : ''}}
-            {{initialGrid[rowIndex][colIndex] ? 'initial' : 'editable'}}
-            {{Math.floor(rowIndex / 2) + Math.floor(colIndex / 3) % 2 === 1 ? 'alt-block' : ''}}
-            {{rowIndex % 2 === 1 && rowIndex !== 5 ? 'row-border' : ''}}
-            {{colIndex % 3 === 2 && colIndex !== 5 ? 'col-border' : ''}}"
-            data-row="{{rowIndex}}"
-            data-col="{{colIndex}}"
-            bindtap="selectCell">
+          <view class="sudoku-cell {{selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex ? 'selected' : ''}} {{initialGrid[rowIndex][colIndex] ? 'initial' : 'editable'}} {{Math.floor(rowIndex / 2) + Math.floor(colIndex / 3) % 2 === 1 ? 'alt-block' : ''}} {{rowIndex % 2 === 1 && rowIndex !== 5 ? 'row-border' : ''}} {{colIndex % 3 === 2 && colIndex !== 5 ? 'col-border' : ''}}" data-row="{{rowIndex}}" data-col="{{colIndex}}" bindtap="selectCell">
             <text class="cell-text {{initialGrid[rowIndex][colIndex] ? 'text-bold' : 'text-blue'}}">{{cell}}</text>
           </view>
         </block>
@@ -35,9 +27,7 @@
   <!-- Number Pad -->
   <view class="number-pad">
     <block wx:for="{{[1, 2, 3, 4, 5, 6]}}" wx:key="*this">
-      <view class="num-btn card"
-        data-num="{{item}}"
-        bindtap="handleNumberInput">
+      <view class="num-btn card" data-num="{{item}}" bindtap="handleNumberInput">
         <text class="num-text text-bold">{{item}}</text>
       </view>
     </block>
