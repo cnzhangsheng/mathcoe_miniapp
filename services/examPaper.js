@@ -51,6 +51,14 @@ const submitExamPaperTest = (testId, data) => {
 }
 
 /**
+ * 获取测试报告详情（包含完整答题卡）
+ * @param {number} testId
+ */
+const getTestReport = (testId) => {
+  return request(`/exam-papers/tests/${testId}/report`)
+}
+
+/**
  * 直接提交考卷测试（不需要预先start）
  * 在交卷时一次性创建测试记录并保存答案
  * @param {number} examPaperId - 考卷ID
@@ -85,5 +93,6 @@ module.exports = {
   submitExamPaperTest,
   submitExamPaper,
   getExamPaperTests,
-  getTestDetail
+  getTestDetail,
+  getTestReport
 }

@@ -49,9 +49,28 @@
     </view>
 
     <view class="answer-result-grid">
-      <block wx:for="{{answerSheetData}}" wx:key="index">
-        <view class="answer-result-cell {{item.isCorrect ? 'cell-correct' : 'cell-wrong'}}">
+      <block wx:for="{{answerSheet}}" wx:key="index">
+        <view class="answer-result-cell {{item.is_correct ? 'cell-correct' : 'cell-wrong'}}" bindtap="viewQuestionDetail" data-index="{{item.index}}">
           <text class="cell-num text-bold">{{item.index}}</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- 答题详情（可选显示） -->
+    <view class="answer-details" wx:if="{{answerSheet.length > 0}}">
+      <view class="details-title">答题详情</view>
+      <block wx:for="{{answerSheet}}" wx:key="index">
+        <view class="answer-detail-item {{item.is_correct ? 'detail-correct' : 'detail-wrong'}}">
+          <view class="detail-header">
+            <text class="detail-index">第{{item.index}}题</text>
+            <text class="detail-status">{{item.is_correct ? '✓ 正确' : '✗ 错误'}}</text>
+          </view>
+          <view class="detail-answers">
+            <text class="detail-label">你的答案：</text>
+            <text class="detail-user-answer">{{item.user_answer || '-'}}</text>
+            <text class="detail-label" wx:if="{{!item.is_correct}}">正确答案：</text>
+            <text class="detail-correct-answer" wx:if="{{!item.is_correct}}">{{item.correct_answer}}</text>
+          </view>
         </view>
       </block>
     </view>

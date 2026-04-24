@@ -468,6 +468,7 @@ Page({
     const accuracyRate = totalQuestions > 0 ? Math.floor((correctCount / totalQuestions) * 100) : 0
 
     // Submit to backend - create exam_paper_test record on submit
+    let testId = null
     if (this.examPaperId) {
       try {
         wx.showLoading({ title: '提交中...', mask: true })
@@ -477,6 +478,7 @@ Page({
         })
         wx.hideLoading()
         console.log('Submit result:', submitResult)
+        testId = submitResult?.id
       } catch (err) {
         wx.hideLoading()
         console.error('Submit exam failed:', err)
@@ -484,11 +486,19 @@ Page({
       }
     }
 
-    // Navigate to exam-report page with query parameters
+    // Navigate to exam-report page
     wx.showTabBar()
-    wx.redirectTo({
-      url: `/pages/exam-report/exam-report?accuracyRate=${accuracyRate}&timeSpent=${timeSpent}&totalQuestions=${totalQuestions}&correctCount=${correctCount}&wrongCount=${wrongCount}&answerSheetData=${encodeURIComponent(JSON.stringify(answerSheetData))}&examPaperId=${this.examPaperId || ''}&topicId=${this.topicId || ''}&title=${encodeURIComponent(examPaper?.title || '')}`
-    })
+    if (testId) {
+      // 使用 test_id 从后端获取完整报告数据
+      wx.redirectTo({
+        url: `/pages/exam-report/exam-report?test_id=${testId}&title=${encodeURIComponent(examPaper?.title || '')}`
+      })
+    } else {
+      // 兼容旧方式：通过 URL 参数传递数据（备用）
+      wx.redirectTo({
+        url: `/pages/exam-report/exam-report?accuracyRate=${accuracyRate}&timeSpent=${timeSpent}&totalQuestions=${totalQuestions}&correctCount=${correctCount}&wrongCount=${wrongCount}&answerSheetData=${encodeURIComponent(JSON.stringify(answerSheetData))}&examPaperId=${this.examPaperId || ''}&topicId=${this.topicId || ''}&title=${encodeURIComponent(examPaper?.title || '')}`
+      })
+    }
   },
 
   // 返回作答（关闭提示弹窗）
