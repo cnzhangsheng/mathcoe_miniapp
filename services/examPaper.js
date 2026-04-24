@@ -51,6 +51,16 @@ const submitExamPaperTest = (testId, data) => {
 }
 
 /**
+ * 直接提交考卷测试（不需要预先start）
+ * 在交卷时一次性创建测试记录并保存答案
+ * @param {number} examPaperId - 考卷ID
+ * @param {object} data - { answers, time_spent }
+ */
+const submitExamPaper = (examPaperId, data) => {
+  return request(`/exam-papers/${examPaperId}/submit`, { method: 'POST', data })
+}
+
+/**
  * 获取用户测试记录列表
  * @param {number} limit
  * @param {number} offset
@@ -73,6 +83,7 @@ module.exports = {
   startExamPaperTest,
   submitTestAnswer,
   submitExamPaperTest,
+  submitExamPaper,
   getExamPaperTests,
   getTestDetail
 }

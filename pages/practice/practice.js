@@ -40,16 +40,19 @@ Page({
     showUnansweredWarning: false,
     unansweredCount: 0,
 
-    // Result Report
+    // Result Report - removed, will redirect to exam-report page
     estimatedScore: 0,
-    completionRate: 0,
-    correctCount: 0
+    completionRate: 0
   },
 
   onLoad(options) {
     const examPaperId = options.exam_paper_id
     const topicId = options.topic_id
     const title = options.title || ''
+
+    // Save IDs for later use
+    this.examPaperId = examPaperId || ''
+    this.topicId = topicId || ''
 
     // 设置初始标题（从URL参数获取）
     if (title) {
@@ -77,18 +80,8 @@ Page({
   // Load Exam Paper
   async loadExamPaper(examPaperId) {
     try {
-      // Start test to get testId
-      const testStart = await examPaperService.startExamPaperTest(examPaperId)
-      if (!testStart) {
-        wx.showToast({ title: '请先登录', icon: 'none' })
-        setTimeout(() => {
-          wx.showTabBar()
-          wx.switchTab({ url: '/pages/topics/topics' })
-        }, 1500)
-        return
-      }
-      this.testId = testStart.id
-
+      // 不再预先创建测试记录，只在交卷时保存
+      // 直接获取考卷详情
       const examPaper = await examPaperService.getExamPaper(examPaperId)
       if (examPaper && examPaper.questions && examPaper.questions.length > 0) {
         // 确保 questions 是数组，提取 question 对象
@@ -345,13 +338,7 @@ Page({
       const newResults = { ...results }
       newResults[currentIndex] = selectedOption
       this.setData({ results: newResults })
-
-      // Submit to backend if testId exists
-      if (this.testId) {
-        examPaperService.submitTestAnswer(this.testId, currentIndex, selectedOption).catch(err => {
-          console.error('Submit answer failed:', err)
-        })
-      }
+      // 不再实时提交答案，只在交卷时一次性保存
     }
   },
 
@@ -456,46 +443,52 @@ Page({
     clearInterval(this.timer)
     this.setData({ showUnansweredWarning: false, showAnswerSheet: false })
 
-    let { results, totalQuestions, startTime } = this.data
+    let { results, totalQuestions, startTime, questions, examPaper } = this.data
     totalQuestions = Number(totalQuestions) || 0
-
-    const answeredCount = Object.keys(results || {}).length
-    const completionRate = totalQuestions > 0
-      ? Math.floor((answeredCount / totalQuestions) * 100)
-      : 0
 
     const timeSpent = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
 
-    this.setData({
-      completionRate: Math.max(0, Math.min(100, completionRate))
-    })
+    // Calculate correct/wrong count and answer sheet data
+    let correctCount = 0
+    const answerSheetData = []
+    for (let i = 1; i <= totalQuestions; i++) {
+      const question = questions[i - 1]
+      const userAnswer = results[i]
+      const correctAnswer = question?.answer || ''
+      const isCorrect = userAnswer === correctAnswer
+      if (isCorrect) correctCount++
+      answerSheetData.push({
+        index: i,
+        userAnswer: userAnswer || '-',
+        correctAnswer: correctAnswer,
+        isCorrect: isCorrect
+      })
+    }
+    const wrongCount = totalQuestions - correctCount
+    const accuracyRate = totalQuestions > 0 ? Math.floor((correctCount / totalQuestions) * 100) : 0
 
-    // Submit to backend if testId exists
-    if (this.testId) {
+    // Submit to backend - create exam_paper_test record on submit
+    if (this.examPaperId) {
       try {
-        const submitResult = await examPaperService.submitExamPaperTest(this.testId, {
+        wx.showLoading({ title: '提交中...', mask: true })
+        const submitResult = await examPaperService.submitExamPaper(this.examPaperId, {
           answers: results,
           time_spent: timeSpent
         })
-
-        this.setData({
-          isExamSubmitted: true,
-          estimatedScore: Number(submitResult.score) || 0,
-          correctCount: Number(submitResult.correct_count) || 0
-        })
-        // 提交成功后修改导航栏标题
-        wx.setNavigationBarTitle({ title: '测试报告' })
+        wx.hideLoading()
+        console.log('Submit result:', submitResult)
       } catch (err) {
+        wx.hideLoading()
         console.error('Submit exam failed:', err)
         wx.showToast({ title: '提交失败', icon: 'none' })
-        this.setData({ isExamSubmitted: true })
-        wx.setNavigationBarTitle({ title: '测试报告' })
       }
-    } else {
-      wx.showToast({ title: '无测试记录', icon: 'none' })
-      this.setData({ isExamSubmitted: true })
-      wx.setNavigationBarTitle({ title: '测试报告' })
     }
+
+    // Navigate to exam-report page with query parameters
+    wx.showTabBar()
+    wx.redirectTo({
+      url: `/pages/exam-report/exam-report?accuracyRate=${accuracyRate}&timeSpent=${timeSpent}&totalQuestions=${totalQuestions}&correctCount=${correctCount}&wrongCount=${wrongCount}&answerSheetData=${encodeURIComponent(JSON.stringify(answerSheetData))}&examPaperId=${this.examPaperId || ''}&topicId=${this.topicId || ''}&title=${encodeURIComponent(examPaper?.title || '')}`
+    })
   },
 
   // 返回作答（关闭提示弹窗）
@@ -505,7 +498,6 @@ Page({
 
   // Review Errors
   reviewErrors() {
-    this.setData({ isExamSubmitted: false })
     wx.showToast({ title: '错题解析功能开发中', icon: 'none' })
   },
 

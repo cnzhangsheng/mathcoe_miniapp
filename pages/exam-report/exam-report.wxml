@@ -1,0 +1,72 @@
+<!-- pages/exam-report/exam-report.wxml -->
+<view class="report-page">
+
+  <!-- Header Title -->
+  <view class="report-header">
+    <text class="report-title text-bold">{{examPaperTitle}}</text>
+    <text class="report-subtitle">测试报告</text>
+  </view>
+
+  <!-- Score Card -->
+  <view class="score-card">
+    <view class="score-main">
+      <text class="score-big-label">正确率</text>
+      <text class="score-big-value text-bold">{{accuracyRate}}%</text>
+    </view>
+
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-icon">⏱️</text>
+        <text class="stat-value text-bold">{{formattedTime}}</text>
+        <text class="stat-label">用时</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-icon">📝</text>
+        <text class="stat-value text-bold">{{totalQuestions}}</text>
+        <text class="stat-label">题目数</text>
+      </view>
+      <view class="stat-item correct-item">
+        <text class="stat-icon">✅</text>
+        <text class="stat-value text-bold">{{correctCount}}</text>
+        <text class="stat-label">正确</text>
+      </view>
+      <view class="stat-item wrong-item">
+        <text class="stat-icon">❌</text>
+        <text class="stat-value text-bold">{{wrongCount}}</text>
+        <text class="stat-label">错误</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Answer Sheet Card -->
+  <view class="answer-sheet-card">
+    <view class="sheet-title-row">
+      <text class="sheet-card-title text-bold">答题卡</text>
+      <view class="sheet-legend">
+        <view class="legend-tag correct-tag">正确</view>
+        <view class="legend-tag wrong-tag">错误</view>
+      </view>
+    </view>
+
+    <view class="answer-result-grid">
+      <block wx:for="{{answerSheetData}}" wx:key="index">
+        <view class="answer-result-cell {{item.isCorrect ? 'cell-correct' : 'cell-wrong'}}">
+          <text class="cell-num text-bold">{{item.index}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Bottom Action Bar -->
+  <view class="bottom-action-bar">
+    <view class="action-btn wrong-book-btn" bindtap="goToWrongBook">
+      <text class="action-icon">📕</text>
+      <text class="action-text text-bold">错题本</text>
+    </view>
+    <view class="action-btn retry-btn" bindtap="retryPractice">
+      <text class="action-icon">🔄</text>
+      <text class="action-text text-bold">重新练习</text>
+    </view>
+  </view>
+
+</view>

@@ -5,6 +5,7 @@
     "pages/practice/practice",
     "pages/topics/topics",
     "pages/topic-question-detail/topic-question-detail",
+    "pages/exam-report/exam-report",
     "pages/review/review",
     "pages/profile/profile",
     "pages/favorites/favorites",
