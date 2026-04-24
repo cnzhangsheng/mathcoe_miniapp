@@ -61,8 +61,8 @@
         <view class="prev-btn {{currentIndex <= 1 ? 'disabled' : 'active'}}" bindtap="goToPrevQuestion">
           <text class="nav-text text-bold">上一题</text>
         </view>
-        <view class="next-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="handleNextOrSubmit">
-          <text class="nav-text text-bold">{{currentIndex >= totalQuestions ? '确认提交' : '下一题'}}</text>
+        <view class="next-btn active" bindtap="handleNextOrSubmit">
+          <text class="nav-text text-bold">{{currentIndex >= totalQuestions ? '确认交卷' : '下一题'}}</text>
         </view>
       </view>
     </view>
@@ -120,8 +120,16 @@
 
     <scroll-view class="modal-scroll" scroll-y="true">
       <view class="sheet-card">
-        <view class="sheet-header">
-          <text class="sheet-title text-bold">答题卡</text>
+        <!-- 作答状态说明 -->
+        <view class="status-legend">
+          <view class="legend-item">
+            <view class="legend-dot done"></view>
+            <text class="legend-text">已作答</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot unanswered"></view>
+            <text class="legend-text">未作答</text>
+          </view>
         </view>
 
         <view class="answer-grid" wx:if="{{totalQuestions > 0}}">
@@ -138,14 +146,23 @@
         </view>
       </view>
     </scroll-view>
+  </view>
 
-    <view class="modal-footer">
-      <view class="footer-row">
-        <view class="continue-btn" bindtap="closeAnswerSheet">
-          <text class="continue-text text-bold">继续答题</text>
+  <!-- Unanswered Warning Modal -->
+  <view class="warning-modal" wx:if="{{showUnansweredWarning}}">
+    <view class="warning-mask"></view>
+    <view class="warning-card">
+      <view class="warning-icon-box">
+        <text class="warning-icon">⚠️</text>
+      </view>
+      <text class="warning-title text-bold">题目还未完成，确认继续交卷？</text>
+      <text class="warning-sub">未作答的题目将被判定为回答错误</text>
+      <view class="warning-buttons">
+        <view class="warning-btn cancel" bindtap="returnToAnswer">
+          <text class="warning-btn-text text-bold">返回作答</text>
         </view>
-        <view class="submit-exam-btn" bindtap="submitExam">
-          <text class="submit-exam-text text-bold">确定交卷</text>
+        <view class="warning-btn confirm" bindtap="confirmSubmit">
+          <text class="warning-btn-text text-bold">确认交卷</text>
         </view>
       </view>
     </view>

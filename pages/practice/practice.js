@@ -37,6 +37,8 @@ Page({
     // Modals
     showAnswerSheet: false,
     isExamSubmitted: false,
+    showUnansweredWarning: false,
+    unansweredCount: 0,
 
     // Result Report
     estimatedScore: 0,
@@ -324,18 +326,13 @@ Page({
 
   // Handle Next or Submit
   handleNextOrSubmit() {
-    const { currentIndex, totalQuestions, selectedOption, examPaperMode } = this.data
-
-    if (!selectedOption) {
-      wx.showToast({ title: '请先选择答案', icon: 'none' })
-      return
-    }
+    const { currentIndex, totalQuestions } = this.data
 
     if (currentIndex >= totalQuestions) {
-      // Last question, show answer sheet for confirmation
-      this.setData({ showAnswerSheet: true })
+      // Last question, directly trigger submit
+      this.submitExam()
     } else {
-      // Save current answer and go to next
+      // Save current answer (if selected) and go to next
       this.saveCurrentAnswer()
       this.goToNextQuestion()
     }
@@ -437,9 +434,29 @@ Page({
 
   // Submit Exam
   async submitExam() {
+    const { results, totalQuestions } = this.data
+    const answeredCount = Object.keys(results || {}).length
+    const unansweredCount = (Number(totalQuestions) || 0) - answeredCount
+
+    // 检查是否有未作答题目
+    if (unansweredCount > 0) {
+      this.setData({
+        showUnansweredWarning: true,
+        unansweredCount
+      })
+      return
+    }
+
+    // 全部已作答，直接提交
+    await this.confirmSubmit()
+  },
+
+  // 确认提交（实际提交）
+  async confirmSubmit() {
     clearInterval(this.timer)
+    this.setData({ showUnansweredWarning: false, showAnswerSheet: false })
+
     let { results, totalQuestions, startTime } = this.data
-    // 确保 totalQuestions 是有效数字
     totalQuestions = Number(totalQuestions) || 0
 
     const answeredCount = Object.keys(results || {}).length
@@ -447,11 +464,9 @@ Page({
       ? Math.floor((answeredCount / totalQuestions) * 100)
       : 0
 
-    // Calculate time spent in seconds
     const timeSpent = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
 
     this.setData({
-      showAnswerSheet: false,
       completionRate: Math.max(0, Math.min(100, completionRate))
     })
 
@@ -468,15 +483,24 @@ Page({
           estimatedScore: Number(submitResult.score) || 0,
           correctCount: Number(submitResult.correct_count) || 0
         })
+        // 提交成功后修改导航栏标题
+        wx.setNavigationBarTitle({ title: '测试报告' })
       } catch (err) {
         console.error('Submit exam failed:', err)
         wx.showToast({ title: '提交失败', icon: 'none' })
         this.setData({ isExamSubmitted: true })
+        wx.setNavigationBarTitle({ title: '测试报告' })
       }
     } else {
       wx.showToast({ title: '无测试记录', icon: 'none' })
       this.setData({ isExamSubmitted: true })
+      wx.setNavigationBarTitle({ title: '测试报告' })
     }
+  },
+
+  // 返回作答（关闭提示弹窗）
+  returnToAnswer() {
+    this.setData({ showUnansweredWarning: false })
   },
 
   // Review Errors

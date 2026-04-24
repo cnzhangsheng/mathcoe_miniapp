@@ -500,6 +500,41 @@
   border: 2rpx solid rgba(0,0,0,0.05);
 }
 
+/* 状态说明 */
+.status-legend {
+  display: flex;
+  justify-content: center;
+  gap: 48rpx;
+  margin-bottom: 48rpx;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.legend-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 8rpx;
+}
+
+.legend-dot.done {
+  background-color: rgba(16,185,129,0.15);
+  border: 2rpx solid rgba(16,185,129,0.3);
+}
+
+.legend-dot.unanswered {
+  background-color: #fff;
+  border: 2rpx solid rgba(0,0,0,0.08);
+}
+
+.legend-text {
+  font-size: 24rpx;
+  color: rgba(0,0,0,0.6);
+}
+
 .sheet-header {
   margin-bottom: 48rpx;
 }
@@ -525,11 +560,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.answer-cell.current {
-  box-shadow: 0 0 0 6rpx rgba(99,102,241,1);
-  border-radius: 32rpx;
 }
 
 .answer-cell.done {
@@ -596,6 +626,103 @@
 
 .submit-exam-text {
   font-size: 14px;
+}
+
+/* ============ Unanswered Warning Modal ============ */
+.warning-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warning-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.warning-card {
+  position: relative;
+  width: 600rpx;
+  background-color: #fff;
+  border-radius: 32rpx;
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.warning-icon-box {
+  width: 96rpx;
+  height: 96rpx;
+  background-color: rgba(251,191,36,0.1);
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32rpx;
+}
+
+.warning-icon {
+  font-size: 48rpx;
+}
+
+.warning-title {
+  font-size: 32rpx;
+  color: rgba(0,0,0,0.9);
+  text-align: center;
+  margin-bottom: 16rpx;
+}
+
+.warning-sub {
+  font-size: 24rpx;
+  color: rgba(0,0,0,0.5);
+  text-align: center;
+  margin-bottom: 48rpx;
+}
+
+.warning-buttons {
+  display: flex;
+  gap: 24rpx;
+  width: 100%;
+}
+
+.warning-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.warning-btn.cancel {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.warning-btn.cancel .warning-btn-text {
+  color: rgba(0,0,0,0.6);
+}
+
+.warning-btn.confirm {
+  background-color: #07C160;
+}
+
+.warning-btn.confirm .warning-btn-text {
+  color: #fff;
+}
+
+.warning-btn-text {
+  font-size: 28rpx;
 }
 
 /* ============ Exam Result Report ============ */
