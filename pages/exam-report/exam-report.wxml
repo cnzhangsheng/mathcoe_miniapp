@@ -4,7 +4,6 @@
   <!-- Header Title -->
   <view class="report-header">
     <text class="report-title text-bold">{{examPaperTitle}}</text>
-    <text class="report-subtitle">测试报告</text>
   </view>
 
   <!-- Score Card -->
@@ -41,7 +40,10 @@
   <!-- Answer Sheet Card -->
   <view class="answer-sheet-card">
     <view class="sheet-title-row">
-      <text class="sheet-card-title text-bold">答题卡</text>
+      <view class="sheet-title-left">
+        <text class="sheet-card-title text-bold">答题卡</text>
+        <text class="sheet-tip">（点击题号查看解析）</text>
+      </view>
       <view class="sheet-legend">
         <view class="legend-tag correct-tag">正确</view>
         <view class="legend-tag wrong-tag">错误</view>
@@ -55,32 +57,13 @@
         </view>
       </block>
     </view>
-
-    <!-- 答题详情（可选显示） -->
-    <view class="answer-details" wx:if="{{answerSheet.length > 0}}">
-      <view class="details-title">答题详情</view>
-      <block wx:for="{{answerSheet}}" wx:key="index">
-        <view class="answer-detail-item {{item.is_correct ? 'detail-correct' : 'detail-wrong'}}">
-          <view class="detail-header">
-            <text class="detail-index">第{{item.index}}题</text>
-            <text class="detail-status">{{item.is_correct ? '✓ 正确' : '✗ 错误'}}</text>
-          </view>
-          <view class="detail-answers">
-            <text class="detail-label">你的答案：</text>
-            <text class="detail-user-answer">{{item.user_answer || '-'}}</text>
-            <text class="detail-label" wx:if="{{!item.is_correct}}">正确答案：</text>
-            <text class="detail-correct-answer" wx:if="{{!item.is_correct}}">{{item.correct_answer}}</text>
-          </view>
-        </view>
-      </block>
-    </view>
   </view>
 
   <!-- Bottom Action Bar -->
   <view class="bottom-action-bar">
-    <view class="action-btn wrong-book-btn" bindtap="goToWrongBook">
-      <text class="action-icon">📕</text>
-      <text class="action-text text-bold">错题本</text>
+    <view class="action-btn back-btn" bindtap="backToTopics">
+      <text class="action-icon">📚</text>
+      <text class="action-text text-bold">返回专题</text>
     </view>
     <view class="action-btn retry-btn" bindtap="retryPractice">
       <text class="action-icon">🔄</text>

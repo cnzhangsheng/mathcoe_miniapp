@@ -226,25 +226,26 @@
   color: #fff;
 }
 
-/* ============ Control Buttons ============ */
-.control-section {
-  margin-top: 48rpx;
-  padding: 16rpx 32rpx;
-}
-
-.control-row {
-  display: flex;
-  align-items: stretch;
-  gap: 24rpx;
-}
-
-.sheet-btn {
-  width: 14%;
-  padding: 22rpx 12rpx;
+/* ============ Bottom Control Bar ============ */
+.bottom-control-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
   background-color: #fff;
-  border: 2rpx solid rgba(0,0,0,0.05);
-  border-radius: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.04);
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0,0,0,0.05);
+  z-index: 100;
+}
+
+.sheet-btn-bottom {
+  width: 100rpx;
+  padding: 16rpx 12rpx;
+  background-color: #576B95;
+  border-radius: 20rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -254,46 +255,46 @@
 
 .sheet-icon {
   font-size: 26rpx;
+  color: #fff;
 }
 
 .sheet-text {
   font-size: 20rpx;
-  color: rgba(0,0,0,0.6);
+  color: #fff;
 }
 
-.nav-buttons {
+.nav-btn {
   flex: 1;
-  display: flex;
-  gap: 16rpx;
-}
-
-.prev-btn, .next-btn {
-  flex: 1;
-  padding: 22rpx 32rpx;
-  border-radius: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.prev-btn.active, .next-btn.active {
+  gap: 8rpx;
+  border-radius: 20rpx;
+  padding: 16rpx 20rpx;
   background-color: #07C160;
+}
+
+.nav-btn.disabled {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.nav-btn.disabled .nav-icon,
+.nav-btn.disabled .nav-text {
+  color: rgba(0,0,0,0.3);
+}
+
+.nav-btn.submit-btn {
+  background-color: #EF4444;
+}
+
+.nav-icon {
+  font-size: 24rpx;
   color: #fff;
-  box-shadow: 0 6rpx 16rpx rgba(7,193,96,0.12);
-}
-
-.prev-btn.disabled {
-  background-color: rgba(0,0,0,0.04);
-  color: rgba(0,0,0,0.25);
-}
-
-.next-btn.disabled {
-  background-color: rgba(0,0,0,0.04);
-  color: rgba(0,0,0,0.25);
 }
 
 .nav-text {
-  font-size: 28rpx;
+  font-size: 24rpx;
+  color: #fff;
 }
 
 /* ============ Feedback Section (Practice Mode) ============ */

@@ -1,0 +1,75 @@
+<!-- pages/question-explanation/question-explanation.wxml -->
+<view class="explanation-page">
+
+  <!-- Page Indicator -->
+  <view class="page-indicator">
+    <text class="page-num text-bold">{{currentIndex}}/{{totalCount}}</text>
+  </view>
+
+  <!-- Content Area -->
+  <scroll-view class="scroll-area" scroll-y="true">
+    <!-- Question Content -->
+    <view class="question-card">
+      <view class="question-content-box">
+        <rich-text class="question-content" nodes="{{questionContent}}"></rich-text>
+      </view>
+    </view>
+
+    <!-- Options with Answer Status -->
+    <view class="options-grid">
+      <block wx:for="{{options}}" wx:key="label">
+        <view class="option-item {{item.label === correctAnswer ? 'correct' : ''}} {{item.label === userAnswer && item.label !== correctAnswer ? 'wrong' : ''}}">
+          <view class="option-label-box {{item.label === correctAnswer ? 'correct-label' : ''}} {{item.label === userAnswer && item.label !== correctAnswer ? 'wrong-label' : ''}}">
+            <text class="option-label text-bold">{{item.label}}</text>
+          </view>
+          <rich-text class="option-text" nodes="{{item.content.text}}"></rich-text>
+          <text class="option-status" wx:if="{{item.label === correctAnswer}}">✓ 正确答案</text>
+          <text class="option-status wrong-status" wx:if="{{item.label === userAnswer && item.label !== correctAnswer}}">✗ 你的选择</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- Answer Summary -->
+    <view class="answer-summary-card">
+      <view class="summary-row">
+        <text class="summary-label">你的答案：</text>
+        <text class="summary-value {{isCorrect ? 'correct' : 'wrong'}}">{{userAnswer}}</text>
+      </view>
+      <view class="summary-row" wx:if="{{!isCorrect}}">
+        <text class="summary-label">正确答案：</text>
+        <text class="summary-value correct">{{correctAnswer}}</text>
+      </view>
+      <view class="result-tag {{isCorrect ? 'correct-tag' : 'wrong-tag'}}">
+        <text class="result-text">{{isCorrect ? '回答正确' : '回答错误'}}</text>
+      </view>
+    </view>
+
+    <!-- Explanation -->
+    <view class="explanation-section" wx:if="{{explanation}}">
+      <view class="explanation-header">
+        <text class="explanation-icon">💡</text>
+        <text class="explanation-title text-bold">答案解析</text>
+      </view>
+      <view class="explanation-card">
+        <rich-text class="explanation-content" nodes="{{explanation}}"></rich-text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- Bottom Navigation Bar -->
+  <view class="bottom-nav-bar">
+    <view class="back-btn-bottom" bindtap="goBack">
+      <text class="back-icon">📋</text>
+      <text class="back-text">返回</text>
+    </view>
+    <view class="nav-btn {{currentIndex <= 1 ? 'disabled' : ''}}" bindtap="prevQuestion">
+      <text class="nav-icon">‹</text>
+      <text class="nav-text">上一题</text>
+    </view>
+    <view class="nav-btn {{currentIndex >= totalCount ? 'disabled' : ''}}" bindtap="nextQuestion">
+      <text class="nav-text">下一题</text>
+      <text class="nav-icon">›</text>
+    </view>
+  </view>
+
+</view>

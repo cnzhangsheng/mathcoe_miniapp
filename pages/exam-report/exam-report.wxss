@@ -3,55 +3,49 @@
 .report-page {
   min-height: 100vh;
   background-color: #F8F8F8;
-  padding: 48rpx;
-  padding-bottom: 200rpx;
+  padding: 24rpx;
+  padding-bottom: 160rpx;
 }
 
 /* Header Title */
 .report-header {
   text-align: center;
-  padding: 48rpx 32rpx;
-  margin-bottom: 32rpx;
-}
-
-.report-title {
-  font-size: 40rpx;
-  color: rgba(0,0,0,0.9);
-  display: block;
+  padding: 24rpx 16rpx;
   margin-bottom: 16rpx;
 }
 
-.report-subtitle {
-  font-size: 26rpx;
-  color: rgba(0,0,0,0.5);
+.report-title {
+  font-size: 36rpx;
+  color: rgba(0,0,0,0.9);
+  display: block;
 }
 
 /* Score Card */
 .score-card {
   background-color: #fff;
-  border-radius: 48rpx;
-  padding: 48rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+  border-radius: 32rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
   border: 2rpx solid rgba(0,0,0,0.05);
-  margin-bottom: 32rpx;
+  margin-bottom: 16rpx;
 }
 
 .score-main {
   text-align: center;
-  padding: 32rpx 0 48rpx;
+  padding: 16rpx 0 24rpx;
   border-bottom: 2rpx solid rgba(0,0,0,0.05);
-  margin-bottom: 32rpx;
-}
-
-.score-big-label {
-  font-size: 28rpx;
-  color: rgba(0,0,0,0.5);
-  display: block;
   margin-bottom: 16rpx;
 }
 
+.score-big-label {
+  font-size: 24rpx;
+  color: rgba(0,0,0,0.5);
+  display: block;
+  margin-bottom: 8rpx;
+}
+
 .score-big-value {
-  font-size: 96rpx;
+  font-size: 72rpx;
   color: #07C160;
 }
 
@@ -59,14 +53,14 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16rpx;
+  gap: 12rpx;
 }
 
 .stat-item {
   text-align: center;
-  padding: 24rpx 8rpx;
+  padding: 16rpx 8rpx;
   background-color: rgba(0,0,0,0.02);
-  border-radius: 24rpx;
+  border-radius: 16rpx;
 }
 
 .correct-item {
@@ -78,16 +72,16 @@
 }
 
 .stat-icon {
-  font-size: 32rpx;
+  font-size: 28rpx;
   display: block;
-  margin-bottom: 8rpx;
+  margin-bottom: 4rpx;
 }
 
 .stat-value {
-  font-size: 36rpx;
+  font-size: 32rpx;
   color: rgba(0,0,0,0.8);
   display: block;
-  margin-bottom: 4rpx;
+  margin-bottom: 2rpx;
 }
 
 .correct-item .stat-value {
@@ -99,16 +93,16 @@
 }
 
 .stat-label {
-  font-size: 22rpx;
+  font-size: 20rpx;
   color: rgba(0,0,0,0.4);
 }
 
 /* Answer Sheet Card */
 .answer-sheet-card {
   background-color: #fff;
-  border-radius: 48rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+  border-radius: 32rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
   border: 2rpx solid rgba(0,0,0,0.05);
 }
 
@@ -116,25 +110,36 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32rpx;
-  padding-bottom: 24rpx;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
   border-bottom: 2rpx solid rgba(0,0,0,0.05);
 }
 
+.sheet-title-left {
+  display: flex;
+  align-items: baseline;
+}
+
 .sheet-card-title {
-  font-size: 32rpx;
+  font-size: 28rpx;
   color: rgba(0,0,0,0.8);
+}
+
+.sheet-tip {
+  font-size: 22rpx;
+  color: rgba(0,0,0,0.4);
+  margin-left: 8rpx;
 }
 
 .sheet-legend {
   display: flex;
-  gap: 16rpx;
+  gap: 12rpx;
 }
 
 .legend-tag {
-  font-size: 22rpx;
-  padding: 8rpx 16rpx;
-  border-radius: 16rpx;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
 }
 
 .correct-tag {
@@ -151,12 +156,12 @@
 .answer-result-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 16rpx;
+  gap: 12rpx;
 }
 
 .answer-result-cell {
   aspect-ratio: 1;
-  border-radius: 24rpx;
+  border-radius: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,7 +178,7 @@
 }
 
 .cell-num {
-  font-size: 28rpx;
+  font-size: 26rpx;
 }
 
 .cell-correct .cell-num {
@@ -190,12 +195,12 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 160rpx;
+  height: 120rpx;
   background-color: #fff;
   display: flex;
-  gap: 24rpx;
-  padding: 24rpx 32rpx;
-  box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.05);
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0,0,0,0.05);
   z-index: 100;
 }
 
@@ -204,16 +209,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16rpx;
-  border-radius: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+  gap: 8rpx;
+  border-radius: 20rpx;
+  padding: 16rpx 20rpx;
 }
 
-.wrong-book-btn {
-  background-color: #EF4444;
+.back-btn {
+  background-color: #576B95;
 }
 
-.wrong-book-btn .action-text {
+.back-btn .action-text {
   color: #fff;
 }
 
@@ -226,86 +231,14 @@
 }
 
 .action-icon {
-  font-size: 36rpx;
+  font-size: 24rpx;
 }
 
 .action-text {
-  font-size: 32rpx;
+  font-size: 24rpx;
 }
 
 /* Utility Classes */
 .text-bold {
   font-weight: bold;
-}
-
-/* Answer Details Section */
-.answer-details {
-  margin-top: 32rpx;
-  padding-top: 24rpx;
-  border-top: 2rpx solid rgba(0,0,0,0.05);
-}
-
-.details-title {
-  font-size: 28rpx;
-  color: rgba(0,0,0,0.6);
-  margin-bottom: 24rpx;
-}
-
-.answer-detail-item {
-  padding: 24rpx;
-  margin-bottom: 16rpx;
-  border-radius: 24rpx;
-  background-color: rgba(0,0,0,0.02);
-}
-
-.detail-correct {
-  background-color: rgba(7,193,96,0.08);
-}
-
-.detail-wrong {
-  background-color: rgba(239,68,68,0.08);
-}
-
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
-
-.detail-index {
-  font-size: 28rpx;
-  color: rgba(0,0,0,0.8);
-}
-
-.detail-status {
-  font-size: 26rpx;
-}
-
-.detail-correct .detail-status {
-  color: #07C160;
-}
-
-.detail-wrong .detail-status {
-  color: #EF4444;
-}
-
-.detail-answers {
-  font-size: 26rpx;
-  color: rgba(0,0,0,0.6);
-}
-
-.detail-label {
-  color: rgba(0,0,0,0.4);
-}
-
-.detail-user-answer {
-  font-weight: bold;
-  color: rgba(0,0,0,0.8);
-  margin-right: 24rpx;
-}
-
-.detail-correct-answer {
-  font-weight: bold;
-  color: #07C160;
 }

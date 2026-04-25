@@ -448,6 +448,13 @@ Page({
 
     const timeSpent = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
 
+    // Debug: 打印提交数据
+    console.log('=== Submit Debug ===')
+    console.log('examPaperId:', this.examPaperId)
+    console.log('token:', wx.getStorageSync('token'))
+    console.log('results:', results)
+    console.log('timeSpent:', timeSpent)
+
     // Calculate correct/wrong count and answer sheet data
     let correctCount = 0
     const answerSheetData = []

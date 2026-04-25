@@ -1,0 +1,305 @@
+/* pages/question-explanation/question-explanation.wxss */
+
+.explanation-page {
+  min-height: 100vh;
+  background-color: #F8F8F8;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 120rpx;
+}
+
+/* Page Indicator */
+.page-indicator {
+  padding: 16rpx 24rpx;
+  background-color: #fff;
+  text-align: center;
+}
+
+.page-num {
+  font-size: 26rpx;
+  color: rgba(0,0,0,0.5);
+}
+
+/* Scroll Area */
+.scroll-area {
+  flex: 1;
+  padding: 24rpx;
+}
+
+/* Question Card - 与 practice 页面保持一致 */
+.question-card {
+  background-color: #fff;
+  border-radius: 48rpx;
+  padding: 48rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+}
+
+.question-content-box {
+  margin-bottom: 32rpx;
+}
+
+.question-content {
+  font-size: 36rpx;
+  color: rgba(0,0,0,0.9);
+  line-height: 1.6;
+}
+
+.question-content p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Options Grid - 与 practice 页面保持一致 */
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.option-item {
+  padding: 32rpx 48rpx;
+  border-radius: 48rpx;
+  border: 6rpx solid rgba(0,0,0,0.03);
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.option-item.correct {
+  background-color: rgba(7,193,96,0.15);
+  border-color: #07C160;
+}
+
+.option-item.wrong {
+  background-color: rgba(239,68,68,0.15);
+  border-color: #EF4444;
+}
+
+.option-label-box {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 32rpx;
+  background-color: rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.option-label-box.correct-label {
+  background-color: #07C160;
+}
+
+.option-label-box.wrong-label {
+  background-color: #EF4444;
+}
+
+.option-label {
+  font-size: 15px;
+  color: rgba(0,0,0,0.3);
+}
+
+.option-label-box.correct-label .option-label {
+  color: #fff;
+}
+
+.option-label-box.wrong-label .option-label {
+  color: #fff;
+}
+
+.option-text {
+  font-size: 30rpx;
+  color: rgba(0,0,0,0.8);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.option-text p {
+  margin: 0;
+}
+
+.option-status {
+  font-size: 22rpx;
+  color: #07C160;
+  flex-shrink: 0;
+  padding-left: 16rpx;
+}
+
+.option-status.wrong-status {
+  color: #EF4444;
+}
+
+/* Answer Summary Card */
+.answer-summary-card {
+  background-color: #fff;
+  border-radius: 32rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: rgba(0,0,0,0.5);
+}
+
+.summary-value {
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
+.summary-value.correct {
+  color: #07C160;
+}
+
+.summary-value.wrong {
+  color: #EF4444;
+}
+
+.result-tag {
+  display: inline-flex;
+  padding: 8rpx 24rpx;
+  border-radius: 16rpx;
+  margin-top: 8rpx;
+}
+
+.result-tag.correct-tag {
+  background-color: rgba(7,193,96,0.15);
+}
+
+.result-tag.wrong-tag {
+  background-color: rgba(239,68,68,0.15);
+}
+
+.result-text {
+  font-size: 26rpx;
+}
+
+.result-tag.correct-tag .result-text {
+  color: #07C160;
+}
+
+.result-tag.wrong-tag .result-text {
+  color: #EF4444;
+}
+
+/* Explanation Section */
+.explanation-section {
+  background-color: #fff;
+  border-radius: 32rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+.explanation-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid rgba(0,0,0,0.05);
+}
+
+.explanation-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.explanation-title {
+  font-size: 28rpx;
+  color: rgba(0,0,0,0.8);
+}
+
+.explanation-card {
+  padding: 8rpx 0;
+}
+
+.explanation-content {
+  font-size: 28rpx;
+  color: rgba(0,0,0,0.75);
+  line-height: 1.6;
+}
+
+.explanation-content p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background-color: #fff;
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -2rpx 8rpx rgba(0,0,0,0.05);
+  z-index: 100;
+}
+
+.back-btn-bottom {
+  width: 100rpx;
+  padding: 16rpx 12rpx;
+  background-color: #576B95;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+}
+
+.back-icon {
+  font-size: 26rpx;
+  color: #fff;
+}
+
+.back-text {
+  font-size: 20rpx;
+  color: #fff;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  border-radius: 20rpx;
+  padding: 16rpx 20rpx;
+  background-color: #07C160;
+}
+
+.nav-btn.disabled {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.nav-btn.disabled .nav-icon,
+.nav-btn.disabled .nav-text {
+  color: rgba(0,0,0,0.3);
+}
+
+.nav-icon {
+  font-size: 24rpx;
+  color: #fff;
+}
+
+.nav-text {
+  font-size: 24rpx;
+  color: #fff;
+}
+
+/* Utility Classes */
+.text-bold {
+  font-weight: bold;
+}

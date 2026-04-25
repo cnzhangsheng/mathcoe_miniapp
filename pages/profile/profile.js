@@ -5,9 +5,8 @@ Page({
   data: {
     userInfo: null,
     stats: [
-      { label: '总答题', value: 342, color: 'blue' },
-      { label: '正确率', value: '88%', color: 'green' },
-      { label: '勋章数', value: 16, color: 'amber' }
+      { label: '错题本', value: '📚', page: '/pages/review/review' },
+      { label: '收藏夹', value: '⭐', page: '/pages/favorites/favorites' }
     ],
     selectedGrade: '三年级',
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
@@ -158,6 +157,19 @@ Page({
 
   goToFavorites() {
     wx.navigateTo({ url: '/pages/favorites/favorites' })
+  },
+
+  goToReview() {
+    wx.switchTab({ url: '/pages/review/review' })
+  },
+
+  goToStat(e) {
+    const page = e.currentTarget.dataset.page
+    if (page === '/pages/review/review') {
+      wx.switchTab({ url: page })
+    } else {
+      wx.navigateTo({ url: page })
+    }
   },
 
   openSettings() {

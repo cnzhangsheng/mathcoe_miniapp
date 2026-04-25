@@ -34,11 +34,11 @@
       </view>
     </view>
 
-    <!-- Stats Summary -->
+    <!-- Quick Access -->
     <view class="stats-row">
       <block wx:for="{{stats}}" wx:key="label">
-        <view class="stat-card card">
-          <text class="stat-value {{item.color === 'green' ? 'primary-color' : ''}}">{{item.value}}</text>
+        <view class="stat-card card" bindtap="goToStat" data-page="{{item.page}}">
+          <text class="stat-icon">{{item.value}}</text>
           <text class="stat-label">{{item.label}}</text>
         </view>
       </block>

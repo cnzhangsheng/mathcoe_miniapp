@@ -1,4 +1,4 @@
-<!--pages/review/review.wxml - 100%复刻 Review.tsx-->
+<!--pages/review/review.wxml-->
 <view class="review-container">
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-state">
@@ -22,170 +22,85 @@
 
     <!-- 错题本 Tab -->
     <block wx:if="{{activeTab === 'incorrect'}}">
-      <!-- AI Error Analysis -->
-      <view class="error-analysis card">
-        <view class="analysis-header">
-          <view class="analysis-icon-box rose-bg">
-            <text>🧠</text>
-          </view>
-          <view>
-            <text class="analysis-title text-bold">错因分布诊断</text>
-            <text class="analysis-sub text-small text-muted">AI ERROR PROFILE ANALYSIS</text>
-          </view>
-        </view>
-
-        <!-- Bar Chart -->
-        <view class="chart-container">
-          <block wx:for="{{errorTypes}}" wx:key="label">
-            <view class="chart-bar-wrapper">
-              <view class="chart-bar {{item.highlight ? 'highlight' : ''}}" style="height: {{item.value}}%;"></view>
-              <text class="chart-label">{{item.label}}</text>
-            </view>
-          </block>
-        </view>
-
-        <!-- AI Diagnosis -->
-        <view class="diagnosis-box">
-          <text class="diagnosis-icon">✨</text>
-          <text class="diagnosis-text">诊断结论：你在 <text class="underline">逻辑推演</text> 类题目中错误率最高（80%），主要原因为"真假话判定"逻辑混淆。建议加强对该专题的深度复查。</text>
-        </view>
+      <!-- Stats Card -->
+      <view class="stats-card card">
+        <text class="stats-title text-bold">错题总数：<text class="highlight-num">{{wrongQuestions.length}}</text></text>
       </view>
 
-      <!-- Smart Stats Card -->
-      <view class="smart-stats card dark">
-        <view class="stats-header">
-          <view class="pulse-dots">
-            <view class="pulse-dot"></view>
-            <view class="pulse-dot"></view>
-            <view class="pulse-dot"></view>
+      <!-- Wrong Questions List -->
+      <block wx:for="{{wrongQuestions}}" wx:key="id">
+        <view class="question-card card" bindtap="viewWrongQuestion" data-index="{{index}}">
+          <view class="question-header">
+            <view class="difficulty-tag">{{item.difficulty}}</view>
+            <text class="question-id">#{{item.question_id}}</text>
           </view>
-          <text class="stats-title">待修复 <text class="highlight-num">12</text> 处思维漏洞</text>
-          <view class="stats-right">
-            <text class="stats-label">今日复习进度</text>
-            <text class="stats-value primary-color">65%</text>
+
+          <view class="question-content-box">
+            <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
+          </view>
+
+          <!-- Answer Info -->
+          <view class="answer-info">
+            <view class="answer-row">
+              <text class="answer-label">你的答案：</text>
+              <text class="answer-value wrong">{{item.user_answer}}</text>
+            </view>
+            <view class="answer-row">
+              <text class="answer-label">正确答案：</text>
+              <text class="answer-value correct">{{item.answer}}</text>
+            </view>
+          </view>
+
+          <!-- Actions -->
+          <view class="question-actions">
+            <view class="action-btn primary" data-id="{{item.question_id}}" catchtap="markMastered">
+              <text class="action-icon">✓</text>
+              <text>标记掌握</text>
+            </view>
+            <view class="delete-btn" data-id="{{item.question_id}}" catchtap="removeWrong">
+              <text>🗑️</text>
+            </view>
           </view>
         </view>
+      </block>
 
-        <view class="action-buttons">
-          <view class="primary-btn" bindtap="startQuickReview">
-            <text class="btn-icon">⚡</text>
-            <text>智能闪电复习</text>
+      <!-- Empty State -->
+      <block wx:if="{{wrongQuestions.length === 0}}">
+        <view class="empty-state">
+          <view class="empty-icon-box">
+            <text>📝</text>
           </view>
-          <view class="secondary-btn">
-            <text>🔄</text>
-          </view>
-        </view>
-      </view>
-
-      <!-- Question Categories -->
-      <block wx:for="{{categories}}" wx:key="id">
-        <view class="category-section">
-          <view class="category-header">
-            <view class="flex-row">
-              <view class="category-icon-box {{item.bgColor}}-bg">
-                <text>{{item.icon}}</text>
-              </view>
-              <view>
-                <text class="category-title text-bold">{{item.title}}</text>
-                <text class="category-count text-small text-muted">{{item.count}} 个漏洞需修补</text>
-              </view>
-            </view>
-            <text class="arrow">›</text>
-          </view>
-
-          <!-- Questions List -->
-          <block wx:for="{{item.questions}}" wx:key="id">
-            <view class="question-card card">
-              <view class="question-content flex-row">
-                <view class="question-img-wrapper">
-                  <image class="question-img" src="{{item.img}}" mode="aspectFill"></image>
-                  <view class="difficulty-tag">{{item.difficulty}} 难度</view>
-                </view>
-
-                <view class="question-info">
-                  <view class="status-row">
-                    <block wx:if="{{item.status === 'critical'}}">
-                      <view class="status-critical">
-                        <text class="status-icon">🔥</text>
-                        <text>记忆濒危 ({{item.retention}}%)</text>
-                      </view>
-                    </block>
-                    <block wx:else>
-                      <view class="status-warning">
-                        <text class="status-icon">📅</text>
-                        <text>巩固期 ({{item.retention}}%)</text>
-                      </view>
-                    </block>
-                    <text class="question-id">#{{item.id}}</text>
-                  </view>
-
-                  <text class="question-title text-bold">{{item.title}}</text>
-
-                  <view class="progress-bar-wrapper">
-                    <view class="progress-bar-bg">
-                      <view class="progress-bar-fill {{item.status === 'critical' ? 'rose' : 'amber'}}" style="width: {{item.retention}}%;"></view>
-                    </view>
-                  </view>
-
-                  <view class="error-reason-box">
-                    <text class="error-icon">📉</text>
-                    <text>主因：{{item.errorReason}}</text>
-                  </view>
-                </view>
-              </view>
-
-              <!-- Actions -->
-              <view class="question-actions">
-                <view class="action-btn primary" data-id="{{item.id}}" bindtap="markMastered">
-                  <text class="action-icon">✓</text>
-                  <text>标记掌握</text>
-                </view>
-                <view class="action-btn secondary" data-id="{{item.id}}" bindtap="analyzeQuestion">
-                  <text class="action-icon purple">✨</text>
-                  <text>深度分析</text>
-                </view>
-                <view class="delete-btn" data-id="{{item.id}}" bindtap="removeWrong">
-                  <text>🗑️</text>
-                </view>
-              </view>
-
-              <!-- Similar Questions Tip -->
-              <view class="similar-tip" data-id="{{item.id}}" bindtap="goToSimilarQuestions">
-                <view class="flex-row">
-                  <text class="similar-icon">🔄</text>
-                  <text class="similar-text">关联推送：本考点有 5 道类似真题</text>
-                </view>
-                <text class="similar-link">立即演练 ›</text>
-              </view>
-            </view>
-          </block>
+          <text class="empty-title">暂无错题记录</text>
+          <text class="empty-sub">继续练习，保持正确率！</text>
         </view>
       </block>
     </block>
 
     <!-- 收藏夹 Tab -->
     <block wx:if="{{activeTab === 'favorites'}}">
-      <block wx:for="{{favorites}}" wx:key="id">
-        <view class="favorite-card card">
-          <view class="favorite-content flex-row">
-            <view class="favorite-img-wrapper">
-              <image class="favorite-img" src="{{item.img}}" mode="aspectFill"></image>
-              <view class="fav-difficulty-tag">{{item.difficulty}}</view>
-            </view>
+      <!-- Stats Card -->
+      <view class="stats-card card">
+        <text class="stats-title text-bold">收藏总数：<text class="highlight-num">{{favorites.length}}</text></text>
+      </view>
 
-            <view class="favorite-info">
-              <view class="fav-category-tag">{{item.category}}</view>
-              <text class="favorite-title text-bold">{{item.title}}</text>
-              <text class="favorite-date text-small text-muted">收藏于 {{item.date}}</text>
-            </view>
+      <!-- Favorites List -->
+      <block wx:for="{{favorites}}" wx:key="id">
+        <view class="favorite-card card" bindtap="viewFavorite" data-index="{{index}}">
+          <view class="question-header">
+            <view class="difficulty-tag">{{item.difficulty}}</view>
+            <text class="question-id">#{{item.question_id}}</text>
+          </view>
+
+          <view class="question-content-box">
+            <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
           </view>
 
           <view class="favorite-actions">
-            <view class="action-btn primary" data-id="{{item.id}}" bindtap="retryQuestion">
+            <view class="action-btn primary" data-id="{{item.question_id}}" catchtap="retryFavorite">
               <text class="action-icon">▶</text>
               <text>重新挑战</text>
             </view>
-            <view class="delete-btn" data-id="{{item.id}}" bindtap="removeFavorite">
+            <view class="delete-btn" data-id="{{item.question_id}}" catchtap="removeFavorite">
               <text>🗑️</text>
             </view>
           </view>

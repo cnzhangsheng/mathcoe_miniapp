@@ -47,24 +47,19 @@
     </view>
   </view>
 
-  <!-- Control Buttons -->
-  <view class="control-section">
-    <view class="control-row">
-      <!-- 答题卡按钮 -->
-      <view class="sheet-btn" bindtap="showAnswerSheet">
-        <text class="sheet-icon">📋</text>
-        <text class="sheet-text text-bold">答题卡</text>
-      </view>
-
-      <!-- 上一题 / 下一题 按钮 -->
-      <view class="nav-buttons">
-        <view class="prev-btn {{currentIndex <= 1 ? 'disabled' : 'active'}}" bindtap="goToPrevQuestion">
-          <text class="nav-text text-bold">上一题</text>
-        </view>
-        <view class="next-btn active" bindtap="handleNextOrSubmit">
-          <text class="nav-text text-bold">{{currentIndex >= totalQuestions ? '确认交卷' : '下一题'}}</text>
-        </view>
-      </view>
+  <!-- Bottom Control Bar -->
+  <view class="bottom-control-bar">
+    <view class="sheet-btn-bottom" bindtap="showAnswerSheet">
+      <text class="sheet-icon">📋</text>
+      <text class="sheet-text">答题卡</text>
+    </view>
+    <view class="nav-btn {{currentIndex <= 1 ? 'disabled' : ''}}" bindtap="goToPrevQuestion">
+      <text class="nav-icon">‹</text>
+      <text class="nav-text">上一题</text>
+    </view>
+    <view class="nav-btn {{currentIndex >= totalQuestions ? 'submit-btn' : ''}}" bindtap="handleNextOrSubmit">
+      <text class="nav-text">{{currentIndex >= totalQuestions ? '确认交卷' : '下一题'}}</text>
+      <text class="nav-icon" wx:if="{{currentIndex < totalQuestions}}">›</text>
     </view>
   </view>
 

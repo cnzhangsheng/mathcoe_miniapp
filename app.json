@@ -6,6 +6,7 @@
     "pages/topics/topics",
     "pages/topic-question-detail/topic-question-detail",
     "pages/exam-report/exam-report",
+    "pages/question-explanation/question-explanation",
     "pages/review/review",
     "pages/profile/profile",
     "pages/favorites/favorites",

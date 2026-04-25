@@ -101,19 +101,14 @@ Page({
     })
   },
 
-  // 查看题目详情
+  // 查看题目详情（解析）
   viewQuestionDetail(e) {
     const index = e.currentTarget.dataset.index
-    const item = this.data.answerSheet[index - 1]
-    if (item) {
-      // 可以跳转到题目详情页查看解析
-      wx.showToast({ title: '题目解析功能开发中', icon: 'none' })
+    if (this.data.answerSheet.length > 0) {
+      wx.navigateTo({
+        url: `/pages/question-explanation/question-explanation?index=${index}&answerSheet=${encodeURIComponent(JSON.stringify(this.data.answerSheet))}`
+      })
     }
-  },
-
-  // 前往错题本
-  goToWrongBook() {
-    wx.switchTab({ url: '/pages/review/review' })
   },
 
   // 重新练习
@@ -129,7 +124,7 @@ Page({
     }
   },
 
-  // 返回主题列表
+  // 返回专题列表
   backToTopics() {
     wx.switchTab({ url: '/pages/topics/topics' })
   }
