@@ -388,12 +388,33 @@ Page({
     }
   },
 
-  // Show Answer Sheet
+  // Show Answer Sheet - 跳转到独立页面
   showAnswerSheet() {
-    this.setData({ showAnswerSheet: true })
+    const { totalQuestions, results } = this.data
+    wx.navigateTo({
+      url: `/pages/answer-sheet/answer-sheet?totalQuestions=${totalQuestions}&results=${encodeURIComponent(JSON.stringify(results))}`
+    })
   },
 
-  // Close Answer Sheet
+  // 从答题卡页面跳转回来时调用
+  jumpToQuestionFromAnswerSheet(index) {
+    index = Number(index) || 1
+    const { questions, results } = this.data
+    if (!questions || !questions[index - 1]) return
+
+    const targetQuestion = questions[index - 1]
+    this.setData({
+      currentIndex: index,
+      currentQuestion: this.formatQuestion(targetQuestion),
+      questionTypeText: this.getQuestionTypeText(targetQuestion),
+      selectedOption: results[index] || null,
+      showFeedback: false
+    })
+    this.buildOptions(targetQuestion)
+    this.updateProgress()
+  },
+
+  // Close Answer Sheet (已废弃，改为独立页面)
   closeAnswerSheet() {
     this.setData({ showAnswerSheet: false })
   },

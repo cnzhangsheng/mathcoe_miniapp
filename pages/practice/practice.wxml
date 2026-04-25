@@ -104,45 +104,6 @@
     </view>
   </view>
 
-  <!-- Answer Sheet Modal -->
-  <view class="answer-sheet-modal" wx:if="{{showAnswerSheet}}">
-    <view class="modal-header-bar">
-      <view class="modal-back-btn" bindtap="closeAnswerSheet">
-        <text class="modal-back-icon">‹</text>
-      </view>
-      <text class="modal-title text-bold">答题卡</text>
-    </view>
-
-    <scroll-view class="modal-scroll" scroll-y="true">
-      <view class="sheet-card">
-        <!-- 作答状态说明 -->
-        <view class="status-legend">
-          <view class="legend-item">
-            <view class="legend-dot done"></view>
-            <text class="legend-text">已作答</text>
-          </view>
-          <view class="legend-item">
-            <view class="legend-dot unanswered"></view>
-            <text class="legend-text">未作答</text>
-          </view>
-        </view>
-
-        <view class="answer-grid" wx:if="{{totalQuestions > 0}}">
-          <block wx:for="{{totalQuestions}}" wx:key="*this" wx:for-item="num">
-            <view class="answer-cell {{currentIndex === num + 1 ? 'current' : ''}} {{results[num + 1] ? 'done' : ''}}"
-              data-index="{{num + 1}}"
-              bindtap="jumpToQuestion">
-              <text class="answer-num text-bold">{{num + 1}}</text>
-            </view>
-          </block>
-        </view>
-        <view class="answer-grid-empty" wx:else>
-          <text class="empty-text">暂无题目</text>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
   <!-- Unanswered Warning Modal -->
   <view class="warning-modal" wx:if="{{showUnansweredWarning}}">
     <view class="warning-mask"></view>
