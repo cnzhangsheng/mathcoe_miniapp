@@ -13,6 +13,27 @@
   color: #999;
 }
 
+/* Date Header */
+.date-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 16rpx;
+  margin-bottom: 16rpx;
+  margin-top: 16rpx;
+}
+
+.date-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.date-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
 /* Tabs */
 .tabs-wrapper {
   margin-bottom: 32rpx;

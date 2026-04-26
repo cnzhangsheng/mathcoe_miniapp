@@ -4,14 +4,9 @@ const reviewService = require('../../services/review')
 
 Page({
   data: {
-    activeTab: 'incorrect', // 'incorrect' or 'favorites'
     loading: true,
-
-    // 错题列表
     wrongQuestions: [],
-
-    // 收藏列表
-    favorites: []
+    groupedQuestions: []  // 按日期分组的错题
   },
 
   onLoad() {
@@ -30,15 +25,12 @@ Page({
       const token = wx.getStorageSync('token')
       if (!token) {
         wx.hideLoading()
-        this.setData({ loading: false, wrongQuestions: [], favorites: [] })
+        this.setData({ loading: false, wrongQuestions: [], groupedQuestions: [] })
         return
       }
 
       // 获取错题列表
       const wrongQuestions = await reviewService.getWrongQuestions() || []
-
-      // 获取收藏列表
-      const favorites = await reviewService.getFavorites() || []
 
       // 处理错题数据，格式化题目内容
       const formattedWrongQuestions = wrongQuestions.map(q => ({
@@ -56,23 +48,13 @@ Page({
         created_at: q.created_at
       }))
 
-      // 处理收藏数据
-      const formattedFavorites = favorites.map(q => ({
-        id: q.id,
-        question_id: q.question_id,
-        title: q.question_title || '题目',
-        content: q.question_content?.text || '',
-        options: q.question_options || [],
-        answer: q.question_answer,
-        explanation: q.question_explanation?.text || '',
-        difficulty: q.question_difficulty || 'L2',
-        created_at: q.created_at
-      }))
+      // 按日期分组
+      const groupedQuestions = this.groupByDate(formattedWrongQuestions)
 
       this.setData({
         loading: false,
         wrongQuestions: formattedWrongQuestions,
-        favorites: formattedFavorites
+        groupedQuestions
       })
       wx.hideLoading()
     } catch (err) {
@@ -82,39 +64,71 @@ Page({
     }
   },
 
-  switchTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab })
+  // 按日期分组错题
+  groupByDate(questions) {
+    const today = this.formatDate(new Date())
+    const groups = {}
+
+    questions.forEach(q => {
+      let dateStr = q.created_at ? this.formatDate(new Date(q.created_at)) : today
+      if (!groups[dateStr]) {
+        groups[dateStr] = []
+      }
+      groups[dateStr].push(q)
+    })
+
+    // 转换为数组并排序（最新日期在前）
+    const sortedDates = Object.keys(groups).sort((a, b) => {
+      return new Date(b) - new Date(a)
+    })
+
+    return sortedDates.map(date => ({
+      date: date,
+      dateLabel: this.getDateLabel(date),
+      questions: groups[date]
+    }))
+  },
+
+  // 格式化日期为 YYYY-MM-DD
+  formatDate(date) {
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    return `${year}-${month}-${day}`
+  },
+
+  // 获取日期显示标签
+  getDateLabel(dateStr) {
+    const today = this.formatDate(new Date())
+    const yesterday = this.formatDate(new Date(Date.now() - 86400000))
+
+    if (dateStr === today) {
+      return '今天'
+    } else if (dateStr === yesterday) {
+      return '昨天'
+    } else {
+      return dateStr
+    }
   },
 
   // 查看错题详情
   viewWrongQuestion(e) {
-    const index = e.currentTarget.dataset.index
-    const question = this.data.wrongQuestions[index]
+    const question = e.currentTarget.dataset.question
     if (question) {
-      // 跳转到题目解析页面
-      const answerSheet = this.data.wrongQuestions.map(q => ({
-        index: q.question_id,
-        question_content: { text: q.content },
-        question_options: q.options,
-        user_answer: q.user_answer,
-        correct_answer: q.answer,
+      // 构建答题卡数据
+      const answerSheet = [{
+        index: 1,
+        question_content: { text: question.content },
+        question_options: question.options,
+        user_answer: question.user_answer,
+        correct_answer: question.answer,
         is_correct: false,
-        question_explanation: { text: q.explanation }
-      }))
+        question_explanation: { text: question.explanation }
+      }]
 
       wx.navigateTo({
-        url: `/pages/question-explanation/question-explanation?index=${index + 1}&answerSheet=${encodeURIComponent(JSON.stringify(answerSheet))}`
+        url: `/pages/question-explanation/question-explanation?index=1&answerSheet=${encodeURIComponent(JSON.stringify(answerSheet))}`
       })
-    }
-  },
-
-  // 查看收藏题目详情
-  viewFavorite(e) {
-    const index = e.currentTarget.dataset.index
-    const question = this.data.favorites[index]
-    if (question) {
-      wx.showToast({ title: '题目详情功能开发中', icon: 'none' })
     }
   },
 
@@ -131,9 +145,10 @@ Page({
             const result = await reviewService.removeWrongQuestion(questionId)
             if (result && result.success) {
               wx.showToast({ title: '已移除', icon: 'success' })
-              // 从列表中移除
+              // 从列表中移除并重新分组
               const wrongQuestions = this.data.wrongQuestions.filter(q => q.question_id !== questionId)
-              this.setData({ wrongQuestions })
+              const groupedQuestions = this.groupByDate(wrongQuestions)
+              this.setData({ wrongQuestions, groupedQuestions })
             } else {
               wx.showToast({ title: '操作失败', icon: 'none' })
             }
@@ -143,44 +158,5 @@ Page({
         }
       }
     })
-  },
-
-  // 取消收藏
-  async removeFavorite(e) {
-    const questionId = e.currentTarget.dataset.id
-
-    wx.showModal({
-      title: '提示',
-      content: '确定取消收藏吗？',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            const result = await reviewService.removeFavorite(questionId)
-            if (result && result.success) {
-              wx.showToast({ title: '已取消收藏', icon: 'success' })
-              // 从列表中移除
-              const favorites = this.data.favorites.filter(q => q.question_id !== questionId)
-              this.setData({ favorites })
-            } else {
-              wx.showToast({ title: '操作失败', icon: 'none' })
-            }
-          } catch (err) {
-            wx.showToast({ title: '操作失败', icon: 'none' })
-          }
-        }
-      }
-    })
-  },
-
-  // 重新挑战错题
-  retryWrong(e) {
-    const questionId = e.currentTarget.dataset.id
-    wx.showToast({ title: '重新挑战功能开发中', icon: 'none' })
-  },
-
-  // 重新挑战收藏题目
-  retryFavorite(e) {
-    const questionId = e.currentTarget.dataset.id
-    wx.showToast({ title: '重新挑战功能开发中', icon: 'none' })
   }
 })

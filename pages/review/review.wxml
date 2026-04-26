@@ -6,90 +6,39 @@
   </view>
 
   <block wx:if="{{!loading}}">
-    <!-- Tabs -->
-    <view class="tabs-wrapper">
-      <view class="tabs-container">
-        <view class="tab-item {{activeTab === 'incorrect' ? 'active' : ''}}" data-tab="incorrect" bindtap="switchTab">
-          <text class="tab-icon">📝</text>
-          <text class="tab-text">错题本</text>
-        </view>
-        <view class="tab-item {{activeTab === 'favorites' ? 'active' : ''}}" data-tab="favorites" bindtap="switchTab">
-          <text class="tab-icon">❤️</text>
-          <text class="tab-text">收藏夹</text>
-        </view>
+    <!-- 错题本按日期分组显示 -->
+    <block wx:for="{{groupedQuestions}}" wx:key="date">
+      <!-- 日期标题 -->
+      <view class="date-header">
+        <text class="date-title">{{item.dateLabel}}</text>
+        <text class="date-count">{{item.questions.length}}题</text>
       </view>
-    </view>
 
-    <!-- 错题本 Tab -->
-    <block wx:if="{{activeTab === 'incorrect'}}">
-      <!-- Wrong Questions List -->
-      <block wx:for="{{wrongQuestions}}" wx:key="id">
-        <view class="question-card card" bindtap="viewWrongQuestion" data-index="{{index}}">
+      <!-- 该日期下的错题列表 -->
+      <block wx:for="{{item.questions}}" wx:key="id" wx:for-item="question">
+        <view class="question-card card" bindtap="viewWrongQuestion" data-question="{{question}}">
           <view class="question-header">
-            <view class="delete-btn-red" data-id="{{item.question_id}}" catchtap="removeWrong">
+            <view class="delete-btn-red" data-id="{{question.question_id}}" catchtap="removeWrong">
               <text class="delete-text">删除</text>
             </view>
           </view>
 
           <view class="question-content-box">
-            <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
+            <rich-text class="question-content" nodes="{{question.content}}"></rich-text>
           </view>
-        </view>
-      </block>
-
-      <!-- Empty State -->
-      <block wx:if="{{wrongQuestions.length === 0}}">
-        <view class="empty-state">
-          <view class="empty-icon-box">
-            <text>📝</text>
-          </view>
-          <text class="empty-title">暂无错题记录</text>
-          <text class="empty-sub">继续练习，保持正确率！</text>
         </view>
       </block>
     </block>
 
-    <!-- 收藏夹 Tab -->
-    <block wx:if="{{activeTab === 'favorites'}}">
-      <!-- Stats Card -->
-      <view class="stats-card card">
-        <text class="stats-title text-bold">收藏总数：<text class="highlight-num">{{favorites.length}}</text></text>
+    <!-- Empty State -->
+    <block wx:if="{{wrongQuestions.length === 0}}">
+      <view class="empty-state">
+        <view class="empty-icon-box">
+          <text>📝</text>
+        </view>
+        <text class="empty-title">暂无错题记录</text>
+        <text class="empty-sub">继续练习，保持正确率！</text>
       </view>
-
-      <!-- Favorites List -->
-      <block wx:for="{{favorites}}" wx:key="id">
-        <view class="favorite-card card" bindtap="viewFavorite" data-index="{{index}}">
-          <view class="question-header">
-            <view class="difficulty-tag">{{item.difficulty}}</view>
-            <text class="question-id">#{{item.question_id}}</text>
-          </view>
-
-          <view class="question-content-box">
-            <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
-          </view>
-
-          <view class="favorite-actions">
-            <view class="action-btn primary" data-id="{{item.question_id}}" catchtap="retryFavorite">
-              <text class="action-icon">▶</text>
-              <text>重新挑战</text>
-            </view>
-            <view class="delete-btn" data-id="{{item.question_id}}" catchtap="removeFavorite">
-              <text>🗑️</text>
-            </view>
-          </view>
-        </view>
-      </block>
-
-      <!-- Empty State -->
-      <block wx:if="{{favorites.length === 0}}">
-        <view class="empty-state">
-          <view class="empty-icon-box">
-            <text>⭐</text>
-          </view>
-          <text class="empty-title">暂无收藏题目</text>
-          <text class="empty-sub">MARK QUESTIONS TO SEE THEM HERE</text>
-        </view>
-      </block>
     </block>
   </block>
 </view>
