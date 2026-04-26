@@ -118,33 +118,6 @@ Page({
     }
   },
 
-  // 标记掌握
-  async markMastered(e) {
-    const questionId = e.currentTarget.dataset.id
-
-    wx.showModal({
-      title: '提示',
-      content: '确定标记为已掌握吗？',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            const result = await reviewService.markMastered(questionId)
-            if (result && result.success) {
-              wx.showToast({ title: '已标记掌握', icon: 'success' })
-              // 从列表中移除
-              const wrongQuestions = this.data.wrongQuestions.filter(q => q.question_id !== questionId)
-              this.setData({ wrongQuestions })
-            } else {
-              wx.showToast({ title: '操作失败', icon: 'none' })
-            }
-          } catch (err) {
-            wx.showToast({ title: '操作失败', icon: 'none' })
-          }
-        }
-      }
-    })
-  },
-
   // 从错题本移除
   async removeWrong(e) {
     const questionId = e.currentTarget.dataset.id

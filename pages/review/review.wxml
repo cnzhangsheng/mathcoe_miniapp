@@ -22,44 +22,17 @@
 
     <!-- 错题本 Tab -->
     <block wx:if="{{activeTab === 'incorrect'}}">
-      <!-- Stats Card -->
-      <view class="stats-card card">
-        <text class="stats-title text-bold">错题总数：<text class="highlight-num">{{wrongQuestions.length}}</text></text>
-      </view>
-
       <!-- Wrong Questions List -->
       <block wx:for="{{wrongQuestions}}" wx:key="id">
         <view class="question-card card" bindtap="viewWrongQuestion" data-index="{{index}}">
           <view class="question-header">
-            <view class="difficulty-tag">{{item.difficulty}}</view>
-            <text class="question-id">#{{item.question_id}}</text>
+            <view class="delete-btn-red" data-id="{{item.question_id}}" catchtap="removeWrong">
+              <text class="delete-text">删除</text>
+            </view>
           </view>
 
           <view class="question-content-box">
             <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
-          </view>
-
-          <!-- Answer Info -->
-          <view class="answer-info">
-            <view class="answer-row">
-              <text class="answer-label">你的答案：</text>
-              <text class="answer-value wrong">{{item.user_answer}}</text>
-            </view>
-            <view class="answer-row">
-              <text class="answer-label">正确答案：</text>
-              <text class="answer-value correct">{{item.answer}}</text>
-            </view>
-          </view>
-
-          <!-- Actions -->
-          <view class="question-actions">
-            <view class="action-btn primary" data-id="{{item.question_id}}" catchtap="markMastered">
-              <text class="action-icon">✓</text>
-              <text>标记掌握</text>
-            </view>
-            <view class="delete-btn" data-id="{{item.question_id}}" catchtap="removeWrong">
-              <text>🗑️</text>
-            </view>
           </view>
         </view>
       </block>
