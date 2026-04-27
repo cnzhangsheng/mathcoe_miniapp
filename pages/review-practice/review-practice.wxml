@@ -9,7 +9,7 @@
   </view>
 
   <!-- 练习内容 -->
-  <block wx:if="{{!loading && currentQuestion}}">
+  <block wx:if="{{!loading && !completed && currentQuestion}}">
     <!-- 进度指示 -->
     <view class="progress-bar">
       <view class="progress-fill" style="width: {{progress}}%;"></view>
@@ -18,10 +18,9 @@
 
     <!-- 题目卡片 -->
     <view class="question-card card">
-      <view class="question-header">
-        <view class="topic-badge">
-          <text>{{topicTitle}}</text>
-        </view>
+      <view class="question-header flex-between">
+        <text class="question-title text-bold">题目{{currentIndex + 1}}</text>
+        <text class="question-type text-small text-muted">{{questionType}}</text>
       </view>
 
       <view class="question-content">
@@ -74,7 +73,7 @@
       </block>
       <block wx:if="{{showResult}}">
         <view class="next-btn primary-bg" bindtap="nextQuestion">
-          <text class="next-text">{{currentIndex < totalQuestions - 1 ? '下一题' : '完成复习'}}</text>
+          <text class="next-text">{{currentIndex < totalQuestions - 1 ? '下一题' : '完成练习'}}</text>
         </view>
       </block>
     </view>
@@ -86,15 +85,15 @@
       <view class="complete-icon-box">
         <text class="complete-icon">🎉</text>
       </view>
-      <text class="complete-title">复习完成</text>
-      <text class="complete-stats">本次复习 {{totalQuestions}} 题，正确 {{correctCount}} 题</text>
+      <text class="complete-title">练习完成</text>
+      <text class="complete-stats">本次练习 {{totalQuestions}} 题，正确 {{correctCount}} 题</text>
 
       <view class="complete-buttons">
         <view class="home-btn primary-bg" bindtap="goHome">
-          <text class="home-text">返回首页</text>
+          <text class="home-text">返回复习</text>
         </view>
         <view class="review-btn" bindtap="goReview">
-          <text class="review-btn-text">继续复习</text>
+          <text class="review-btn-text">继续练习</text>
         </view>
       </view>
     </view>

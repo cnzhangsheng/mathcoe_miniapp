@@ -20,7 +20,8 @@ Page({
     correctCount: 0,
 
     // 题目属性
-    topicTitle: ''
+    topicTitle: '',
+    questionType: '单选题'
   },
 
   onLoad(options) {
@@ -57,7 +58,8 @@ Page({
             options: options,
             answer: wrong.question_answer,
             explanation: wrong.question_explanation?.text || wrong.question_explanation || '',
-            difficulty: wrong.question_difficulty || 'L2'
+            difficulty: wrong.question_difficulty || 'L2',
+            question_type: wrong.question_type || 'single'
           }
         }
         return null
@@ -67,13 +69,22 @@ Page({
         this.setData({
           loading: false,
           questions,
+          currentIndex: 0,
           currentQuestion: questions[0],
-          progress: 100 / questions.length
+          progress: 100 / questions.length,
+          correctCount: 0,
+          selectedAnswer: '',
+          showResult: false,
+          isCorrect: false
         })
         this.updateQuestionMeta(questions[0])
       } else {
-        wx.showToast({ title: '未找到题目', icon: 'none' })
-        this.setData({ loading: false })
+        wx.hideLoading()
+        wx.showToast({ title: '错题已全部完成', icon: 'success' })
+        setTimeout(() => {
+          wx.switchTab({ url: '/pages/review/review' })
+        }, 1500)
+        return
       }
 
       wx.hideLoading()
@@ -97,8 +108,10 @@ Page({
   },
 
   updateQuestionMeta(question) {
+    const questionType = question.question_type === 'multiple' ? '多选题' : '单选题'
     this.setData({
-      topicTitle: question.topicTitle
+      topicTitle: question.topicTitle,
+      questionType
     })
   },
 
@@ -155,11 +168,13 @@ Page({
   },
 
   goHome() {
-    wx.switchTab({ url: '/pages/index/index' })
+    wx.switchTab({ url: '/pages/review/review' })
   },
 
   goReview() {
-    wx.switchTab({ url: '/pages/review/review' })
+    // 重新加载最新的错题列表（排除已做对的题目）
+    this.setData({ loading: true, completed: false })
+    this.loadQuestions(this.data.questionIds)
   },
 
   onShareAppMessage() {

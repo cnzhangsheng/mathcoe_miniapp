@@ -104,34 +104,50 @@ Page({
 
   // 处理错题数据
   processWrongQuestions(questions) {
-    return questions.map(q => ({
-      id: q.id,
-      question_id: q.question_id,
-      topic_id: parseInt(q.question_topic_id) || parseInt(q.topic_id) || 0,
-      topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
-      content: q.question_content?.text || q.content || '',
-      options: q.question_options || [],
-      answer: q.question_answer,
-      explanation: q.question_explanation?.text || '',
-      user_answer: q.user_answer,
-      retry_count: q.retry_count || 0,
-      created_at: q.created_at,
-      dateLabel: this.getDateLabel(q.created_at)
-    }))
+    return questions.map(q => {
+      // 转换 options 格式: [{label: 'A', text: '内容'}] -> [{key: 'A', value: '内容'}]
+      const optionsList = (q.question_options || []).map(opt => ({
+        key: opt.label || opt.key,
+        value: opt.text || opt.value || opt.content?.text || ''
+      }))
+
+      return {
+        id: q.id,
+        question_id: q.question_id,
+        topic_id: parseInt(q.question_topic_id) || parseInt(q.topic_id) || 0,
+        topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
+        content: q.question_content?.text || q.content || '',
+        options: optionsList,
+        answer: q.question_answer,
+        explanation: q.question_explanation?.text || '',
+        user_answer: q.user_answer,
+        retry_count: q.retry_count || 0,
+        created_at: q.created_at,
+        dateLabel: this.getDateLabel(q.created_at)
+      }
+    })
   },
 
   // 处理收藏数据
   processFavoriteQuestions(questions) {
-    return questions.map(q => ({
-      id: q.id,
-      question_id: q.question_id,
-      topic_id: q.question_topic_id,
-      topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
-      content: q.question_content?.text || q.content || '',
-      options: q.question_options || [],
-      answer: q.question_answer,
-      explanation: q.question_explanation?.text || ''
-    }))
+    return questions.map(q => {
+      // 转换 options 格式
+      const optionsList = (q.question_options || []).map(opt => ({
+        key: opt.label || opt.key,
+        value: opt.text || opt.value || opt.content?.text || ''
+      }))
+
+      return {
+        id: q.id,
+        question_id: q.question_id,
+        topic_id: q.question_topic_id,
+        topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
+        content: q.question_content?.text || q.content || '',
+        options: optionsList,
+        answer: q.question_answer,
+        explanation: q.question_explanation?.text || ''
+      }
+    })
   },
 
   // 按专题分组

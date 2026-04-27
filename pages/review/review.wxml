@@ -40,7 +40,7 @@
 
       <!-- 开始复习按钮 -->
       <view class="start-btn primary-bg" bindtap="startReview">
-        <text class="start-btn-text">开始复习</text>
+        <text class="start-btn-text">重新练习</text>
       </view>
 
       <!-- 错题列表 -->
@@ -64,9 +64,6 @@
 
                 <view class="question-bottom flex-between">
                   <view class="question-actions flex-row">
-                    <view class="mini-btn primary-bg" catchtap="retryQuestion" data-question="{{item}}">
-                      <text class="mini-text text-small text-bold">重练</text>
-                    </view>
                     <view class="mini-btn outline-btn" catchtap="removeWrong" data-id="{{item.question_id}}">
                       <text class="mini-text text-small text-bold">移除</text>
                     </view>

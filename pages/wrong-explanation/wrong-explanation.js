@@ -17,13 +17,20 @@ Page({
 
   onLoad(options) {
     const question = JSON.parse(decodeURIComponent(options.question || '{}'))
+
+    // 转换 options 格式: [{label: 'A', text: '内容'}] -> [{key: 'A', value: '内容'}]
+    const optionsList = (question.options || []).map(opt => ({
+      key: opt.label || opt.key,
+      value: opt.text || opt.value || opt.content?.text || ''
+    }))
+
     this.setData({
       questionId: question.question_id,
       wrongId: question.id,
       topicTitle: question.topicTitle || '',
       dateLabel: question.dateLabel || '',
       content: question.content || '',
-      options: question.options || [],
+      options: optionsList,
       correctAnswer: question.answer || '',
       userAnswer: question.user_answer || '',
       isCorrect: question.user_answer === question.answer,
