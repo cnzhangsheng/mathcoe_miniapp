@@ -1,197 +1,226 @@
-<!--pages/index/index.wxml - 100%复刻 Home.tsx-->
-<view class="home-container">
+<!--pages/index/index.wxml - 新首页设计 -->
+<view class="home-page">
+
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-state">
-    <text>加载中...</text>
+    <view class="loading-card">
+      <view class="loading-icon-box">
+        <text class="loading-icon">🔄</text>
+      </view>
+      <text class="loading-text text-small">正在加载...</text>
+    </view>
   </view>
 
-  <block wx:if="{{!loading}}">
-    <!-- User Header & Streak -->
+  <block wx:if="{{!loading && isLoggedIn}}">
+    <!-- 用户区域 -->
     <view class="user-header">
       <view class="user-info">
         <view class="avatar-wrapper">
           <image class="avatar" src="{{userInfo.avatar_url || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
         </view>
         <view class="user-text">
-          <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，早安！</text>
-          <text class="user-sub text-small">加油，今天也要元气满满哦</text>
-          <text class="login-time text-xs" wx:if="{{lastLoginAt}}">{{lastLoginAt}}</text>
+          <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，{{greetingText}}</text>
+          <text class="user-sub text-small">今日目标完成 {{todayDone}}/{{dailyGoal}} 题</text>
         </view>
       </view>
-      <view class="streak-badge">
+      <view class="streak-badge" bindtap="goToProfile">
         <text class="streak-icon">🔥</text>
-        <text class="streak-text text-bold">连推 {{streakDays}} 天</text>
+        <text class="streak-text text-bold">{{streakDays}}</text>
       </view>
     </view>
 
-    <!-- Exam Countdown Bar -->
-    <view class="countdown-section">
-      <view class="countdown-bar">
-        <view class="countdown-left">
-          <view class="timer-icon-box">
-            <text>⏱️</text>
-          </view>
-          <view>
-            <text class="countdown-label text-small">2025 袋鼠数学竞赛</text>
-            <text class="countdown-text text-bold">距离开赛还有 <text class="primary-color">{{countdownDays}}</text> 天</text>
-          </view>
-        </view>
-        <view class="signup-btn" bindtap="goToPractice">
-          <text class="text-small text-bold">立即报名</text>
-        </view>
-      </view>
-
-      <!-- Daily Inspiration -->
-      <view class="inspiration-card">
-        <view class="inspiration-icon-box">
-          <text>✨</text>
-        </view>
-        <view class="inspiration-text">
-          <text class="inspiration-title text-small text-bold">每日逻辑：</text>
-          <text class="inspiration-quote text-small">"数学是逻辑的最高形式。" —— 莱布尼茨</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- Primary Actions Grid -->
-    <view class="action-grid">
-      <view class="action-card card" bindtap="goToPractice">
-        <view class="action-decorator primary-decorator"></view>
-        <view class="action-icon-box primary-icon">
+    <!-- 今日目标进度 -->
+    <view class="goal-section">
+      <view class="goal-header flex-row">
+        <view class="goal-icon-box">
           <text>🎯</text>
         </view>
-        <view class="action-content">
-          <text class="action-title text-bold">今日挑战</text>
-          <view class="progress-mini">
-            <view class="progress-bar">
-              <view class="progress-bar-fill primary-bg" style="width: 33%;"></view>
-            </view>
-            <text class="text-small text-muted">1/3</text>
+        <text class="goal-title text-bold">今日目标</text>
+        <text class="goal-count text-small">{{todayDone}}/{{dailyGoal}} 题</text>
+      </view>
+      <view class="goal-progress-bar">
+        <view class="goal-progress-fill primary-bg" style="width: {{goalProgress}}%;"></view>
+      </view>
+      <view class="goal-hint" wx:if="{{goalProgress < 100}}">
+        <text class="goal-hint-text text-small text-muted">还差 {{dailyGoal - todayDone}} 题，加油！</text>
+      </view>
+      <view class="goal-complete" wx:if="{{goalProgress >= 100}}">
+        <text class="goal-complete-icon">✅</text>
+        <text class="goal-complete-text text-small text-bold">今日目标已达成！</text>
+      </view>
+    </view>
+
+    <!-- 本周学习统计 -->
+    <view class="stats-section">
+      <view class="stats-header flex-between">
+        <view class="stats-title-row flex-row">
+          <view class="stats-icon-box">
+            <text>📈</text>
           </view>
+          <text class="stats-title text-bold">本周学习</text>
         </view>
-        <view class="play-btn primary-bg">
-          <text>▶</text>
+        <text class="stats-week text-small text-muted">{{weekRange}}</text>
+      </view>
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-value text-bold">{{weekQuestions}}</text>
+          <text class="stat-label text-small text-muted">答题数</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value text-bold primary-color">{{weekCorrectRate}}%</text>
+          <text class="stat-label text-small text-muted">正确率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value text-bold rose-color">{{weekWrongCount}}</text>
+          <text class="stat-label text-small text-muted">本周错题</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value text-bold amber-color">{{favoriteCount}}</text>
+          <text class="stat-label text-small text-muted">收藏数</text>
         </view>
       </view>
+    </view>
 
-      <view class="action-card card" bindtap="goToExam">
-        <view class="action-decorator purple-decorator"></view>
+    <!-- 快捷入口 (4个大按钮) -->
+    <view class="quick-actions">
+      <view class="action-item primary-action" bindtap="goToDiscover">
+        <view class="action-icon-box primary-icon">
+          <text class="action-icon">🎯</text>
+        </view>
+        <text class="action-title text-bold">探索</text>
+        <text class="action-sub text-small">随机刷题</text>
+      </view>
+
+      <view class="action-item purple-action" bindtap="goToTopics">
         <view class="action-icon-box purple-icon">
-          <text>📝</text>
+          <text class="action-icon">📚</text>
         </view>
-        <view class="action-content">
-          <text class="action-title text-bold">全真模考</text>
-          <text class="text-small text-muted">限时 45 分钟测试</text>
+        <text class="action-title text-bold">专题</text>
+        <text class="action-sub text-small">专项训练</text>
+      </view>
+
+      <view class="action-item amber-action" bindtap="goToExamPaper">
+        <view class="action-icon-box amber-icon">
+          <text class="action-icon">📝</text>
         </view>
-        <view class="play-btn purple-bg">
-          <text>▶</text>
+        <text class="action-title text-bold">模考</text>
+        <text class="action-sub text-small">真题演练</text>
+      </view>
+
+      <view class="action-item rose-action" bindtap="goToReview">
+        <view class="action-icon-box rose-icon">
+          <text class="action-icon">❌</text>
         </view>
+        <text class="action-title text-bold">错题</text>
+        <text class="action-sub text-small">{{wrongCount}}题待练</text>
       </view>
     </view>
 
-    <!-- Capability Radar / Abilities -->
-    <view class="radar-card card">
-      <view class="radar-header">
-        <view class="radar-icon-box">
-          <text>📊</text>
+    <!-- 竞赛倒计时 -->
+    <view class="countdown-card">
+      <view class="countdown-left flex-row">
+        <view class="timer-icon-box">
+          <text>⏱️</text>
         </view>
-        <text class="radar-title text-bold">能力雷达</text>
-        <text class="radar-rank text-small text-muted">上周超越 {{abilityRank}}% 用户</text>
+        <view class="countdown-info">
+          <text class="countdown-label text-small text-muted">2025 袋鼠数学竞赛</text>
+          <text class="countdown-text text-bold">距离开赛还有 <text class="countdown-num primary-color">{{countdownDays}}</text> 天</text>
+        </view>
+      </view>
+      <view class="countdown-btn" bindtap="goToExamPaper">
+        <text class="countdown-btn-text text-small text-bold">立即报名</text>
+      </view>
+    </view>
+
+    <!-- 能力雷达（多边形） -->
+    <view class="radar-card">
+      <view class="radar-header flex-between">
+        <view class="radar-title-row flex-row">
+          <view class="radar-icon-box">
+            <text>📊</text>
+          </view>
+          <text class="radar-title text-bold">能力雷达</text>
+        </view>
+        <text class="radar-rank text-small text-muted">超越 {{abilityRank}}% 用户</text>
       </view>
 
-      <view class="abilities-grid">
-        <block wx:for="{{abilities}}" wx:key="label">
-          <view class="ability-item">
-            <view class="ability-label-row">
-              <text class="ability-label text-small text-bold">{{item.label}}</text>
-              <text class="ability-value text-small text-muted">{{item.value}}%</text>
+      <!-- 多边形雷达图（带标签） -->
+      <view class="radar-chart-container">
+        <canvas type="2d" id="radarCanvas" class="radar-canvas" canvas-id="radarCanvas"></canvas>
+      </view>
+    </view>
+
+    <!-- 推荐考卷 -->
+    <view class="recommend-section">
+      <view class="section-header flex-between">
+        <view class="section-title-row flex-row">
+          <view class="section-icon-box">
+            <text>📝</text>
+          </view>
+          <text class="section-title text-bold">推荐考卷</text>
+        </view>
+        <text class="section-more text-small text-muted" bindtap="goToTopics">更多 ›</text>
+      </view>
+
+      <view class="exam-list">
+        <block wx:for="{{recommendedPapers}}" wx:key="id">
+          <view class="exam-card card" data-id="{{item.id}}" bindtap="selectExamPaper">
+            <view class="exam-left">
+              <view class="exam-icon-box {{item.typeClass}}">
+                <text class="exam-icon">{{item.typeIcon}}</text>
+              </view>
             </view>
-            <view class="ability-bar">
-              <view class="ability-bar-fill {{item.barClass}}" style="width: {{item.value}}%;"></view>
+            <view class="exam-middle">
+              <view class="exam-top flex-row">
+                <view class="level-badge {{item.levelClass}}">
+                  <text class="level-text text-bold">{{item.levelLabel}}</text>
+                </view>
+                <text class="exam-title text-bold">{{item.title}}</text>
+              </view>
+              <view class="exam-bottom flex-row">
+                <text class="exam-meta text-small text-muted">{{item.paperTypeLabel}}</text>
+                <text class="exam-meta text-small text-muted">{{item.total_questions}} 题</text>
+              </view>
+            </view>
+            <view class="exam-right">
+              <view class="start-btn primary-bg">
+                <text class="start-text text-small text-bold">开始</text>
+              </view>
             </view>
           </view>
         </block>
       </view>
     </view>
 
-    <!-- Expert Tips -->
-    <view class="tips-section">
-      <view class="tips-header">
-        <text class="tips-title text-bold">提分秘籍</text>
-        <text class="tips-sub text-small text-muted">技巧合集</text>
-      </view>
-      <view class="tips-grid">
-        <block wx:for="{{expertTips}}" wx:key="title">
-          <view class="tip-card card">
-            <view class="tip-icon-box {{item.bgClass}}">
-              <text class="tip-icon">{{item.icon}}</text>
-            </view>
-            <text class="tip-title text-small text-bold">{{item.title}}</text>
-            <text class="tip-desc text-xs">{{item.desc}}</text>
-          </view>
-        </block>
-      </view>
-    </view>
-
-    <!-- Learning Journey / Progress Forest -->
-    <view class="forest-card">
-      <view class="forest-content">
-        <text class="forest-title text-bold">探索森林</text>
-        <text class="forest-progress text-small">L1 阶段完成度 65%</text>
-        <view class="forest-dots">
-          <view class="forest-dot filled"></view>
-          <view class="forest-dot filled"></view>
-          <view class="forest-dot filled"></view>
-          <view class="forest-dot empty"></view>
+    <!-- 今日建议 -->
+    <view class="suggestion-card" wx:if="{{weakTopic}}">
+      <view class="suggestion-header flex-row">
+        <view class="suggestion-icon-box">
+          <text>💡</text>
         </view>
+        <text class="suggestion-title text-bold">今日建议</text>
       </view>
-      <view class="forest-btn" bindtap="goToPractice">
-        <text>🧭</text>
+      <view class="suggestion-content">
+        <text class="suggestion-text">你在「<text class="suggestion-highlight text-bold">{{weakTopic.title}}</text>」模块较弱，建议今天重点练习。</text>
       </view>
-    </view>
-
-    <!-- Grid Navigation (Topics & Practice) -->
-    <view class="nav-section">
-      <view class="nav-card card" bindtap="goToTopics">
-        <view class="nav-icon-box blue-icon">
-          <text>📐</text>
-        </view>
-        <view class="nav-content">
-          <text class="nav-title text-bold">专题训练</text>
-          <text class="nav-sub text-small text-muted">逐一攻克袋鼠数学思维重点</text>
-        </view>
-        <text class="nav-arrow">›</text>
+      <view class="suggestion-btn" data-id="{{weakTopic.id}}" bindtap="goToTopicDetail">
+        <text class="suggestion-btn-text text-bold">去练习 ›</text>
       </view>
-
-      <view class="nav-card card" bindtap="goToReview">
-        <view class="nav-icon-box red-icon">
-          <text>📋</text>
-        </view>
-        <view class="nav-content">
-          <text class="nav-title text-bold">错题本</text>
-          <text class="nav-sub text-small text-muted">温故而知新，掌握 {{wrongCount}} 道易错题</text>
-        </view>
-        <text class="nav-arrow">›</text>
-      </view>
-    </view>
-
-    <!-- Past Years' Exams -->
-    <view class="exams-section">
-      <view class="exams-header">
-        <text class="exams-title text-bold">历年真题</text>
-        <text class="exams-sub text-small text-muted">全部真题</text>
-      </view>
-      <scroll-view class="exams-scroll" scroll-x="true">
-        <block wx:for="{{pastExams}}" wx:key="year">
-          <view class="exam-card card" data-year="{{item.year}}" bindtap="goToExam">
-            <view class="exam-icon-box purple-icon">
-              <text>📝</text>
-            </view>
-            <text class="exam-title text-bold">{{item.title}}</text>
-            <text class="exam-diff text-small text-muted">{{item.difficulty}} 难度</text>
-          </view>
-        </block>
-      </scroll-view>
     </view>
   </block>
+
+  <!-- 未登录状态 -->
+  <view wx:if="{{!loading && !isLoggedIn}}" class="login-prompt">
+    <view class="prompt-card">
+      <view class="prompt-icon-box">
+        <text class="prompt-icon">🧮</text>
+      </view>
+      <text class="prompt-title text-bold">袋鼠数学智练</text>
+      <text class="prompt-sub text-small text-muted">每天10分钟，数学思维突飞猛进</text>
+      <view class="prompt-btn" bindtap="goToLogin">
+        <text class="prompt-btn-text text-bold">开始学习</text>
+      </view>
+    </view>
+  </view>
+
 </view>

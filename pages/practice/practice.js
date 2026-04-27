@@ -1,6 +1,7 @@
 // pages/practice/practice.js - 100%复刻 kangaroo-math-brain Practice.tsx
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
+const reviewService = require('../../services/review')
 
 Page({
   data: {
@@ -343,7 +344,7 @@ Page({
   },
 
   // Check Answer (Practice Mode)
-  checkAnswer() {
+  async checkAnswer() {
     const { currentQuestion, selectedOption } = this.data
     const correctAnswer = currentQuestion?.answer || ''
     const isCorrect = selectedOption === correctAnswer
@@ -364,6 +365,16 @@ Page({
       correctAnswer,
       explanation: explanation || '暂无解析'
     })
+
+    // 如果答错，添加到错题本
+    if (!isCorrect && currentQuestion?.id) {
+      try {
+        await reviewService.addWrongQuestion(currentQuestion.id)
+        console.log('已加入错题本:', currentQuestion.id)
+      } catch (err) {
+        console.error('添加错题失败:', err)
+      }
+    }
   },
 
   // Go to Next Question

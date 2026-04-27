@@ -1,0 +1,71 @@
+<!-- pages/wrong-explanation/wrong-explanation.wxml - 错题解析页面 -->
+<view class="explanation-page">
+  <!-- 题目卡片 -->
+  <view class="question-card card">
+    <view class="card-header">
+      <view class="topic-badge">
+        <text class="topic-text text-small text-bold">{{topicTitle}}</text>
+      </view>
+      <text class="date-text text-small text-muted">{{dateLabel}}</text>
+    </view>
+
+    <view class="question-content-box">
+      <rich-text class="question-content" nodes="{{content}}"></rich-text>
+    </view>
+
+    <!-- 选项列表 -->
+    <view class="options-list">
+      <block wx:for="{{options}}" wx:key="key">
+        <view class="option-item {{item.key === correctAnswer ? 'correct' : ''}} {{item.key === userAnswer && item.key !== correctAnswer ? 'wrong' : ''}}">
+          <view class="option-left">
+            <view class="option-key-box {{item.key === correctAnswer ? 'correct-bg' : ''}} {{item.key === userAnswer && item.key !== correctAnswer ? 'wrong-bg' : ''}}">
+              <text class="option-key text-bold">{{item.key}}</text>
+            </view>
+          </view>
+          <view class="option-right">
+            <rich-text class="option-text" nodes="{{item.value}}"></rich-text>
+            <text class="option-tag" wx:if="{{item.key === correctAnswer}}">✓ 正确答案</text>
+            <text class="option-tag wrong-tag" wx:if="{{item.key === userAnswer && item.key !== correctAnswer}}">✗ 你的选择</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 答案结果 -->
+  <view class="result-card card">
+    <view class="result-header {{isCorrect ? 'success' : 'error'}}">
+      <text class="result-icon">{{isCorrect ? '✅' : '❌'}}</text>
+      <text class="result-text text-bold">{{isCorrect ? '回答正确' : '回答错误'}}</text>
+    </view>
+    <view class="answer-info">
+      <view class="answer-row">
+        <text class="answer-label">正确答案：</text>
+        <text class="answer-value correct text-bold">{{correctAnswer}}</text>
+      </view>
+      <view class="answer-row" wx:if="{{userAnswer}}">
+        <text class="answer-label">你的答案：</text>
+        <text class="answer-value {{isCorrect ? 'correct' : 'wrong'}} text-bold">{{userAnswer}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 解析 -->
+  <view class="explanation-card card" wx:if="{{explanation}}">
+    <view class="explanation-header">
+      <text class="explanation-icon">💡</text>
+      <text class="explanation-title text-bold">答案解析</text>
+    </view>
+    <rich-text class="explanation-content" nodes="{{explanation}}"></rich-text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <view class="retry-btn primary-bg" bindtap="retryQuestion">
+      <text class="retry-text text-bold">重练此题</text>
+    </view>
+    <view class="remove-btn outline-btn" bindtap="removeQuestion">
+      <text class="remove-text text-bold">移除错题</text>
+    </view>
+  </view>
+</view>

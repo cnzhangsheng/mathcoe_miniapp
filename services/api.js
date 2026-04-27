@@ -17,16 +17,20 @@ const request = (url, options = {}) => {
       return
     }
 
+    const startTime = Date.now()
+
     wx.request({
       url: app.globalData.baseUrl + url,
       method: options.method || 'GET',
       data: options.data || {},
+      timeout: 30000,  // 30秒超时
       header: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         ...options.header
       },
       success: (res) => {
+        console.log(`API ${url}: ${Date.now() - startTime}ms, status=${res.statusCode}`)
         if (res.statusCode === 200) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
@@ -41,12 +45,12 @@ const request = (url, options = {}) => {
           console.log('Server error:', res.data)
           resolve(null)
         } else {
-          reject(new Error(res.data?.detail || res.data?.message || 'Request failed'))
+          resolve(null)  // 其他错误也返回null，不reject
         }
       },
       fail: (err) => {
-        console.log('Request failed:', err)
-        resolve(null)
+        console.log(`API ${url} failed:`, err.errMsg || err)
+        resolve(null)  // 网络错误返回null，不reject
       }
     })
   })

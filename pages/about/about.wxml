@@ -1,0 +1,84 @@
+<!--pages/about/about.wxml - 关于页面 -->
+<view class="about-page">
+  <!-- Logo区域 -->
+  <view class="logo-section">
+    <view class="logo-box">
+      <text class="logo-icon">🧮</text>
+    </view>
+    <text class="app-name text-bold">袋鼠数学智练</text>
+    <text class="app-desc text-small text-muted">每天10分钟，数学思维突飞猛进</text>
+    <text class="app-version text-small text-muted">版本 1.0.0</text>
+  </view>
+
+  <!-- 关于竞赛 -->
+  <view class="info-card card">
+    <view class="info-header">
+      <view class="info-title-row flex-row">
+        <view class="info-icon-box">
+          <text>🏆</text>
+        </view>
+        <text class="info-title text-bold">袋鼠数学竞赛</text>
+      </view>
+    </view>
+    <view class="info-content">
+      <text class="info-text">袋鼠数学竞赛是全球最大的青少年数学竞赛之一，每年有超过600万学生参与。竞赛旨在通过有趣且具有挑战性的题目，激发学生对数学的兴趣和热情。</text>
+    </view>
+  </view>
+
+  <!-- 功能介绍 -->
+  <view class="info-card card">
+    <view class="info-header">
+      <view class="info-title-row flex-row">
+        <view class="info-icon-box">
+          <text>🎯</text>
+        </view>
+        <text class="info-title text-bold">核心功能</text>
+      </view>
+    </view>
+    <view class="feature-list">
+      <view class="feature-item">
+        <text class="feature-icon">📚</text>
+        <text class="feature-text">海量真题题库，覆盖所有知识点</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">📊</text>
+        <text class="feature-text">智能学习统计，追踪学习进度</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">❌</text>
+        <text class="feature-text">错题智能归档，针对性复习提升</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">🔥</text>
+        <text class="feature-text">每日打卡激励，养成学习习惯</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系我们 -->
+  <view class="info-card card">
+    <view class="info-header">
+      <view class="info-title-row flex-row">
+        <view class="info-icon-box">
+          <text>📧</text>
+        </view>
+        <text class="info-title text-bold">联系我们</text>
+      </view>
+    </view>
+    <view class="contact-list">
+      <view class="contact-item">
+        <text class="contact-label text-small text-muted">客服微信</text>
+        <text class="contact-value text-bold">mathcoe_service</text>
+      </view>
+      <view class="contact-item">
+        <text class="contact-label text-small text-muted">问题反馈</text>
+        <text class="contact-value text-bold">support@mathcoe.com</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 版权信息 -->
+  <view class="copyright">
+    <text class="copyright-text text-small text-muted">© 2025 MathCoe Team</text>
+  </view>
+</view>

@@ -2,10 +2,25 @@
 const { request } = require('./api')
 
 /**
+ * 获取专题列表
+ */
+const getTopics = async () => {
+  return request('/topics')
+}
+
+/**
  * 获取错题列表
  */
 const getWrongQuestions = async () => {
   return request('/favorites/wrong')
+}
+
+/**
+ * 添加错题
+ * @param {number} questionId - 题目ID
+ */
+const addWrongQuestion = async (questionId) => {
+  return request('/favorites/wrong', { method: 'POST', data: { question_id: questionId } })
 }
 
 /**
@@ -48,7 +63,9 @@ const removeFavorite = async (questionId) => {
 }
 
 module.exports = {
+  getTopics,
   getWrongQuestions,
+  addWrongQuestion,
   markMastered,
   removeWrongQuestion,
   getFavorites,

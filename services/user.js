@@ -23,6 +23,13 @@ const getAbilityRadar = () => {
 }
 
 /**
+ * 获取用户学习统计
+ */
+const getUserStats = () => {
+  return request('/users/stats')
+}
+
+/**
  * 更新用户信息
  * @param {object} data - 更新数据
  */
@@ -37,5 +44,6 @@ module.exports = {
   getUserInfo,
   getUserProgress,
   getAbilityRadar,
+  getUserStats,
   updateUserInfo
 }

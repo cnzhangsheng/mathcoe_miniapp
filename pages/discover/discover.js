@@ -7,9 +7,11 @@ Page({
   data: {
     loading: true,
     question: null,
+    selectedOption: null,  // 当前选中的选项
     showAnswer: false,
     isLiked: false,
-    isFavorited: false
+    isFavorited: false,
+    likeCount: 0
   },
 
   onLoad() {
@@ -25,7 +27,7 @@ Page({
 
   // 加载随机题目
   async loadRandomQuestion() {
-    this.setData({ loading: true, showAnswer: false })
+    this.setData({ loading: true, showAnswer: false, selectedOption: null })
 
     try {
       const token = wx.getStorageSync('token')
@@ -55,8 +57,11 @@ Page({
         this.setData({
           loading: false,
           question: formattedQuestion,
+          selectedOption: null,
+          showAnswer: false,
           isLiked: false,
-          isFavorited: false
+          isFavorited: false,
+          likeCount: Math.floor(Math.random() * 50) + 10  // 模拟点赞数
         })
       } else {
         this.setData({ loading: false })
@@ -69,15 +74,44 @@ Page({
     }
   },
 
-  // 显示/隐藏答案
+  // 选择选项
+  selectOption(e) {
+    if (this.data.showAnswer) return  // 已显示答案后不可再选
+
+    const option = e.currentTarget.dataset.option
+    this.setData({ selectedOption: option })
+  },
+
+  // 显示/隐藏答案（需要先选择选项）
   toggleAnswer() {
-    this.setData({ showAnswer: !this.data.showAnswer })
+    if (!this.data.selectedOption) {
+      wx.showToast({ title: '请先选择答案', icon: 'none' })
+      return
+    }
+
+    const { question, selectedOption } = this.data
+    const isCorrect = selectedOption === question.answer
+
+    this.setData({ showAnswer: true })
+
+    // 如果答错，添加到错题本（不阻塞）
+    if (!isCorrect) {
+      reviewService.addWrongQuestion(question.id).then(() => {
+        console.log('已加入错题本')
+      }).catch(err => {
+        console.error('添加错题失败:', err)
+      })
+    }
   },
 
   // 点赞
   toggleLike() {
-    this.setData({ isLiked: !this.data.isLiked })
-    if (this.data.isLiked) {
+    const { isLiked, likeCount } = this.data
+    this.setData({
+      isLiked: !isLiked,
+      likeCount: isLiked ? likeCount - 1 : likeCount + 1
+    })
+    if (!isLiked) {
       wx.showToast({ title: '已点赞', icon: 'success' })
     }
   },
@@ -111,6 +145,7 @@ Page({
 
   // 下一题
   nextQuestion() {
+    this.setData({ selectedOption: null, showAnswer: false })
     this.loadRandomQuestion()
   },
 

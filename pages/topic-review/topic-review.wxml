@@ -1,0 +1,62 @@
+<!--pages/topic-review/topic-review.wxml - 专题错题复习页面 -->
+<view class="topic-review-page">
+  <!-- 页面标题 -->
+  <view class="page-header card">
+    <view class="header-left flex-row">
+      <view class="topic-icon-box {{iconClass}}">
+        <text class="topic-icon">{{icon}}</text>
+      </view>
+      <view class="header-info">
+        <text class="header-title text-bold">{{title}}</text>
+        <text class="header-count text-small text-muted">错题 {{wrongCount}} 题</text>
+      </view>
+    </view>
+    <view class="start-btn primary-bg" bindtap="startReview">
+      <text class="start-text text-small text-bold">开始复习</text>
+    </view>
+  </view>
+
+  <!-- 错题列表 -->
+  <view class="section-card card">
+    <view class="section-header">
+      <text class="section-title text-bold">错题列表</text>
+    </view>
+
+    <block wx:if="{{questions.length > 0}}">
+      <view class="question-list">
+        <block wx:for="{{questions}}" wx:key="id">
+          <view class="question-item" bindtap="viewQuestion" data-question="{{item}}">
+            <view class="question-top flex-between">
+              <text class="retry-text text-small text-muted">重练 {{item.retry_count}} 次</text>
+              <text class="date-text text-small text-muted">{{item.dateLabel}}</text>
+            </view>
+
+            <view class="question-content">
+              <text>{{item.content}}</text>
+            </view>
+
+            <view class="question-bottom flex-between">
+              <text class="date-text text-small text-muted">{{item.dateLabel}}</text>
+              <view class="action-btns flex-row">
+                <view class="mini-btn primary-bg" catchtap="retryQuestion" data-id="{{item.question_id}}">
+                  <text class="mini-text text-small text-bold">重练</text>
+                </view>
+                <view class="mini-btn outline-btn" catchtap="removeWrong" data-id="{{item.question_id}}">
+                  <text class="mini-text text-small text-bold">移除</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <block wx:if="{{questions.length === 0}}">
+      <view class="empty-state">
+        <text class="empty-icon">🎉</text>
+        <text class="empty-title text-bold">该专题暂无错题</text>
+      </view>
+    </block>
+  </view>
+</view>

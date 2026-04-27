@@ -1,214 +1,174 @@
-// pages/profile/profile.js - 100%复刻 Me.tsx
+// pages/profile/profile.js - 我的页面（设置页面）
 const app = getApp()
+const userService = require('../../services/user')
 
 Page({
   data: {
+    loading: true,
     userInfo: null,
-    stats: [
-      { label: '错题本', value: '📚', page: '/pages/review/review' },
-      { label: '收藏夹', value: '⭐', page: '/pages/favorites/favorites' }
+    streakDays: 0,
+
+    // 年级
+    gradeLabels: [
+      { value: 'G1', label: '一年级', desc: 'Level A' },
+      { value: 'G2', label: '二年级', desc: 'Level A' },
+      { value: 'G3', label: '三年级', desc: 'Level B' },
+      { value: 'G4', label: '四年级', desc: 'Level B' },
+      { value: 'G5', label: '五年级', desc: 'Level C' },
+      { value: 'G6', label: '六年级', desc: 'Level C' }
     ],
-    selectedGrade: '三年级',
-    grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
     gradeIndex: 2,
-    calendarDays: [],
-    medals: [
-      { unlocked: true, level: 'L2', title: '初级关口' },
-      { unlocked: true, level: null, title: '几何大师' },
-      { unlocked: false, level: null, title: '锁定中' },
-      { unlocked: false, level: null, title: '锁定中' }
-    ],
-    certificates: [
-      { title: '2024 L2 全真模考高分证', level: '优秀' },
-      { title: '逻辑专题训练思维勋章', level: '专业' }
-    ],
-    showSettings: false,
+
+    // 设置
     dailyGoal: 10,
-    showHints: true,
-    examPressure: false,
-    loading: true
+    showGoalPicker: false,
+    showGradePicker: false
   },
 
   onLoad() {
-    this.initCalendar()
-    // 优先从 globalData 获取年级信息
-    if (app.globalData.userInfo?.grade) {
-      const grade = app.globalData.userInfo.grade
-      const gradeIndex = parseInt(grade.replace('G', '')) - 1
-      this.setData({
-        gradeIndex,
-        selectedGrade: this.data.grades[gradeIndex],
-        userInfo: app.globalData.userInfo
-      })
-    }
-    this.loadUserInfo()
+    this.loadData()
   },
 
-  initCalendar() {
-    const activeDays = [2, 5, 8, 12, 15, 18, 20, 22]
-    const days = []
-    for (let i = 1; i <= 28; i++) {
-      days.push({
-        day: i,
-        active: activeDays.includes(i - 1)
-      })
-    }
-    this.setData({ calendarDays: days })
-  },
+  async loadData() {
+    wx.showLoading({ title: '加载中...', mask: true })
 
-  async loadUserInfo() {
     try {
       const token = wx.getStorageSync('token')
       if (!token) {
+        wx.hideLoading()
         this.setData({ loading: false })
         return
       }
 
-      wx.request({
-        url: app.globalData.baseUrl + '/users/me',
-        header: { 'Authorization': `Bearer ${token}` },
-        success: (res) => {
-          if (res.data) {
-            // 存入 globalData
-            app.globalData.userInfo = res.data
-            // 根据 grade 设置 gradeIndex
-            if (res.data.grade) {
-              const gradeIndex = parseInt(res.data.grade.replace('G', '')) - 1
-              this.setData({
-                userInfo: res.data,
-                gradeIndex,
-                selectedGrade: this.data.grades[gradeIndex],
-                loading: false
-              })
-            } else {
-              this.setData({
-                userInfo: res.data,
-                loading: false
-              })
-            }
-          } else {
-            this.setData({ loading: false })
-          }
-        },
-        fail: () => {
-          this.setData({ loading: false })
-        }
-      })
+      // 加载用户信息
+      const userInfo = await userService.getUserInfo().catch(() => null)
+
+      if (userInfo) {
+        const gradeIndex = this.getGradeIndex(userInfo.grade)
+        this.setData({
+          userInfo,
+          gradeIndex,
+          streakDays: userInfo.streak_days || 0,
+          dailyGoal: userInfo.daily_goal || 10
+        })
+      }
+
+      wx.hideLoading()
+      this.setData({ loading: false })
     } catch (err) {
+      wx.hideLoading()
+      console.error('Load data failed:', err)
       this.setData({ loading: false })
     }
   },
 
-  updateGrade(grade) {
-    return new Promise((resolve, reject) => {
-      wx.request({
-        url: app.globalData.baseUrl + '/users/me',
-        method: 'PATCH',
-        header: { 'Authorization': `Bearer ${wx.getStorageSync('token')}` },
-        data: { grade },
-        success: (res) => {
-          if (res.statusCode === 200) {
-            resolve(res.data)
-          } else {
-            reject(res)
-          }
-        },
-        fail: reject
-      })
-    })
+  getGradeIndex(grade) {
+    if (!grade) return 2
+    const num = parseInt(grade.replace('G', '')) || 1
+    return Math.max(0, Math.min(5, num - 1))
   },
 
-  onGradeChange(e) {
-    const newIndex = e.detail.value
-    const oldIndex = this.data.gradeIndex
-    const oldGrade = this.data.selectedGrade
-
-    // 先更新本地状态
-    this.setData({
-      gradeIndex: newIndex,
-      selectedGrade: this.data.grades[newIndex]
-    })
-
-    // 计算 grade 值 (G1-G6)
-    const grade = `G${parseInt(newIndex) + 1}`
-
-    // 调用 API 保存
-    this.updateGrade(grade)
-      .then(() => {
-        // 成功后更新 globalData
-        if (app.globalData.userInfo) {
-          app.globalData.userInfo.grade = grade
-        }
-        wx.showToast({ title: '保存成功', icon: 'success' })
-      })
-      .catch(() => {
-        // 失败时回滚本地状态
-        this.setData({
-          gradeIndex: oldIndex,
-          selectedGrade: oldGrade
-        })
-        wx.showToast({ title: '保存失败', icon: 'error' })
-      })
+  // 年级选择
+  selectGrade(e) {
+    const newIndex = e.currentTarget.dataset.index
+    this.updateGrade(newIndex)
+    this.closeGradePicker()
   },
 
-  goToRecords() {
-    wx.navigateTo({ url: '/pages/records/records' })
-  },
+  async updateGrade(newIndex) {
+    const grade = this.data.gradeLabels[newIndex].value
 
-  goToFavorites() {
-    wx.navigateTo({ url: '/pages/favorites/favorites' })
-  },
-
-  goToReview() {
-    wx.switchTab({ url: '/pages/review/review' })
-  },
-
-  goToStat(e) {
-    const page = e.currentTarget.dataset.page
-    if (page === '/pages/review/review') {
-      wx.switchTab({ url: page })
-    } else {
-      wx.navigateTo({ url: page })
+    try {
+      await userService.updateUserInfo({ grade })
+      this.setData({ gradeIndex: newIndex })
+      if (app.globalData.userInfo) {
+        app.globalData.userInfo.grade = grade
+      }
+      wx.showToast({ title: '已更新', icon: 'success' })
+    } catch (err) {
+      wx.showToast({ title: '更新失败', icon: 'none' })
     }
   },
 
-  openSettings() {
-    this.setData({ showSettings: true })
+  openGradePicker() {
+    this.setData({ showGradePicker: true })
   },
 
-  closeSettings() {
-    this.setData({ showSettings: false })
+  closeGradePicker() {
+    this.setData({ showGradePicker: false })
   },
 
-  setDailyGoal(goal) {
-    this.setData({ dailyGoal: goal })
+  // 每日目标
+  openGoalPicker() {
+    this.setData({ showGoalPicker: true })
   },
 
-  toggleHints() {
-    this.setData({ showHints: !this.data.showHints })
+  closeGoalPicker() {
+    this.setData({ showGoalPicker: false })
   },
 
-  togglePressure() {
-    this.setData({ examPressure: !this.data.examPressure })
+  async setDailyGoal(e) {
+    const goal = e.currentTarget.dataset.goal
+
+    try {
+      await userService.updateUserInfo({ daily_goal: goal })
+      this.setData({ dailyGoal: goal })
+      wx.setStorageSync('dailyGoal', goal)  // 同时保存到本地
+      this.closeGoalPicker()
+      wx.showToast({ title: '已设置', icon: 'success' })
+    } catch (err) {
+      wx.showToast({ title: '设置失败', icon: 'none' })
+    }
   },
 
-  saveSettings() {
-    this.setData({ showSettings: false })
-    wx.showToast({ title: '保存成功', icon: 'success' })
+  // 关于页面
+  goToAbout() {
+    wx.navigateTo({ url: '/pages/about/about' })
   },
 
+  // 清除缓存
+  clearCache() {
+    wx.showModal({
+      title: '提示',
+      content: '确定要清除本地缓存吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 保留登录信息
+          const token = wx.getStorageSync('token')
+          const userId = wx.getStorageSync('userId')
+
+          // 清除其他缓存
+          wx.clearStorageSync()
+
+          // 恢复登录信息
+          if (token) wx.setStorageSync('token', token)
+          if (userId) wx.setStorageSync('userId', userId)
+
+          wx.showToast({ title: '已清除', icon: 'success' })
+        }
+      }
+    })
+  },
+
+  // 退出登录
   logout() {
     wx.showModal({
       title: '提示',
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
-          wx.removeStorageSync('token')
-          wx.removeStorageSync('userId')
+          wx.clearStorageSync()
           app.globalData.isLoggedIn = false
           wx.redirectTo({ url: '/pages/login/login' })
         }
       }
     })
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '袋鼠数学智练',
+      path: '/pages/index/index'
+    }
   }
 })

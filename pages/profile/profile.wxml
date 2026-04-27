@@ -1,189 +1,152 @@
-<!--pages/profile/profile.wxml - 100%复刻 Me.tsx-->
-<view class="me-container">
+<!--pages/profile/profile.wxml - 我的页面（设置页面） -->
+<view class="profile-page">
+
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-state">
-    <text>加载中...</text>
+    <view class="loading-card">
+      <view class="loading-icon-box">
+        <text class="loading-icon">🔄</text>
+      </view>
+      <text class="loading-text text-small">正在加载...</text>
+    </view>
   </view>
 
   <block wx:if="{{!loading}}">
-    <!-- Profile Header -->
-    <view class="profile-header card">
-      <view class="avatar-wrapper">
-        <image class="profile-avatar" src="{{userInfo.avatar_url || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-        <view class="edit-btn" bindtap="openSettings">
-          <text class="edit-icon">✏️</text>
+    <!-- 用户信息 -->
+    <view class="user-card card">
+      <view class="user-header flex-row">
+        <view class="avatar-wrapper">
+          <image class="user-avatar" src="{{userInfo.avatar_url || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
         </view>
-      </view>
-      <view class="profile-info">
-        <view class="name-row">
-          <text class="profile-name">{{userInfo.nickname || '数学小达人'}}</text>
-          <view class="level-badge">
-            <text class="level-icon">🏆</text>
-            <text class="level-text">LV.12</text>
+        <view class="user-info">
+          <text class="user-name text-bold">{{userInfo.nickname || '数学小达人'}}</text>
+          <view class="streak-row" wx:if="{{streakDays > 0}}">
+            <text class="streak-icon">🔥</text>
+            <text class="streak-text text-small">连续学习 {{streakDays}} 天</text>
           </view>
         </view>
-        <picker mode="selector" range="{{grades}}" value="{{gradeIndex}}" bindchange="onGradeChange">
-          <view class="grade-picker">
-            <text class="grade-text">{{selectedGrade}}</text>
-            <text class="picker-arrow">›</text>
-          </view>
-        </picker>
-      </view>
-      <view class="settings-btn" bindtap="openSettings">
-        <text class="settings-icon">⚡</text>
       </view>
     </view>
 
-    <!-- Quick Access -->
-    <view class="stats-row">
-      <block wx:for="{{stats}}" wx:key="label">
-        <view class="stat-card card" bindtap="goToStat" data-page="{{item.page}}">
-          <text class="stat-icon">{{item.value}}</text>
-          <text class="stat-label">{{item.label}}</text>
+    <!-- 学习设置 -->
+    <view class="section-card card">
+      <view class="section-header">
+        <text class="section-title text-bold">学习设置</text>
+      </view>
+
+      <view class="menu-item" bindtap="openGoalPicker">
+        <view class="menu-left flex-row">
+          <view class="menu-icon-box green-bg">
+            <text class="menu-icon">🎯</text>
+          </view>
+          <text class="menu-text">每日目标</text>
         </view>
-      </block>
-    </view>
-
-    <!-- Calendar -->
-    <view class="calendar-card card">
-      <view class="calendar-header flex-between">
-        <view class="flex-row">
-          <text class="calendar-icon">📅</text>
-          <text class="calendar-title text-bold">备考日历</text>
+        <view class="menu-right flex-row">
+          <text class="menu-value text-bold primary-color">{{dailyGoal}} 题</text>
+          <text class="menu-arrow">›</text>
         </view>
-        <text class="calendar-sub text-muted">本月坚持 18 天</text>
       </view>
-      <view class="calendar-grid">
-        <block wx:for="{{calendarDays}}" wx:key="day">
-          <view class="calendar-day {{item.active ? 'active' : ''}}">
-            <text>{{item.day}}</text>
-          </view>
-        </block>
-      </view>
-    </view>
 
-    <!-- Honor Wall -->
-    <view class="honor-card card">
-      <view class="honor-header flex-between">
-        <view class="flex-row">
-          <view class="honor-icon-box">
-            <text>🏅</text>
+      <view class="menu-item" bindtap="openGradePicker">
+        <view class="menu-left flex-row">
+          <view class="menu-icon-box purple-bg">
+            <text class="menu-icon">📚</text>
           </view>
-          <view>
-            <text class="honor-title text-bold">全景荣誉墙</text>
-            <text class="honor-sub text-small text-muted">KANGAROO HALL OF FAME</text>
-          </view>
+          <text class="menu-text">学习年级</text>
         </view>
-        <text class="arrow">›</text>
-      </view>
-
-      <!-- Medals Grid -->
-      <view class="medals-grid">
-        <block wx:for="{{medals}}" wx:key="title">
-          <view class="medal-item {{item.unlocked ? 'unlocked' : 'locked'}}">
-            <view class="medal-box {{item.unlocked ? 'gradient-bg' : 'gray-bg'}}">
-              <text class="medal-emoji">{{item.unlocked ? '🔷' : '🔒'}}</text>
-              <view wx:if="{{item.level}}" class="level-tag">{{item.level}}</view>
-            </view>
-            <text class="medal-title">{{item.title}}</text>
-          </view>
-        </block>
-      </view>
-
-      <!-- Certificates -->
-      <view class="cert-section">
-        <text class="cert-header text-small text-muted">官方认证证书 (2)</text>
-        <block wx:for="{{certificates}}" wx:key="title">
-          <view class="cert-item">
-            <text class="cert-check">✓</text>
-            <text class="cert-title">{{item.title}}</text>
-            <text class="cert-badge">{{item.level}}</text>
-          </view>
-        </block>
-      </view>
-
-      <view class="view-all-btn">
-        <text>查看完整成长荣誉簿 (12) ›</text>
+        <view class="menu-right flex-row">
+          <text class="menu-value text-bold">{{gradeLabels[gradeIndex].label}}</text>
+          <text class="menu-arrow">›</text>
+        </view>
       </view>
     </view>
 
-    <!-- Menu -->
-    <view class="menu-card">
-      <view class="menu-item" bindtap="openSettings">
-        <view class="flex-row">
+    <!-- 系统设置 -->
+    <view class="section-card card">
+      <view class="section-header">
+        <text class="section-title text-bold">系统设置</text>
+      </view>
+
+      <view class="menu-item" bindtap="goToAbout">
+        <view class="menu-left flex-row">
           <view class="menu-icon-box gray-bg">
-            <text class="menu-icon">✏️</text>
+            <text class="menu-icon">📖</text>
           </view>
-          <text class="menu-text">备考设置</text>
+          <text class="menu-text">关于袋鼠数学</text>
         </view>
-        <text class="arrow">›</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item" bindtap="clearCache">
+        <view class="menu-left flex-row">
+          <view class="menu-icon-box blue-bg">
+            <text class="menu-icon">🗑️</text>
+          </view>
+          <text class="menu-text">清除缓存</text>
+        </view>
+        <text class="menu-arrow">›</text>
       </view>
     </view>
 
-    <!-- Logout -->
+    <!-- 退出登录 -->
     <view class="logout-btn" bindtap="logout">
-      <text>退出备考模式</text>
+      <text class="logout-text text-bold">退出登录</text>
+    </view>
+
+    <!-- 版本信息 -->
+    <view class="version-info">
+      <text class="version-text text-small text-muted">版本 1.0.0</text>
     </view>
   </block>
 
-  <!-- Settings Modal -->
-  <view wx:if="{{showSettings}}" class="settings-modal">
-    <view class="settings-header flex-between">
-      <view class="back-btn" bindtap="closeSettings">
-        <text>‹</text>
+  <!-- 每日目标选择弹窗 -->
+  <view wx:if="{{showGoalPicker}}" class="picker-modal">
+    <view class="picker-mask" bindtap="closeGoalPicker"></view>
+    <view class="picker-content">
+      <view class="picker-header flex-between">
+        <text class="picker-title text-bold">选择每日目标</text>
+        <view class="picker-close" bindtap="closeGoalPicker">
+          <text>✕</text>
+        </view>
       </view>
-      <text class="settings-title text-bold">备考设置</text>
-      <view class="placeholder"></view>
+      <view class="picker-options">
+        <view class="picker-option {{dailyGoal === 5 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{5}}">
+          <text class="option-text text-bold">5 题/天</text>
+          <text class="option-desc text-small text-muted">轻松入门</text>
+        </view>
+        <view class="picker-option {{dailyGoal === 10 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{10}}">
+          <text class="option-text text-bold">10 题/天</text>
+          <text class="option-desc text-small text-muted">推荐</text>
+        </view>
+        <view class="picker-option {{dailyGoal === 15 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{15}}">
+          <text class="option-text text-bold">15 题/天</text>
+          <text class="option-desc text-small text-muted">进阶提升</text>
+        </view>
+        <view class="picker-option {{dailyGoal === 20 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{20}}">
+          <text class="option-text text-bold">20 题/天</text>
+          <text class="option-desc text-small text-muted">冲刺满分</text>
+        </view>
+      </view>
     </view>
+  </view>
 
-    <view class="settings-content">
-      <!-- Daily Goal -->
-      <view class="setting-section">
-        <view class="flex-between">
-          <text class="setting-label text-bold">每日练习目标</text>
-          <text class="setting-value primary-color text-bold">{{dailyGoal}} 题</text>
-        </view>
-        <view class="goal-options">
-          <view class="goal-btn {{dailyGoal === 5 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{5}}">5</view>
-          <view class="goal-btn {{dailyGoal === 10 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{10}}">10</view>
-          <view class="goal-btn {{dailyGoal === 15 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{15}}">15</view>
-          <view class="goal-btn {{dailyGoal === 20 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{20}}">20</view>
+  <!-- 年级选择弹窗 -->
+  <view wx:if="{{showGradePicker}}" class="picker-modal">
+    <view class="picker-mask" bindtap="closeGradePicker"></view>
+    <view class="picker-content">
+      <view class="picker-header flex-between">
+        <text class="picker-title text-bold">选择学习年级</text>
+        <view class="picker-close" bindtap="closeGradePicker">
+          <text>✕</text>
         </view>
       </view>
-
-      <!-- Toggles -->
-      <view class="toggle-item card">
-        <view class="flex-row">
-          <view class="toggle-icon-box blue-bg">
-            <text>💡</text>
+      <view class="picker-options">
+        <block wx:for="{{gradeLabels}}" wx:key="value">
+          <view class="picker-option {{gradeIndex === index ? 'active' : ''}}" bindtap="selectGrade" data-index="{{index}}">
+            <text class="option-text text-bold">{{item.label}}</text>
+            <text class="option-desc text-small text-muted">{{item.desc}}</text>
           </view>
-          <view>
-            <text class="toggle-title text-bold">显示实时解析</text>
-            <text class="toggle-desc text-small text-muted">答对后立即查看思路</text>
-          </view>
-        </view>
-        <view class="toggle-switch {{showHints ? 'on' : 'off'}}" bindtap="toggleHints">
-          <view class="toggle-dot"></view>
-        </view>
-      </view>
-
-      <view class="toggle-item card">
-        <view class="flex-row">
-          <view class="toggle-icon-box rose-bg">
-            <text>⏱️</text>
-          </view>
-          <view>
-            <text class="toggle-title text-bold">开启压力模考</text>
-            <text class="toggle-desc text-small text-muted">自动隐藏干扰，限时挑战</text>
-          </view>
-        </view>
-        <view class="toggle-switch {{examPressure ? 'on' : 'off'}}" bindtap="togglePressure">
-          <view class="toggle-dot"></view>
-        </view>
-      </view>
-
-      <view class="save-btn" bindtap="saveSettings">
-        <text>保存并应用</text>
+        </block>
       </view>
     </view>
   </view>

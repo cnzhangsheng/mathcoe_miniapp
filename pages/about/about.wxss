@@ -1,0 +1,160 @@
+/* pages/about/about.wxss */
+
+.about-page {
+  padding: 40rpx 20rpx;
+  padding-bottom: 80rpx;
+  background-color: #F8F8F8;
+  min-height: 100vh;
+}
+
+/* Logo Section */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0;
+  margin-bottom: 24rpx;
+}
+
+.logo-box {
+  width: 120rpx;
+  height: 120rpx;
+  background-color: #D1FAE5;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.logo-icon {
+  font-size: 56rpx;
+}
+
+.app-name {
+  font-size: 40rpx;
+  color: rgba(0, 0, 0, 0.9);
+  margin-bottom: 12rpx;
+}
+
+.app-desc {
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 8rpx;
+}
+
+.app-version {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Info Card */
+.info-card {
+  border-radius: 32rpx;
+  margin-bottom: 24rpx;
+  overflow: hidden;
+}
+
+.info-header {
+  padding: 24rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.03);
+}
+
+.info-title-row {
+  gap: 12rpx;
+}
+
+.info-icon-box {
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-title {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.info-content {
+  padding: 24rpx;
+}
+
+.info-text {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.6;
+}
+
+/* Feature List */
+.feature-list {
+  padding: 16rpx 24rpx;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 0;
+}
+
+.feature-icon {
+  font-size: 28rpx;
+}
+
+.feature-text {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Contact List */
+.contact-list {
+  padding: 16rpx 24rpx;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+}
+
+.contact-label {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.contact-value {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+/* Copyright */
+.copyright {
+  text-align: center;
+  padding: 32rpx;
+}
+
+.copyright-text {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* Utility */
+.card {
+  background-color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-small {
+  font-size: 24rpx;
+}
+
+.text-muted {
+  color: rgba(0, 0, 0, 0.4);
+}

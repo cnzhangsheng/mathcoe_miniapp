@@ -1,78 +1,128 @@
-<!-- pages/discover/discover.wxml -->
-<view class="discover-container">
+<!-- pages/discover/discover.wxml - 参考专题题目详情页面布局 -->
+<view class="discover-page">
+
   <!-- 加载状态 -->
-  <view wx:if="{{loading}}" class="loading-state">
-    <text>加载中...</text>
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-card">
+      <view class="loading-icon-box">
+        <text class="loading-icon">🔄</text>
+      </view>
+      <text class="loading-text text-small">正在加载题目...</text>
+    </view>
   </view>
 
+  <!-- 无题目状态 -->
+  <view class="empty-state" wx:if="{{!loading && !question}}">
+    <view class="empty-card">
+      <view class="empty-icon-box">
+        <text class="empty-icon">📚</text>
+      </view>
+      <text class="empty-title text-bold">暂无题目</text>
+      <text class="empty-sub text-small">请稍后再试或刷新页面</text>
+      <view class="empty-btn" bindtap="loadRandomQuestion">
+        <text class="empty-btn-text text-bold">重新加载</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 题目内容 -->
   <block wx:if="{{!loading && question}}">
-    <!-- 题目卡片 -->
+    <!-- Question Card -->
     <view class="question-card">
-      <!-- 题目内容 -->
+      <!-- 题目内容使用 rich-text 渲染 -->
       <view class="question-content-box">
-        <rich-text class="question-content" nodes="{{question.content}}"></rich-text>
+        <rich-text class="question-content" nodes="{{question.content || '题目内容'}}"></rich-text>
       </view>
 
-      <!-- 选项列表 -->
-      <view class="options-list" wx:if="{{question.options && question.options.length > 0}}">
+      <!-- Options 使用 rich-text 渲染 -->
+      <view class="options-list">
         <block wx:for="{{question.options}}" wx:key="label">
-          <view class="option-item">
-            <view class="option-label-box">
-              <text class="option-label">{{item.label}}</text>
+          <view class="option-item {{selectedOption === item.label ? 'selected' : ''}} {{showAnswer && question.answer === item.label ? 'correct' : ''}} {{showAnswer && selectedOption === item.label && question.answer !== item.label ? 'wrong' : ''}}"
+            data-option="{{item.label}}"
+            bindtap="selectOption">
+            <view class="option-label-box {{selectedOption === item.label ? 'active' : ''}} {{showAnswer && question.answer === item.label ? 'correct-label' : ''}} {{showAnswer && selectedOption === item.label && question.answer !== item.label ? 'wrong-label' : ''}}">
+              <text class="option-label text-bold">{{item.label}}</text>
             </view>
-            <rich-text class="option-text" nodes="{{item.text}}"></rich-text>
+            <rich-text class="option-text {{selectedOption === item.label ? 'active-text' : ''}}" nodes="{{item.text || ''}}"></rich-text>
+            <text class="option-status" wx:if="{{showAnswer && question.answer === item.label}}">✓</text>
+            <text class="option-status wrong-status" wx:if="{{showAnswer && selectedOption === item.label && question.answer !== item.label}}">✗</text>
           </view>
         </block>
       </view>
+    </view>
 
-      <!-- 点赞和收藏按钮 -->
-      <view class="action-buttons">
-        <view class="action-btn {{isLiked ? 'active' : ''}}" bindtap="toggleLike">
+    <!-- Action Bar: Like + Bookmark + View Answer -->
+    <view class="action-bar" wx:if="{{!showAnswer}}">
+      <view class="action-icons">
+        <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
           <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
-          <text class="action-text">{{isLiked ? '已点赞' : '点赞'}}</text>
+          <text class="action-count">{{likeCount || 0}}</text>
         </view>
-        <view class="action-btn {{isFavorited ? 'active' : ''}}" bindtap="toggleFavorite">
-          <text class="action-icon">{{isFavorited ? '❤️' : '🤍'}}</text>
+        <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
+          <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
           <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
         </view>
       </view>
-
-      <!-- 查看答案按钮 -->
-      <view class="answer-btn" bindtap="toggleAnswer">
-        <text class="answer-btn-text">{{showAnswer ? '隐藏答案' : '查看答案'}}</text>
-      </view>
-
-      <!-- 答案和解析 -->
-      <view class="answer-section" wx:if="{{showAnswer}}">
-        <view class="answer-box">
-          <view class="answer-marker"></view>
-          <view class="answer-content">
-            <text class="answer-label">正确答案</text>
-            <text class="answer-value">{{question.answer}}</text>
-          </view>
-        </view>
-
-        <view class="explanation-box">
-          <view class="explanation-marker"></view>
-          <view class="explanation-content">
-            <text class="explanation-label">题目解析</text>
-            <rich-text class="explanation-text" nodes="{{question.explanation}}"></rich-text>
-          </view>
-        </view>
+      <view class="view-answer-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="toggleAnswer">
+        <text class="view-answer-text text-bold">查看答案</text>
       </view>
     </view>
 
-    <!-- 下一题按钮 -->
-    <view class="next-btn" bindtap="nextQuestion">
-      <text class="next-btn-text">下一题</text>
+    <!-- Analysis Section (after showAnswer) -->
+    <view class="analysis-section" wx:if="{{showAnswer}}">
+      <view class="analysis-header flex-row">
+        <text class="analysis-icon">💡</text>
+        <text class="analysis-title text-small text-bold">答案解析</text>
+      </view>
+
+      <view class="analysis-card">
+        <!-- Correct Answer -->
+        <view class="answer-row flex-row">
+          <view class="answer-box">
+            <text class="answer-letter text-bold">{{question.answer}}</text>
+          </view>
+          <view class="answer-info">
+            <text class="answer-title text-bold">正确答案：选项 {{question.answer}}</text>
+          </view>
+        </view>
+
+        <!-- Explanation -->
+        <view class="logic-box">
+          <text class="logic-label text-xs text-bold">题目解析</text>
+          <rich-text class="logic-text" nodes="{{question.explanation || '暂无解析'}}"></rich-text>
+        </view>
+
+        <!-- Key Point -->
+        <view class="key-point-box" wx:if="{{question.difficulty}}">
+          <view class="key-icon-box">
+            <text class="key-icon">⭐</text>
+          </view>
+          <view class="key-content">
+            <text class="key-label text-xs text-bold">难度等级：</text>
+            <text class="key-text text-xs">{{question.difficulty}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Action Buttons (after answer) -->
+      <view class="action-bar-after">
+        <view class="action-icons">
+          <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+            <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
+          </view>
+          <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
+            <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Next Button -->
+      <view class="next-section">
+        <view class="next-btn" bindtap="nextQuestion">
+          <text class="next-text text-bold">下一题挑战</text>
+        </view>
+      </view>
     </view>
   </block>
 
-  <!-- 无题目状态 -->
-  <view wx:if="{{!loading && !question}}" class="empty-state">
-    <text class="empty-text">暂无题目，请稍后再试</text>
-    <view class="retry-btn" bindtap="loadRandomQuestion">
-      <text class="retry-text">重新加载</text>
-    </view>
-  </view>
 </view>
