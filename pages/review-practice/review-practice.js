@@ -6,6 +6,7 @@ Page({
   data: {
     loading: true,
     questionIds: [],
+    topicId: 0,  // 当前筛选的专题 ID
     questions: [],
     currentIndex: 0,
     totalQuestions: 0,
@@ -25,6 +26,9 @@ Page({
   },
 
   onLoad(options) {
+    const topicId = parseInt(options.topicId) || 0
+    this.setData({ topicId })
+
     if (options.ids) {
       const ids = options.ids.split(',').map(id => parseInt(id))
       this.setData({ questionIds: ids, totalQuestions: ids.length })
@@ -69,13 +73,15 @@ Page({
         this.setData({
           loading: false,
           questions,
+          totalQuestions: questions.length,
           currentIndex: 0,
           currentQuestion: questions[0],
           progress: 100 / questions.length,
           correctCount: 0,
           selectedAnswer: '',
           showResult: false,
-          isCorrect: false
+          isCorrect: false,
+          completed: false
         })
         this.updateQuestionMeta(questions[0])
       } else {
@@ -172,9 +178,83 @@ Page({
   },
 
   goReview() {
-    // 重新加载最新的错题列表（排除已做对的题目）
+    // 继续练习：重新加载当前专题下的最新错题
     this.setData({ loading: true, completed: false })
-    this.loadQuestions(this.data.questionIds)
+    this.loadLatestWrongQuestions()
+  },
+
+  async loadLatestWrongQuestions() {
+    wx.showLoading({ title: '加载中...', mask: true })
+
+    try {
+      // 获取错题列表
+      const wrongQuestions = await reviewService.getWrongQuestions() || []
+
+      // 根据专题筛选
+      let filtered = wrongQuestions
+      if (this.data.topicId > 0) {
+        filtered = wrongQuestions.filter(q => parseInt(q.question_topic_id) === this.data.topicId)
+      }
+
+      if (filtered.length === 0) {
+        wx.hideLoading()
+        wx.showToast({ title: '该专题暂无错题', icon: 'none' })
+        setTimeout(() => {
+          wx.switchTab({ url: '/pages/review/review' })
+        }, 1500)
+        return
+      }
+
+      // 随机抽取最多10题
+      const shuffled = filtered.sort(() => Math.random() - 0.5)
+      const selected = shuffled.slice(0, 10)
+
+      // 转换题目格式
+      const questions = selected.map(wrong => {
+        const options = (wrong.question_options || []).map(opt => ({
+          key: opt.label || opt.key,
+          value: opt.text || opt.value || opt.content?.text || ''
+        }))
+
+        return {
+          id: wrong.id,
+          question_id: wrong.question_id,
+          topic_id: wrong.question_topic_id,
+          topicTitle: this.getTopicTitle(wrong.question_topic_id),
+          content: wrong.question_content?.text || wrong.question_content || '',
+          options: options,
+          answer: wrong.question_answer,
+          explanation: wrong.question_explanation?.text || wrong.question_explanation || '',
+          difficulty: wrong.question_difficulty || 'L2',
+          question_type: wrong.question_type || 'single'
+        }
+      })
+
+      const questionIds = questions.map(q => q.question_id)
+
+      this.setData({
+        loading: false,
+        questions,
+        questionIds,
+        totalQuestions: questions.length,
+        currentIndex: 0,
+        currentQuestion: questions[0],
+        progress: 100 / questions.length,
+        correctCount: 0,
+        selectedAnswer: '',
+        showResult: false,
+        isCorrect: false,
+        completed: false
+      })
+      this.updateQuestionMeta(questions[0])
+
+      wx.hideLoading()
+    } catch (err) {
+      wx.hideLoading()
+      console.error('Load questions failed:', err)
+      wx.showToast({ title: '加载失败', icon: 'none' })
+      this.setData({ loading: false })
+    }
   },
 
   onShareAppMessage() {

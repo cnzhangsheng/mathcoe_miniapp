@@ -251,10 +251,11 @@ Page({
     const shuffled = filteredWrong.sort(() => Math.random() - 0.5)
     const selected = shuffled.slice(0, 10)
 
-    // 构建答题卡数据并跳转到练习页面
+    // 构建答题卡数据并跳转到练习页面，传递专题 ID
     const questionIds = selected.map(q => q.question_id)
+    const topicId = this.data.selectedTopicId || 0
     wx.navigateTo({
-      url: `/pages/review-practice/review-practice?ids=${questionIds.join(',')}`
+      url: `/pages/review-practice/review-practice?ids=${questionIds.join(',')}&topicId=${topicId}`
     })
   },
 

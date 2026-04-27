@@ -10,17 +10,11 @@
 
   <!-- 练习内容 -->
   <block wx:if="{{!loading && !completed && currentQuestion}}">
-    <!-- 进度指示 -->
-    <view class="progress-bar">
-      <view class="progress-fill" style="width: {{progress}}%;"></view>
-    </view>
-    <view class="progress-text">{{currentIndex + 1}} / {{totalQuestions}}</view>
-
     <!-- 题目卡片 -->
     <view class="question-card card">
       <view class="question-header flex-between">
-        <text class="question-title text-bold">题目{{currentIndex + 1}}</text>
-        <text class="question-type text-small text-muted">{{questionType}}</text>
+        <text class="question-title text-bold">题目{{currentIndex + 1}}（{{questionType}}）</text>
+        <text class="question-count text-muted">{{currentIndex + 1}}/{{totalQuestions}}</text>
       </view>
 
       <view class="question-content">
