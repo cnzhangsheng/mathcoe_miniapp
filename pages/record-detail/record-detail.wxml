@@ -1,0 +1,104 @@
+<!--pages/record-detail/record-detail.wxml - 答题记录题目详情 -->
+<view class="detail-page">
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-card">
+      <view class="loading-icon-box">
+        <text class="loading-icon">🔄</text>
+      </view>
+      <text class="loading-text text-small">正在加载...</text>
+    </view>
+  </view>
+
+  <!-- 题目内容 -->
+  <block wx:if="{{!loading && question}}">
+    <!-- 题目信息 -->
+    <view class="question-info-row">
+      <text class="topic-badge text-small text-bold">{{topicTitle}}</text>
+      <text class="question-type-badge text-small text-muted">（{{questionType}}）</text>
+    </view>
+
+    <!-- Question Card -->
+    <view class="question-card">
+      <!-- 题目内容 -->
+      <view class="question-content-box">
+        <rich-text class="question-content" nodes="{{question.content || '题目内容'}}"></rich-text>
+      </view>
+
+      <!-- Options -->
+      <view class="options-list">
+        <block wx:for="{{question.options}}" wx:key="label">
+          <view class="option-item {{userAnswer === item.label ? 'selected' : ''}} {{question.answer === item.label ? 'correct' : ''}} {{userAnswer === item.label && question.answer !== item.label ? 'wrong' : ''}}">
+            <view class="option-label-box {{userAnswer === item.label ? (question.answer === item.label ? 'correct-label' : 'wrong-label') : ''}} {{question.answer === item.label && userAnswer !== item.label ? 'correct-label' : ''}}">
+              <text class="option-label text-bold">{{item.label}}</text>
+            </view>
+            <rich-text class="option-text {{userAnswer === item.label || question.answer === item.label ? 'active-text' : ''}}" nodes="{{item.text || ''}}"></rich-text>
+            <text class="option-status" wx:if="{{question.answer === item.label}}">✓</text>
+            <text class="option-status wrong-status" wx:if="{{userAnswer === item.label && question.answer !== item.label}}">✗</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- User Answer Info -->
+    <view class="answer-info-section">
+      <view class="answer-info-card">
+        <view class="answer-row flex-row">
+          <view class="answer-box {{isCorrect ? 'correct-box' : 'wrong-box'}}">
+            <text class="answer-letter text-bold">{{userAnswer}}</text>
+          </view>
+          <view class="answer-info">
+            <text class="answer-title text-bold">你的答案：{{userAnswer}}</text>
+            <text class="answer-sub text-small {{isCorrect ? 'correct-text' : 'wrong-text'}}">{{isCorrect ? '回答正确 ✓' : '回答错误 ✗'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Analysis Section -->
+    <view class="analysis-section">
+      <view class="analysis-header flex-row">
+        <text class="analysis-icon">💡</text>
+        <text class="analysis-title text-small text-bold">答案解析</text>
+      </view>
+
+      <view class="analysis-card">
+        <!-- Correct Answer -->
+        <view class="correct-answer-row flex-row">
+          <view class="correct-answer-box">
+            <text class="correct-letter text-bold">{{question.answer}}</text>
+          </view>
+          <view class="correct-info">
+            <text class="correct-title text-bold">正确答案：选项 {{question.answer}}</text>
+          </view>
+        </view>
+
+        <!-- Explanation -->
+        <view class="logic-box">
+          <text class="logic-label text-xs text-bold">题目解析</text>
+          <rich-text class="logic-text" nodes="{{question.explanation || '暂无解析'}}"></rich-text>
+        </view>
+
+        <!-- Difficulty -->
+        <view class="key-point-box" wx:if="{{question.difficulty}}">
+          <view class="key-icon-box">
+            <text class="key-icon">⭐</text>
+          </view>
+          <view class="key-content">
+            <text class="key-label text-xs text-bold">难度等级：</text>
+            <text class="key-text text-xs">{{question.difficulty}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Back Button -->
+    <view class="back-section">
+      <view class="back-btn" bindtap="goBack">
+        <text class="back-text text-bold">返回列表</text>
+      </view>
+    </view>
+  </block>
+
+</view>

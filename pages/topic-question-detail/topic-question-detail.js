@@ -1,5 +1,7 @@
 // pages/topic-question-detail/topic-question-detail.js - 100%复刻 kangaroo-math-brain TopicDetail.tsx
 const practiceService = require('../../services/practice')
+const discoverService = require('../../services/discover')
+const reviewService = require('../../services/review')
 const app = getApp()
 
 Page({
@@ -13,6 +15,7 @@ Page({
     totalQuestions: 0,
     question: null,
     questionContentHtml: '',
+    questionTypeText: '单选题',
     options: [],
     selectedOption: null,
     isSubmitted: false,
@@ -68,21 +71,40 @@ Page({
       // 保存所有题目
       this.questionsList = result.questions
       const firstQuestion = result.questions[0]
+
+      // 获取点赞状态和收藏状态
+      const likeStatus = await discoverService.getLikeStatus(firstQuestion.id).catch(() => null)
+      const isLiked = likeStatus?.is_liked || false
+      const likeCount = likeStatus?.like_count || 0
+
+      // 检查是否已收藏
+      const isBookmarked = await reviewService.isFavorited(firstQuestion.id).catch(() => false)
+
       this.setData({
         sessionId: result.session_id,
         totalQuestions: result.questions.length,
         question: firstQuestion,
         questions: result.questions,
         questionContentHtml: this.extractContentHtml(firstQuestion),
+        questionTypeText: this.getQuestionTypeText(firstQuestion),
         options: this.formatOptions(firstQuestion.options),
-        isLiked: false,
-        isBookmarked: false,
-        likeCount: 0
+        isLiked,
+        isBookmarked,
+        likeCount
       })
     } catch (err) {
       console.error('Load question failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
     }
+  },
+
+  // 获取题目类型文本
+  getQuestionTypeText(question) {
+    if (!question || !question.question_type) return '单选题'
+    const type = question.question_type.toLowerCase()
+    if (type === 'multiple') return '多选题'
+    if (type === 'single') return '单选题'
+    return '单选题'
   },
 
   // 提取题目内容 HTML
@@ -162,15 +184,51 @@ Page({
   },
 
   // 点赞切换
-  toggleLike() {
-    const isLiked = !this.data.isLiked
-    const likeCount = isLiked ? (this.data.likeCount || 0) + 1 : Math.max(0, (this.data.likeCount || 1) - 1)
-    this.setData({ isLiked, likeCount })
+  async toggleLike() {
+    const { question, isLiked, likeCount } = this.data
+    if (!question) return
+
+    try {
+      if (isLiked) {
+        // 取消点赞
+        const result = await discoverService.removeLike(question.id)
+        if (result && result.success) {
+          this.setData({ isLiked: false, likeCount: likeCount - 1 })
+        }
+      } else {
+        // 添加点赞
+        const result = await discoverService.addLike(question.id)
+        if (result) {
+          this.setData({ isLiked: true, likeCount: likeCount + 1 })
+        }
+      }
+    } catch (err) {
+      console.error('Like failed:', err)
+    }
   },
 
   // 收藏切换
-  toggleBookmark() {
-    this.setData({ isBookmarked: !this.data.isBookmarked })
+  async toggleBookmark() {
+    const { question, isBookmarked } = this.data
+    if (!question) return
+
+    try {
+      if (isBookmarked) {
+        // 取消收藏
+        const result = await reviewService.removeFavorite(question.id)
+        if (result && result.success) {
+          this.setData({ isBookmarked: false })
+        }
+      } else {
+        // 添加收藏
+        const result = await reviewService.addFavorite(question.id)
+        if (result) {
+          this.setData({ isBookmarked: true })
+        }
+      }
+    } catch (err) {
+      console.error('Favorite failed:', err)
+    }
   },
 
   // 提交答案（查看答案）
@@ -202,11 +260,12 @@ Page({
   },
 
   // 下一题
-  handleNext() {
+  async handleNext() {
     const { currentIndex, totalQuestions } = this.data
 
     if (currentIndex >= totalQuestions) {
-      this.setData({ isCompleted: true })
+      // 完成所有题目，直接返回专题页面
+      wx.navigateBack()
       return
     }
 
@@ -214,18 +273,27 @@ Page({
     const nextIndex = currentIndex
     const nextQuestion = this.questionsList[nextIndex]
 
+    // 获取点赞状态和收藏状态
+    const likeStatus = await discoverService.getLikeStatus(nextQuestion.id).catch(() => null)
+    const isLiked = likeStatus?.is_liked || false
+    const likeCount = likeStatus?.like_count || 0
+
+    // 检查是否已收藏
+    const isBookmarked = await reviewService.isFavorited(nextQuestion.id).catch(() => false)
+
     this.setData({
       currentIndex: currentIndex + 1,
       question: nextQuestion,
       questionContentHtml: this.extractContentHtml(nextQuestion),
+      questionTypeText: this.getQuestionTypeText(nextQuestion),
       options: this.formatOptions(nextQuestion.options),
       selectedOption: null,
       isSubmitted: false,
       correctAnswer: '',
       analysis: { logic: '', tip: '', point: '' },
-      isLiked: false,
-      isBookmarked: false,
-      likeCount: 0
+      isLiked,
+      isBookmarked,
+      likeCount
     })
   },
 

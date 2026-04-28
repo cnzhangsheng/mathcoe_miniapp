@@ -1,4 +1,4 @@
-<!--pages/records/records.wxml - 100%复刻 Records.tsx-->
+<!--pages/records/records.wxml - 用户历史答题记录-->
 <view class="records-container">
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-state">
@@ -6,58 +6,102 @@
   </view>
 
   <block wx:if="{{!loading}}">
-    <!-- Header -->
-    <view class="records-header card">
-      <view class="header-icon-box blue-bg">
-        <text>🏆</text>
+    <!-- Filter Bar - 平铺筛选 -->
+    <view class="filter-bar">
+      <!-- Topic Filter -->
+      <view class="filter-group">
+        <view class="filter-option {{selectedTopicId === 0 ? 'active' : ''}}" bindtap="selectTopic" data-id="{{0}}" data-name="全部">
+          <text class="option-text text-small">全部</text>
+        </view>
+        <block wx:for="{{topics}}" wx:key="id">
+          <view class="filter-option {{selectedTopicId === item.id ? 'active' : ''}}" bindtap="selectTopic" data-id="{{item.id}}" data-name="{{item.title}}">
+            <text class="option-text text-small">{{item.title}}</text>
+          </view>
+        </block>
       </view>
-      <view>
-        <text class="header-title text-bold">全真答题记录</text>
-        <text class="header-sub text-small text-muted">MY PERFORMANCE HISTORY</text>
-      </view>
-    </view>
 
-    <!-- Summary Stats -->
-    <view class="summary-stats card dark">
-      <view class="stat-box">
-        <text class="stat-label text-small">累计完成次数</text>
-        <text class="stat-value">{{stats.total}} <text class="stat-unit">次</text></text>
+      <!-- Time Filter -->
+      <view class="filter-group">
+        <view class="filter-option {{selectedTime === 'all' ? 'active' : ''}}" bindtap="selectTime" data-value="all" data-name="全部">
+          <text class="option-text text-small">全部</text>
+        </view>
+        <view class="filter-option {{selectedTime === 'day' ? 'active' : ''}}" bindtap="selectTime" data-value="day" data-name="今日">
+          <text class="option-text text-small">今日</text>
+        </view>
+        <view class="filter-option {{selectedTime === 'week' ? 'active' : ''}}" bindtap="selectTime" data-value="week" data-name="本周">
+          <text class="option-text text-small">本周</text>
+        </view>
+        <view class="filter-option {{selectedTime === 'month' ? 'active' : ''}}" bindtap="selectTime" data-value="month" data-name="本月">
+          <text class="option-text text-small">本月</text>
+        </view>
       </view>
-      <view class="stat-box">
-        <text class="stat-label text-small">平均正确率</text>
-        <text class="stat-value primary-color">{{stats.avgRate}}%</text>
+
+      <!-- Result Filter -->
+      <view class="filter-group">
+        <view class="filter-option {{selectedResult === 'all' ? 'active' : ''}}" bindtap="selectResult" data-value="all" data-name="全部">
+          <text class="option-text text-small">全部</text>
+        </view>
+        <view class="filter-option {{selectedResult === 'correct' ? 'active' : ''}}" bindtap="selectResult" data-value="correct" data-name="正确">
+          <text class="option-text text-small">正确</text>
+        </view>
+        <view class="filter-option {{selectedResult === 'wrong' ? 'active' : ''}}" bindtap="selectResult" data-value="wrong" data-name="错误">
+          <text class="option-text text-small">错误</text>
+        </view>
       </view>
-      <view class="stat-decorator"></view>
     </view>
 
     <!-- Records List -->
     <view class="records-list">
       <block wx:for="{{records}}" wx:key="id">
-        <view class="record-item card" data-id="{{item.id}}" bindtap="goToDetail">
-          <view class="record-score-box">
-            <text class="record-type text-small">{{item.type}}</text>
-            <text class="record-score text-bold">{{item.score}}</text>
+        <view class="record-item card" data-record="{{item}}" bindtap="goToDetail">
+          <view class="record-left">
+            <view class="record-topic-box">
+              <text class="record-topic-name text-bold">{{item.topicTitle}}</text>
+            </view>
+            <view class="record-meta">
+              <text class="meta-item">{{item.date}}</text>
+            </view>
           </view>
 
           <view class="record-info">
-            <text class="record-title text-bold">{{item.title}}</text>
-            <view class="record-meta">
-              <text class="meta-item">⏱️ {{item.time}}</text>
-              <text class="meta-item">📊 {{item.score / item.total * 100}}%</text>
-              <text class="meta-item">{{item.date}}</text>
+            <view class="record-content">
+              <rich-text class="content-text" nodes="{{item.contentHtml}}"></rich-text>
             </view>
           </view>
 
           <view class="record-right">
             <block wx:if="{{item.result === 'excellent'}}">
               <view class="result-badge excellent">
-                <text>优异</text>
+                <text class="text-small">正确</text>
               </view>
             </block>
-            <text class="arrow">›</text>
+            <block wx:else>
+              <view class="result-badge fail">
+                <text class="text-small">错误</text>
+              </view>
+            </block>
           </view>
         </view>
       </block>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{loadingMore}}">
+      <text class="load-more-text text-small text-muted">加载更多...</text>
+    </view>
+
+    <!-- 无更多数据 -->
+    <view class="no-more" wx:if="{{!hasMore && records.length > 0}}">
+      <text class="no-more-text text-small text-muted">——已经到底啦——</text>
+    </view>
+
+    <!-- 无数据提示 -->
+    <view class="empty-state" wx:if="{{records.length === 0}}">
+      <view class="empty-card">
+        <text class="empty-icon">📝</text>
+        <text class="empty-title text-bold">暂无答题记录</text>
+        <text class="empty-sub text-small text-muted">开始练习后将在这里显示记录</text>
+      </view>
     </view>
   </block>
 </view>

@@ -93,25 +93,6 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
-.streak-badge {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  padding: 16rpx 32rpx;
-  background-color: rgba(251, 191, 36, 0.1);
-  border-radius: 32rpx;
-  border: 2rpx solid rgba(251, 191, 36, 0.2);
-}
-
-.streak-icon {
-  font-size: 28rpx;
-}
-
-.streak-text {
-  font-size: 28rpx;
-  color: #F59E0B;
-}
-
 /* Goal Section */
 .goal-section {
   background-color: #fff;
@@ -342,10 +323,6 @@
   color: rgba(0, 0, 0, 0.9);
 }
 
-.radar-rank {
-  color: rgba(0, 0, 0, 0.5);
-}
-
 /* Radar Chart Container */
 .radar-chart-container {
   width: 100%;
@@ -458,6 +435,16 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+}
+
+/* End Tip */
+.end-tip {
+  padding: 32rpx 0;
+  text-align: center;
+}
+
+.end-tip-text {
+  color: rgba(0, 0, 0, 0.3);
 }
 
 .exam-card {

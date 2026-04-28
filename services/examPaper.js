@@ -13,6 +13,14 @@ const getExamPapers = (params = {}) => {
 }
 
 /**
+ * 获取智能推荐考卷
+ * @param {number} limit - 推荐数量
+ */
+const getRecommendedPapers = (limit = 2) => {
+  return request(`/exam-papers/recommended?limit=${limit}`)
+}
+
+/**
  * 获取考卷详情（包含题目列表）
  * @param {number} examPaperId
  */
@@ -87,6 +95,7 @@ const getTestDetail = (testId) => {
 
 module.exports = {
   getExamPapers,
+  getRecommendedPapers,
   getExamPaper,
   startExamPaperTest,
   submitTestAnswer,

@@ -23,10 +23,6 @@
           <text class="user-sub text-small">今日目标完成 {{todayDone}}/{{dailyGoal}} 题</text>
         </view>
       </view>
-      <view class="streak-badge" bindtap="goToProfile">
-        <text class="streak-icon">🔥</text>
-        <text class="streak-text text-bold">{{streakDays}}</text>
-      </view>
     </view>
 
     <!-- 今日目标进度 -->
@@ -134,14 +130,13 @@
 
     <!-- 能力雷达（多边形） -->
     <view class="radar-card">
-      <view class="radar-header flex-between">
+      <view class="radar-header">
         <view class="radar-title-row flex-row">
           <view class="radar-icon-box">
             <text>📊</text>
           </view>
           <text class="radar-title text-bold">能力雷达</text>
         </view>
-        <text class="radar-rank text-small text-muted">超越 {{abilityRank}}% 用户</text>
       </view>
 
       <!-- 多边形雷达图（带标签） -->
@@ -189,6 +184,11 @@
             </view>
           </view>
         </block>
+      </view>
+
+      <!-- 底部提示 -->
+      <view class="end-tip" wx:if="{{recommendedPapers.length > 0}}">
+        <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
       </view>
     </view>
 

@@ -24,10 +24,17 @@ const submitAnswer = (data) => {
 }
 
 /**
- * 获取练习记录
+ * 获取练习记录（分页）
+ * @param {number} page - 页码
+ * @param {number} pageSize - 每页数量
+ * @param {object} filters - 筛选条件 { topicId, timeFilter, resultFilter }
  */
-const getRecords = () => {
-  return request('/practice/records')
+const getRecords = (page = 1, pageSize = 10, filters = {}) => {
+  const params = { page, page_size: pageSize, detail: true }
+  if (filters.topicId) params.topic_id = filters.topicId
+  if (filters.timeFilter) params.time_filter = filters.timeFilter
+  if (filters.resultFilter) params.result_filter = filters.resultFilter
+  return request('/practice/records', { data: params })
 }
 
 /**
@@ -66,6 +73,13 @@ const getWrongQuestions = () => {
   return request('/favorites/wrong')
 }
 
+/**
+ * 获取今日答题统计
+ */
+const getTodayStats = () => {
+  return request('/practice/today-stats')
+}
+
 module.exports = {
   startPractice,
   submitAnswer,
@@ -73,5 +87,6 @@ module.exports = {
   getFavorites,
   addFavorite,
   removeFavorite,
-  getWrongQuestions
+  getWrongQuestions,
+  getTodayStats
 }

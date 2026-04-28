@@ -126,6 +126,11 @@ Page({
     wx.navigateTo({ url: '/pages/about/about' })
   },
 
+  // 答题记录
+  goToRecords() {
+    wx.navigateTo({ url: '/pages/records/records' })
+  },
+
   // 清除缓存
   clearCache() {
     wx.showModal({

@@ -18,6 +18,7 @@
     "pages/profile/profile",
     "pages/favorites/favorites",
     "pages/records/records",
+    "pages/record-detail/record-detail",
     "pages/about/about",
     "pages/game/hanoi/hanoi",
     "pages/game/sudoku/sudoku"

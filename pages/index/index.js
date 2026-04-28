@@ -2,6 +2,7 @@
 const app = getApp()
 const userService = require('../../services/user')
 const examPaperService = require('../../services/examPaper')
+const practiceService = require('../../services/practice')
 
 Page({
   data: {
@@ -9,7 +10,6 @@ Page({
     isLoggedIn: false,
     userInfo: null,
     greetingText: '早安！',
-    streakDays: 0,
     countdownDays: 158,
 
     // 今日目标
@@ -25,7 +25,6 @@ Page({
       { label: '规律与观察', value: 0, barClass: 'bar-amber' },
       { label: '综合应用题', value: 0, barClass: 'bar-rose' }
     ],
-    abilityRank: 0,
 
     // 推荐考卷
     recommendedPapers: [],
@@ -49,6 +48,7 @@ Page({
   onShow() {
     if (this.data.isLoggedIn) {
       this.loadTodayProgress()
+      this.loadStats()  // 每次显示时重新加载本周统计
     }
   },
 
@@ -87,10 +87,10 @@ Page({
   // 加载所有数据
   async loadData() {
     try {
-      // 并行加载用户信息、考卷、进度、能力雷达
-      const [userInfo, examPapers, progress, abilityRadar] = await Promise.all([
+      // 并行加载用户信息、推荐考卷、进度、能力雷达
+      const [userInfo, recommendedPapers, progress, abilityRadar] = await Promise.all([
         userService.getUserInfo().catch(() => null),
-        examPaperService.getExamPapers().catch(() => []),
+        examPaperService.getRecommendedPapers(2).catch(() => []),
         userService.getUserProgress().catch(() => []),
         userService.getAbilityRadar().catch(() => null)
       ])
@@ -98,32 +98,23 @@ Page({
       if (userInfo && userInfo.id) {
         this.setData({
           userInfo,
-          streakDays: userInfo.streak_days || 0,
           dailyGoal: userInfo.daily_goal || 10
         })
         // 同步保存到本地
         wx.setStorageSync('dailyGoal', userInfo.daily_goal || 10)
       }
 
-      // 处理考卷数据
-      if (examPapers && examPapers.length > 0) {
-        const grade = userInfo?.grade || 'G1'
-        const userLevel = this.gradeToLevel(grade)
-
-        // 根据年级筛选推荐考卷
-        const recommended = examPapers
-          .filter(p => p.level === userLevel)
-          .slice(0, 2)
-          .map(paper => ({
-            ...paper,
-            typeIcon: this.getPaperTypeIcon(paper.paper_type),
-            typeClass: paper.paper_type || 'daily',
-            levelLabel: paper.level,
-            levelClass: `level-${paper.level}`,
-            paperTypeLabel: this.getPaperTypeLabel(paper.paper_type)
-          }))
-
-        this.setData({ recommendedPapers: recommended })
+      // 处理推荐考卷数据（智能推荐，已排除完成的考卷）
+      if (recommendedPapers && recommendedPapers.length > 0) {
+        const formattedPapers = recommendedPapers.map(paper => ({
+          ...paper,
+          typeIcon: this.getPaperTypeIcon(paper.paper_type),
+          typeClass: paper.paper_type || 'daily',
+          levelLabel: paper.level,
+          levelClass: `level-${paper.level}`,
+          paperTypeLabel: this.getPaperTypeLabel(paper.paper_type)
+        }))
+        this.setData({ recommendedPapers: formattedPapers })
       }
 
       // 处理能力雷达（直接使用后端返回的数据）
@@ -135,8 +126,7 @@ Page({
         }))
 
         this.setData({
-          abilities: abilities.length > 0 ? abilities : this.data.abilities,
-          abilityRank: abilityRadar.overall_rank || 0
+          abilities: abilities.length > 0 ? abilities : this.data.abilities
         })
 
         // 绘制雷达图（等待 DOM 更新）
@@ -174,25 +164,62 @@ Page({
   },
 
   // 加载今日进度
-  loadTodayProgress() {
-    const dailyGoal = wx.getStorageSync('dailyGoal') || 10
-    const todayKey = `todayDone_${new Date().toDateString()}`
-    const todayDone = wx.getStorageSync(todayKey) || 0
-    const goalProgress = Math.min(100, Math.round((todayDone / dailyGoal) * 100))
+  async loadTodayProgress() {
+    try {
+      console.log('[loadTodayProgress] 开始请求今日统计...')
+      const dailyGoal = wx.getStorageSync('dailyGoal') || 10
 
-    this.setData({
-      dailyGoal,
-      todayDone,
-      goalProgress
-    })
+      // 从后端获取今日答题统计
+      const todayStats = await practiceService.getTodayStats()
+      console.log('[loadTodayProgress] API返回:', todayStats)
+
+      if (todayStats) {
+        const todayDone = todayStats.total || 0
+        const goalProgress = Math.min(100, Math.round((todayDone / dailyGoal) * 100))
+
+        this.setData({
+          dailyGoal,
+          todayDone,
+          goalProgress
+        })
+      } else {
+        // 如果后端不可用，使用本地存储
+        console.log('[loadTodayProgress] API返回无效，使用本地存储')
+        const todayKey = `todayDone_${new Date().toDateString()}`
+        const todayDone = wx.getStorageSync(todayKey) || 0
+        const goalProgress = Math.min(100, Math.round((todayDone / dailyGoal) * 100))
+
+        this.setData({
+          dailyGoal,
+          todayDone,
+          goalProgress
+        })
+      }
+    } catch (err) {
+      console.error('[loadTodayProgress] 请求失败:', err)
+      // 使用本地存储作为备用
+      const dailyGoal = wx.getStorageSync('dailyGoal') || 10
+      const todayKey = `todayDone_${new Date().toDateString()}`
+      const todayDone = wx.getStorageSync(todayKey) || 0
+      const goalProgress = Math.min(100, Math.round((todayDone / dailyGoal) * 100))
+
+      this.setData({
+        dailyGoal,
+        todayDone,
+        goalProgress
+      })
+    }
   },
 
   // 加载统计数据（本周）
   async loadStats() {
     try {
-      const stats = await userService.getUserStats().catch(() => null)
+      console.log('[loadStats] 开始请求用户统计数据...')
+      const stats = await userService.getUserStats()
+      console.log('[loadStats] API返回:', stats)
 
       if (stats && stats.week_start && stats.week_end) {
+        console.log('[loadStats] 使用后端数据更新')
         this.setData({
           weekRange: `${stats.week_start} ~ ${stats.week_end}`,
           weekQuestions: stats.total_questions || 0,
@@ -201,7 +228,8 @@ Page({
           favoriteCount: stats.favorite_count || 0
         })
       } else {
-        // 使用本地存储的统计数据
+        console.log('[loadStats] API返回无效，使用备用数据')
+        // 使用本地存储的统计数据（仅作为备用）
         const totalQuestions = wx.getStorageSync('totalQuestions') || 0
         const wrongCount = wx.getStorageSync('wrongCount') || 0
         const favoriteCount = wx.getStorageSync('favoriteCount') || 0
@@ -229,16 +257,8 @@ Page({
         })
       }
     } catch (err) {
-      console.error('Load stats failed:', err)
+      console.error('[loadStats] 请求失败:', err)
     }
-  },
-
-  // 年级转等级
-  gradeToLevel(grade) {
-    const gradeNum = parseInt(grade.replace('G', '')) || 1
-    if (gradeNum <= 2) return 'A'
-    if (gradeNum <= 4) return 'B'
-    return 'C'
   },
 
   // 获取考卷类型图标
@@ -369,7 +389,6 @@ Page({
 
         // 字体大小：与 text-small (24rpx ≈ 12px) 一致
         const titleFontSize = 12
-        const valueFontSize = 10
 
         dataPoints.forEach((p, i) => {
           // 数据点
@@ -386,20 +405,14 @@ Page({
           const labelY = centerY + labelRadius * Math.sin(p.angle)
 
           const label = abilities[i]?.label || ''
-          const valueText = `${p.value}%`
 
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
 
-          // 标题（与 text-small 字体大小一致）
+          // 只显示专题名称
           ctx.font = `${titleFontSize}px sans-serif`
           ctx.fillStyle = 'rgba(0, 0, 0, 0.85)'
-          ctx.fillText(label, labelX, labelY - 10)
-
-          // 数值（稍小）
-          ctx.font = `${valueFontSize}px sans-serif`
-          ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-          ctx.fillText(valueText, labelX, labelY + 9)
+          ctx.fillText(label, labelX, labelY)
         })
       })
   },

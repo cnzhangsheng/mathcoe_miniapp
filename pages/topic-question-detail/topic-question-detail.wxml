@@ -31,6 +31,12 @@
 
   <!-- 题目内容 -->
   <block wx:if="{{!noQuestions && !isCompleted && question}}">
+    <!-- 题目信息 -->
+    <view class="question-info-row">
+      <text class="topic-badge text-small text-bold">{{topicTitle}}</text>
+      <text class="question-type-badge text-small text-muted">（{{questionTypeText}}）</text>
+    </view>
+
     <!-- Question Card -->
     <view class="question-card">
       <!-- 题目内容使用 rich-text 渲染 -->
@@ -62,20 +68,22 @@
       </view>
     </view>
 
-    <!-- Action Bar: Like + Bookmark + View Answer -->
-    <view class="action-bar" wx:if="{{!isSubmitted}}">
-      <view class="action-icons">
-        <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
-          <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
-          <text class="action-count">{{likeCount || 0}}</text>
-        </view>
-        <view class="action-icon-btn {{isBookmarked ? 'bookmarked' : ''}}" bindtap="toggleBookmark">
-          <text class="action-icon">{{isBookmarked ? '⭐' : '☆'}}</text>
-          <text class="action-text">{{isBookmarked ? '已收藏' : '收藏'}}</text>
-        </view>
+    <!-- Action Bar: Like + Bookmark -->
+    <view class="action-icons-right">
+      <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+        <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
+        <text class="action-count">{{likeCount || 0}}</text>
       </view>
-      <view class="view-answer-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="handleSubmit">
-        <text class="view-answer-text text-bold">查看答案</text>
+      <view class="action-icon-btn {{isBookmarked ? 'bookmarked' : ''}}" bindtap="toggleBookmark">
+        <text class="action-icon">{{isBookmarked ? '⭐' : '☆'}}</text>
+        <text class="action-text">{{isBookmarked ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+
+    <!-- Submit Button -->
+    <view class="submit-row" wx:if="{{!isSubmitted}}">
+      <view class="submit-answer-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="handleSubmit">
+        <text class="submit-answer-text text-bold">提交答案</text>
       </view>
     </view>
 

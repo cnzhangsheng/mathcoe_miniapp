@@ -2,6 +2,7 @@
 const app = getApp()
 const discoverService = require('../../services/discover')
 const reviewService = require('../../services/review')
+const practiceService = require('../../services/practice')
 
 Page({
   data: {
@@ -112,7 +113,7 @@ Page({
   },
 
   // 显示/隐藏答案（需要先选择选项）
-  toggleAnswer() {
+  async toggleAnswer() {
     if (!this.data.selectedOption) {
       wx.showToast({ title: '请先选择答案', icon: 'none' })
       return
@@ -120,6 +121,17 @@ Page({
 
     const { question, selectedOption } = this.data
     const isCorrect = selectedOption === question.answer
+
+    // 保存答题记录到后端
+    try {
+      await practiceService.submitAnswer({
+        question_id: question.id,
+        user_answer: selectedOption
+      })
+      console.log('答题记录已保存')
+    } catch (err) {
+      console.error('保存答题记录失败:', err)
+    }
 
     this.setData({ showAnswer: true })
 
