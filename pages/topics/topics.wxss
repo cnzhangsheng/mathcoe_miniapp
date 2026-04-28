@@ -374,6 +374,20 @@
   border-radius: 24rpx;
 }
 
+.load-more-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* End Tip */
+.end-tip {
+  padding: 32rpx 0;
+  text-align: center;
+}
+
+.end-tip-text {
+  color: rgba(0, 0, 0, 0.3);
+}
+
 .no-data {
   padding: 48rpx;
   text-align: center;

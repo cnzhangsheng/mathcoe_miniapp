@@ -11,7 +11,9 @@ Page({
     showAnswer: false,
     isLiked: false,
     isFavorited: false,
-    likeCount: 0
+    likeCount: 0,
+    topicTitle: '',
+    questionType: '单选题'
   },
 
   onLoad() {
@@ -40,6 +42,11 @@ Page({
       const question = await discoverService.getRandomQuestion()
 
       if (question) {
+        // 获取专题标题（后端直接返回 topic_title）
+        const topicTitle = question.topic_title || this.getTopicTitle(question.topic_id)
+        // 获取题目类型
+        const questionType = question.question_type === 'multiple' ? '多选题' : '单选题'
+
         // 格式化题目
         const formattedQuestion = {
           id: question.id,
@@ -54,14 +61,24 @@ Page({
           difficulty: question.difficulty
         }
 
+        // 获取点赞状态和收藏状态
+        const likeStatus = await discoverService.getLikeStatus(question.id).catch(() => null)
+        const isLiked = likeStatus?.is_liked || false
+        const likeCount = likeStatus?.like_count || 0
+
+        // 检查是否已收藏
+        const isFavorited = await reviewService.isFavorited(question.id).catch(() => false)
+
         this.setData({
           loading: false,
           question: formattedQuestion,
+          topicTitle,
+          questionType,
           selectedOption: null,
           showAnswer: false,
-          isLiked: false,
-          isFavorited: false,
-          likeCount: Math.floor(Math.random() * 50) + 10  // 模拟点赞数
+          isLiked,
+          isFavorited,
+          likeCount
         })
       } else {
         this.setData({ loading: false })
@@ -72,6 +89,18 @@ Page({
       this.setData({ loading: false })
       wx.showToast({ title: '加载失败', icon: 'none' })
     }
+  },
+
+  // 根据专题 ID 获取专题标题
+  getTopicTitle(topicId) {
+    const titles = {
+      1: '算术与计数',
+      2: '逻辑与推理',
+      3: '几何与空间',
+      4: '规律与观察',
+      5: '综合应用题'
+    }
+    return titles[topicId] || '其他'
   },
 
   // 选择选项
@@ -105,14 +134,26 @@ Page({
   },
 
   // 点赞
-  toggleLike() {
-    const { isLiked, likeCount } = this.data
-    this.setData({
-      isLiked: !isLiked,
-      likeCount: isLiked ? likeCount - 1 : likeCount + 1
-    })
-    if (!isLiked) {
-      wx.showToast({ title: '已点赞', icon: 'success' })
+  async toggleLike() {
+    const { question, isLiked, likeCount } = this.data
+    if (!question) return
+
+    try {
+      if (isLiked) {
+        // 取消点赞
+        const result = await discoverService.removeLike(question.id)
+        if (result && result.success) {
+          this.setData({ isLiked: false, likeCount: likeCount - 1 })
+        }
+      } else {
+        // 添加点赞
+        const result = await discoverService.addLike(question.id)
+        if (result) {
+          this.setData({ isLiked: true, likeCount: likeCount + 1 })
+        }
+      }
+    } catch (err) {
+      console.error('Like failed:', err)
     }
   },
 
@@ -126,20 +167,17 @@ Page({
         // 取消收藏
         const result = await reviewService.removeFavorite(question.id)
         if (result && result.success) {
-          wx.showToast({ title: '已取消收藏', icon: 'success' })
           this.setData({ isFavorited: false })
         }
       } else {
         // 添加收藏
         const result = await reviewService.addFavorite(question.id)
         if (result) {
-          wx.showToast({ title: '已收藏', icon: 'success' })
           this.setData({ isFavorited: true })
         }
       }
     } catch (err) {
       console.error('Favorite failed:', err)
-      wx.showToast({ title: '操作失败', icon: 'none' })
     }
   },
 

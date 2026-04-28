@@ -40,6 +40,15 @@ const removeWrongQuestion = async (questionId) => {
 }
 
 /**
+ * 检查是否已收藏
+ * @param {number} questionId - 题目ID
+ */
+const isFavorited = async (questionId) => {
+  const favorites = await request('/favorites') || []
+  return favorites.some(f => f.question_id === questionId)
+}
+
+/**
  * 获取收藏列表
  */
 const getFavorites = async () => {
@@ -64,6 +73,7 @@ const removeFavorite = async (questionId) => {
 
 module.exports = {
   getTopics,
+  isFavorited,
   getWrongQuestions,
   addWrongQuestion,
   markMastered,

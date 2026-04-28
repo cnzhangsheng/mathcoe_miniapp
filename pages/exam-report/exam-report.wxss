@@ -231,11 +231,11 @@
 }
 
 .action-icon {
-  font-size: 24rpx;
+  font-size: 28rpx;
 }
 
 .action-text {
-  font-size: 24rpx;
+  font-size: 28rpx;
 }
 
 /* Utility Classes */

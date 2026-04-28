@@ -42,6 +42,13 @@ Page({
     this.loadExamPapers()
   },
 
+  // 下拉加载更多考卷
+  onReachBottom() {
+    if (this.data.hasMoreExamPapers && !this.data.examPapersLoading) {
+      this.loadMoreExamPapers()
+    }
+  },
+
   // 筛选专题
   filterTopics() {
     const { topics, activeTab } = this.data
@@ -199,7 +206,7 @@ Page({
   // 选择考卷 - 进入考试页面
   selectExamPaper(e) {
     const paperId = e.currentTarget.dataset.id
-    wx.reLaunch({
+    wx.navigateTo({
       url: `/pages/practice/practice?exam_paper_id=${paperId}`
     })
   },

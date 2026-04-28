@@ -27,6 +27,12 @@
   margin-bottom: 20rpx;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
 .topic-badge {
   padding: 8rpx 16rpx;
   border-radius: 12rpx;
@@ -38,6 +44,18 @@
 }
 
 .date-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.remove-btn {
+  padding: 8rpx 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-icon {
+  font-size: 24rpx;
   color: rgba(0, 0, 0, 0.4);
 }
 
@@ -244,22 +262,6 @@
   color: #fff;
 }
 
-.remove-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24rpx;
-  border-radius: 24rpx;
-  background-color: #fff;
-  border: 2rpx solid #EF4444;
-}
-
-.remove-text {
-  font-size: 28rpx;
-  color: #EF4444;
-}
-
 /* Utility */
 .text-bold {
   font-weight: 700;
@@ -271,4 +273,15 @@
 
 .text-muted {
   color: rgba(0, 0, 0, 0.4);
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

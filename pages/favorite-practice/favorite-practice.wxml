@@ -1,0 +1,95 @@
+<!--pages/favorite-practice/favorite-practice.wxml - 收藏练习页面 -->
+<view class="practice-page">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <view class="loading-card">
+      <text class="loading-icon">🔄</text>
+      <text class="loading-text">正在加载题目...</text>
+    </view>
+  </view>
+
+  <!-- 练习内容 -->
+  <block wx:if="{{!loading && !completed && currentQuestion}}">
+    <!-- 题目卡片 -->
+    <view class="question-card card">
+      <view class="question-header flex-between">
+        <text class="question-title text-bold">题目{{currentIndex + 1}}（{{questionType}}）</text>
+        <text class="question-count text-muted">{{currentIndex + 1}}/{{totalQuestions}}</text>
+      </view>
+
+      <view class="question-content">
+        <rich-text nodes="{{currentQuestion.content}}"></rich-text>
+      </view>
+
+      <!-- 选项列表 -->
+      <view class="options-list">
+        <block wx:for="{{currentQuestion.options}}" wx:key="key">
+          <view class="option-item {{selectedAnswer === item.key ? 'selected' : ''}} {{showResult && item.key === currentQuestion.answer ? 'correct' : ''}} {{showResult && selectedAnswer === item.key && selectedAnswer !== currentQuestion.answer ? 'wrong' : ''}}"
+                bindtap="selectOption"
+                data-key="{{item.key}}">
+            <view class="option-key">{{item.key}}</view>
+            <rich-text class="option-text" nodes="{{item.value}}"></rich-text>
+          </view>
+        </block>
+      </view>
+
+      <!-- 答案结果 -->
+      <view wx:if="{{showResult}}" class="result-section">
+        <view class="result-header {{isCorrect ? 'success' : 'error'}}">
+          <text class="result-icon">{{isCorrect ? '✅' : '❌'}}</text>
+          <text class="result-text">{{isCorrect ? '回答正确' : '回答错误'}}</text>
+        </view>
+
+        <view class="answer-info">
+          <view class="answer-row">
+            <text class="answer-label">正确答案：</text>
+            <text class="answer-value correct">{{currentQuestion.answer}}</text>
+          </view>
+          <view wx:if="{{selectedAnswer}}" class="answer-row">
+            <text class="answer-label">你的答案：</text>
+            <text class="answer-value {{isCorrect ? 'correct' : 'wrong'}}">{{selectedAnswer}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{currentQuestion.explanation}}" class="explanation-box">
+          <text class="explanation-label">解析</text>
+          <rich-text class="explanation-text" nodes="{{currentQuestion.explanation}}"></rich-text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <block wx:if="{{!showResult}}">
+        <view class="submit-btn primary-bg" bindtap="submitAnswer">
+          <text class="submit-text">提交答案</text>
+        </view>
+      </block>
+      <block wx:if="{{showResult}}">
+        <view class="next-btn primary-bg" bindtap="nextQuestion">
+          <text class="next-text">{{currentIndex < totalQuestions - 1 ? '下一题' : '完成练习'}}</text>
+        </view>
+      </block>
+    </view>
+  </block>
+
+  <!-- 完成页面 -->
+  <block wx:if="{{!loading && completed}}">
+    <view class="complete-page">
+      <view class="complete-icon-box">
+        <text class="complete-icon">🎉</text>
+      </view>
+      <text class="complete-title">练习完成</text>
+      <text class="complete-stats">本次练习 {{totalQuestions}} 题，正确 {{correctCount}} 题</text>
+
+      <view class="complete-buttons">
+        <view class="home-btn primary-bg" bindtap="goHome">
+          <text class="home-text">返回复习</text>
+        </view>
+        <view class="review-btn" bindtap="goReview">
+          <text class="review-btn-text">继续练习</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

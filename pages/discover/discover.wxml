@@ -27,6 +27,12 @@
 
   <!-- 题目内容 -->
   <block wx:if="{{!loading && question}}">
+    <!-- 题目信息 -->
+    <view class="question-info-row">
+      <text class="topic-badge text-small text-bold">{{topicTitle}}</text>
+      <text class="question-type-badge text-small text-muted">（{{questionType}}）</text>
+    </view>
+
     <!-- Question Card -->
     <view class="question-card">
       <!-- 题目内容使用 rich-text 渲染 -->
@@ -51,20 +57,22 @@
       </view>
     </view>
 
-    <!-- Action Bar: Like + Bookmark + View Answer -->
-    <view class="action-bar" wx:if="{{!showAnswer}}">
-      <view class="action-icons">
-        <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
-          <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
-          <text class="action-count">{{likeCount || 0}}</text>
-        </view>
-        <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
-          <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
-          <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
-        </view>
+    <!-- Like + Bookmark - 在选项下面 -->
+    <view class="action-icons-right">
+      <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
+        <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
+        <text class="action-count">{{likeCount || 0}}</text>
       </view>
-      <view class="view-answer-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="toggleAnswer">
-        <text class="view-answer-text text-bold">查看答案</text>
+      <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
+        <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
+        <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+
+    <!-- Submit Answer Button -->
+    <view class="submit-row" wx:if="{{!showAnswer}}">
+      <view class="submit-answer-btn {{selectedOption ? 'active' : 'disabled'}}" bindtap="toggleAnswer">
+        <text class="submit-answer-text text-bold">提交答案</text>
       </view>
     </view>
 
@@ -100,18 +108,6 @@
           <view class="key-content">
             <text class="key-label text-xs text-bold">难度等级：</text>
             <text class="key-text text-xs">{{question.difficulty}}</text>
-          </view>
-        </view>
-      </view>
-
-      <!-- Action Buttons (after answer) -->
-      <view class="action-bar-after">
-        <view class="action-icons">
-          <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
-            <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
-          </view>
-          <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
-            <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
           </view>
         </view>
       </view>

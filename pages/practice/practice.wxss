@@ -41,7 +41,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16rpx;
+}
+
+.exam-title {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.9);
+  max-width: 400rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .question-badge {
@@ -111,6 +119,22 @@
   box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
   border: 2rpx solid rgba(0,0,0,0.05);
   margin: 16rpx;
+}
+
+/* Question Header */
+.question-header {
+  margin-bottom: 32rpx;
+}
+
+.question-number {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.question-type-text {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.5);
+  margin-left: 8rpx;
 }
 
 .question-title-box {
@@ -232,19 +256,18 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 120rpx;
+  height: 105rpx;
   background-color: #fff;
   display: flex;
   gap: 16rpx;
-  padding: 16rpx 24rpx;
+  padding: 12rpx 24rpx;
   box-shadow: 0 -2rpx 8rpx rgba(0,0,0,0.05);
   z-index: 100;
 }
 
 .sheet-btn-bottom {
   width: 100rpx;
-  padding: 16rpx 12rpx;
-  background-color: #576B95;
+  padding: 12rpx 8rpx;
   border-radius: 20rpx;
   display: flex;
   flex-direction: column;
@@ -255,12 +278,12 @@
 
 .sheet-icon {
   font-size: 26rpx;
-  color: #fff;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .sheet-text {
   font-size: 20rpx;
-  color: #fff;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .nav-btn {
@@ -270,7 +293,7 @@
   justify-content: center;
   gap: 8rpx;
   border-radius: 20rpx;
-  padding: 16rpx 20rpx;
+  padding: 12rpx 20rpx;
   background-color: #07C160;
 }
 
@@ -288,12 +311,12 @@
 }
 
 .nav-icon {
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #fff;
 }
 
 .nav-text {
-  font-size: 24rpx;
+  font-size: 28rpx;
   color: #fff;
 }
 

@@ -62,11 +62,9 @@
   <!-- Bottom Action Bar -->
   <view class="bottom-action-bar">
     <view class="action-btn back-btn" bindtap="backToTopics">
-      <text class="action-icon">📚</text>
       <text class="action-text text-bold">返回专题</text>
     </view>
     <view class="action-btn retry-btn" bindtap="retryPractice">
-      <text class="action-icon">🔄</text>
       <text class="action-text text-bold">重新练习</text>
     </view>
   </view>

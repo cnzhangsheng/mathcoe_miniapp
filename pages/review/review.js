@@ -18,11 +18,25 @@ Page({
     // 专题分组
     topicGroups: [],
 
-    // 最近错题
+    // 错题列表（分页）
+    wrongQuestions: [],
+    wrongPage: 1,
+    wrongPageSize: 10,
+    wrongHasMore: true,
+    wrongLoading: false,
+
+    // 最近错题（首页展示）
     recentWrongQuestions: [],
 
-    // 收藏列表
+    // 收藏列表（分页）
     favoriteQuestions: [],
+    favoritePage: 1,
+    favoritePageSize: 10,
+    favoriteHasMore: true,
+    favoriteLoading: false,
+
+    // 全部收藏（用于分页）
+    allFavoriteQuestions: [],
 
     // 全部错题（用于统计和分组）
     allWrongQuestions: []
@@ -35,6 +49,15 @@ Page({
   onShow() {
     // 每次显示时重新加载数据
     this.loadData()
+  },
+
+  // 下拉加载更多
+  onReachBottom() {
+    if (this.data.activeTab === 'wrong' && this.data.wrongHasMore && !this.data.wrongLoading) {
+      this.loadMoreWrongQuestions()
+    } else if (this.data.activeTab === 'favorite' && this.data.favoriteHasMore && !this.data.favoriteLoading) {
+      this.loadMoreFavoriteQuestions()
+    }
   },
 
   async loadData() {
@@ -80,18 +103,35 @@ Page({
       if (this.data.selectedTopicId > 0) {
         filteredWrong = processedWrong.filter(q => parseInt(q.topic_id) === this.data.selectedTopicId)
       }
-      const recentWrongQuestions = filteredWrong
-        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-        .slice(0, 5)
+
+      // 按时间排序
+      const sortedWrong = filteredWrong.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+      // 分页加载第一页错题
+      const firstWrongPage = sortedWrong.slice(0, this.data.wrongPageSize)
+      const wrongHasMore = sortedWrong.length > this.data.wrongPageSize
+
+      // 收藏数据按时间排序
+      const sortedFavorites = processedFavorites.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+      // 分页加载第一页收藏
+      const firstFavoritePage = sortedFavorites.slice(0, this.data.favoritePageSize)
+      const favoriteHasMore = sortedFavorites.length > this.data.favoritePageSize
 
       this.setData({
         loading: false,
         allWrongQuestions: processedWrong,
+        allFavoriteQuestions: processedFavorites,
         pendingWrongCount,
         favoriteCount,
         filterTopics,
-        recentWrongQuestions,
-        favoriteQuestions: processedFavorites
+        wrongQuestions: firstWrongPage,
+        wrongPage: 1,
+        wrongHasMore: wrongHasMore,
+        recentWrongQuestions: firstWrongPage.slice(0, 5),
+        favoriteQuestions: firstFavoritePage,
+        favoritePage: 1,
+        favoriteHasMore: favoriteHasMore
       })
 
       wx.hideLoading()
@@ -100,6 +140,56 @@ Page({
       console.error('Load data failed:', err)
       this.setData({ loading: false })
     }
+  },
+
+  // 加载更多错题
+  loadMoreWrongQuestions() {
+    if (!this.data.wrongHasMore || this.data.wrongLoading) return
+
+    this.setData({ wrongLoading: true })
+
+    // 根据筛选过滤错题
+    let filteredWrong = this.data.allWrongQuestions
+    if (this.data.selectedTopicId > 0) {
+      filteredWrong = this.data.allWrongQuestions.filter(q => parseInt(q.topic_id) === this.data.selectedTopicId)
+    }
+
+    // 按时间排序
+    const sortedWrong = filteredWrong.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+    const nextPage = this.data.wrongPage + 1
+    const startIndex = (nextPage - 1) * this.data.wrongPageSize
+    const endIndex = startIndex + this.data.wrongPageSize
+    const newQuestions = sortedWrong.slice(startIndex, endIndex)
+
+    this.setData({
+      wrongQuestions: [...this.data.wrongQuestions, ...newQuestions],
+      wrongPage: nextPage,
+      wrongHasMore: endIndex < sortedWrong.length,
+      wrongLoading: false
+    })
+  },
+
+  // 加载更多收藏
+  loadMoreFavoriteQuestions() {
+    if (!this.data.favoriteHasMore || this.data.favoriteLoading) return
+
+    this.setData({ favoriteLoading: true })
+
+    // 按时间排序
+    const sortedFavorites = this.data.allFavoriteQuestions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+    const nextPage = this.data.favoritePage + 1
+    const startIndex = (nextPage - 1) * this.data.favoritePageSize
+    const endIndex = startIndex + this.data.favoritePageSize
+    const newQuestions = sortedFavorites.slice(startIndex, endIndex)
+
+    this.setData({
+      favoriteQuestions: [...this.data.favoriteQuestions, ...newQuestions],
+      favoritePage: nextPage,
+      favoriteHasMore: endIndex < sortedFavorites.length,
+      favoriteLoading: false
+    })
   },
 
   // 处理错题数据
@@ -221,17 +311,25 @@ Page({
     const topicId = parseInt(e.currentTarget.dataset.id) || 0
     this.setData({ selectedTopicId: topicId })
 
-    // 根据筛选重新过滤最近错题
+    // 根据筛选重新过滤错题
     let filteredWrong = this.data.allWrongQuestions
     if (topicId > 0) {
       filteredWrong = this.data.allWrongQuestions.filter(q => parseInt(q.topic_id) === topicId)
     }
 
-    const recentWrongQuestions = filteredWrong
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      .slice(0, 5)
+    // 按时间排序
+    const sortedWrong = filteredWrong.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
-    this.setData({ recentWrongQuestions })
+    // 重置分页，显示第一页
+    const firstPage = sortedWrong.slice(0, this.data.wrongPageSize)
+    const hasMore = sortedWrong.length > this.data.wrongPageSize
+
+    this.setData({
+      wrongQuestions: firstPage,
+      wrongPage: 1,
+      wrongHasMore: hasMore,
+      recentWrongQuestions: firstPage.slice(0, 5)
+    })
   },
 
   // 开始复习（根据筛选专题复习）
@@ -344,7 +442,7 @@ Page({
   practiceFavorite(e) {
     const question = e.currentTarget.dataset.question
     wx.navigateTo({
-      url: `/pages/review-practice/review-practice?ids=${question.question_id}`
+      url: `/pages/favorite-practice/favorite-practice?ids=${question.question_id}`
     })
   },
 

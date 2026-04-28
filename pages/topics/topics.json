@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "专题训练",
-  "usingComponents": {}
+  "usingComponents": {},
+  "onReachBottomDistance": 50
 }

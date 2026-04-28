@@ -2,11 +2,16 @@
 <view class="explanation-page">
   <!-- 题目卡片 -->
   <view class="question-card card">
-    <view class="card-header">
-      <view class="topic-badge">
-        <text class="topic-text text-small text-bold">{{topicTitle}}</text>
+    <view class="card-header flex-between">
+      <view class="header-left flex-row">
+        <view class="topic-badge">
+          <text class="topic-text text-small text-bold">{{topicTitle}}</text>
+        </view>
+        <text class="date-text text-small text-muted">{{dateLabel}}</text>
       </view>
-      <text class="date-text text-small text-muted">{{dateLabel}}</text>
+      <view class="remove-btn" bindtap="removeQuestion">
+        <text class="remove-icon">✕</text>
+      </view>
     </view>
 
     <view class="question-content-box">

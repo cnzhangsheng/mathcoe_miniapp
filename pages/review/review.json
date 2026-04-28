@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "复习",
-  "usingComponents": {}
+  "usingComponents": {},
+  "onReachBottomDistance": 50
 }

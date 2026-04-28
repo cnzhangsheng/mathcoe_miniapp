@@ -1,16 +1,11 @@
 <!--pages/practice/practice.wxml - 100%复刻 kangaroo-math-brain Practice.tsx -->
 <view class="practice-page">
 
-  <!-- Exam Status Bar (Back + Timer) -->
+  <!-- Exam Status Bar (Timer) -->
   <view class="exam-status-bar" wx:if="{{examPaperMode}}">
-    <!-- 返回按钮 -->
-    <view class="back-btn" bindtap="goBack">
-      <text class="back-icon">‹</text>
-    </view>
-    <!-- 题目编号和类型 -->
+    <!-- 考卷标题 -->
     <view class="status-center">
-      <text class="question-badge text-bold">Q{{currentIndex || 1}}</text>
-      <text class="question-type-tag">{{questionTypeText}}</text>
+      <text class="exam-title text-bold">{{examPaper.title || '考卷测试'}}</text>
     </view>
     <!-- 计时器 -->
     <view class="timer-box {{timeLeft >= 300 ? '' : 'urgent'}}">
@@ -20,6 +15,12 @@
 
   <!-- Main Practice Card -->
   <view class="practice-card">
+    <!-- Question Header -->
+    <view class="question-header flex-row">
+      <text class="question-number text-bold">题目{{currentIndex}}</text>
+      <text class="question-type-text">（{{questionTypeText}}）</text>
+    </view>
+
     <!-- Question Content -->
     <view class="question-content-box">
       <rich-text class="question-content" nodes="{{currentQuestion.contentHtml || '题目内容'}}"></rich-text>

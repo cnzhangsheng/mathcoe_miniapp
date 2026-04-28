@@ -99,6 +99,26 @@
   font-size: 28rpx;
 }
 
+/* Question Info Row - 题目信息行 */
+.question-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  padding: 0 8rpx;
+}
+
+.topic-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  background-color: #DBEAFE;
+  color: #2563EB;
+}
+
+.question-type-badge {
+  color: rgba(0, 0, 0, 0.5);
+}
+
 /* Question Card */
 .question-card {
   background-color: #fff;
@@ -224,17 +244,45 @@
   color: #F43F5E;
 }
 
-/* Submit Section - Action Bar */
-.action-bar {
+/* Action Icons Right - 点赞收藏靠右 */
+.action-icons-right {
   margin-top: 32rpx;
-  padding: 24rpx 32rpx;
-  background-color: #fff;
-  border-radius: 48rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 24rpx;
+  padding-right: 32rpx;
+}
+
+/* Submit Answer Row - 提交答案按钮单独一行 */
+.submit-row {
+  margin-top: 32rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-answer-btn {
+  padding: 24rpx 64rpx;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 16rpx rgba(7, 193, 96, 0.2);
+}
+
+.submit-answer-btn.active {
+  background-color: #07C160;
+  color: #fff;
+}
+
+.submit-answer-btn.disabled {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.3);
+  box-shadow: none;
+}
+
+.submit-answer-text {
+  font-size: 28rpx;
 }
 
 .action-icons {
@@ -446,18 +494,6 @@
 
 .key-text {
   color: rgba(180, 83, 9, 0.7);
-}
-
-/* Action Bar After Answer */
-.action-bar-after {
-  margin-top: 32rpx;
-  padding: 24rpx 32rpx;
-  background-color: #fff;
-  border-radius: 48rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Next Section */

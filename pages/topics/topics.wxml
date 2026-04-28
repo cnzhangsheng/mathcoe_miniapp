@@ -33,14 +33,6 @@
     <view class="topics-section">
       <view class="section-header flex-row">
         <text class="section-title text-bold">重点突破专题</text>
-        <view class="tab-group">
-          <view class="tab-item {{activeTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">
-            <text class="tab-text text-small text-bold">全部</text>
-          </view>
-          <view class="tab-item {{activeTab === 'high' ? 'active' : ''}}" bindtap="switchTab" data-tab="high">
-            <text class="tab-text text-small text-bold">高频</text>
-          </view>
-        </view>
       </view>
 
       <view class="topics-grid">
@@ -103,11 +95,14 @@
         </block>
       </view>
 
-      <!-- 加载更多 -->
-      <view class="load-more" wx:if="{{hasMoreExamPapers}}">
-        <view class="load-more-btn" bindtap="loadMoreExamPapers">
-          <text class="load-more-text text-small">{{examPapersLoading ? '加载中...' : '加载更多考卷'}}</text>
-        </view>
+      <!-- 加载更多提示 -->
+      <view class="load-more" wx:if="{{examPapersLoading}}">
+        <text class="load-more-text text-small text-muted">加载中...</text>
+      </view>
+
+      <!-- 底部提示 -->
+      <view class="end-tip" wx:if="{{!hasMoreExamPapers && examPapers.length > 0}}">
+        <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
       </view>
 
       <!-- 无数据提示 -->

@@ -553,8 +553,9 @@ Page({
   // Go Back
   goBack() {
     if (this.data.isExamSubmitted) {
+      clearInterval(this.timer)
       wx.showTabBar()
-      wx.switchTab({ url: '/pages/topics/topics' })
+      wx.navigateBack()
     } else {
       wx.showModal({
         title: '确认退出',
@@ -563,7 +564,7 @@ Page({
           if (res.confirm) {
             clearInterval(this.timer)
             wx.showTabBar()
-            wx.switchTab({ url: '/pages/topics/topics' })
+            wx.navigateBack()
           }
         }
       })
@@ -574,13 +575,14 @@ Page({
   finishPractice() {
     clearInterval(this.timer)
     wx.showTabBar()
-    wx.switchTab({ url: '/pages/topics/topics' })
+    wx.navigateBack()
   },
 
   // Back to List (from result report)
   backToList() {
+    clearInterval(this.timer)
     wx.showTabBar()
-    wx.switchTab({ url: '/pages/topics/topics' })
+    wx.navigateBack()
   },
 
   preventClose() {

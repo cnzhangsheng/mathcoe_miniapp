@@ -474,11 +474,15 @@
 }
 
 .remove-btn {
-  padding: 6rpx 12rpx;
+  padding: 8rpx 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.remove-text {
-  color: #F43F5E;
+.remove-icon {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.4);
 }
 
 .practice-btn {
@@ -519,6 +523,30 @@
 .empty-sub {
   color: rgba(0, 0, 0, 0.2);
   margin-top: 8rpx;
+}
+
+/* Load More */
+.load-more {
+  padding: 32rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.load-more-text {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* End Tip */
+.end-tip {
+  padding: 32rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.end-tip-text {
+  color: rgba(0, 0, 0, 0.3);
 }
 
 /* Utility Classes */
