@@ -206,6 +206,7 @@ Page({
         question_id: q.question_id,
         topic_id: parseInt(q.question_topic_id) || parseInt(q.topic_id) || 0,
         topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
+        level: q.question_difficulty_level,
         content: q.question_content?.text || q.content || '',
         options: optionsList,
         answer: q.question_answer,
@@ -232,6 +233,7 @@ Page({
         question_id: q.question_id,
         topic_id: q.question_topic_id,
         topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
+        level: q.question_difficulty_level,
         content: q.question_content?.text || q.content || '',
         options: optionsList,
         answer: q.question_answer,
@@ -448,7 +450,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '复习中心 - 袋鼠数学智练',
+      title: '复习中心 - 袋鼠数学助理',
       path: '/pages/review/review'
     }
   }

@@ -7,6 +7,7 @@
         <view class="topic-badge">
           <text class="topic-text text-small text-bold">{{topicTitle}}</text>
         </view>
+        <text class="difficulty-badge text-small text-bold" wx:if="{{questionLevel}}">{{questionLevel}}</text>
         <text class="date-text text-small text-muted">{{dateLabel}}</text>
       </view>
       <view class="remove-btn" bindtap="removeQuestion">

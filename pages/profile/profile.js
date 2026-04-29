@@ -10,19 +10,31 @@ Page({
 
     // 年级
     gradeLabels: [
-      { value: 'G1', label: '一年级', desc: 'Level A' },
-      { value: 'G2', label: '二年级', desc: 'Level A' },
-      { value: 'G3', label: '三年级', desc: 'Level B' },
-      { value: 'G4', label: '四年级', desc: 'Level B' },
-      { value: 'G5', label: '五年级', desc: 'Level C' },
-      { value: 'G6', label: '六年级', desc: 'Level C' }
+      { value: 'G1', label: '一年级'},
+      { value: 'G2', label: '二年级'},
+      { value: 'G3', label: '三年级'},
+      { value: 'G4', label: '四年级'},
+      { value: 'G5', label: '五年级'},
+      { value: 'G6', label: '六年级'}
     ],
     gradeIndex: 2,
+
+    // 难度等级
+    difficultyLabels: [
+      { value: 1, label: 'Level 1' },
+      { value: 2, label: 'Level 2' },
+      { value: 3, label: 'Level 3' },
+      { value: 4, label: 'Level 4' },
+      { value: 5, label: 'Level 5' },
+      { value: 6, label: 'Level 6' }
+    ],
+    difficultyLevel: 1,
 
     // 设置
     dailyGoal: 10,
     showGoalPicker: false,
-    showGradePicker: false
+    showGradePicker: false,
+    showDifficultyPicker: false
   },
 
   onLoad() {
@@ -49,7 +61,8 @@ Page({
           userInfo,
           gradeIndex,
           streakDays: userInfo.streak_days || 0,
-          dailyGoal: userInfo.daily_goal || 10
+          dailyGoal: userInfo.daily_goal || 10,
+          difficultyLevel: userInfo.difficulty_level || 1
         })
       }
 
@@ -121,6 +134,34 @@ Page({
     }
   },
 
+  // 难度等级选择
+  openDifficultyPicker() {
+    this.setData({ showDifficultyPicker: true })
+  },
+
+  closeDifficultyPicker() {
+    this.setData({ showDifficultyPicker: false })
+  },
+
+  selectDifficulty(e) {
+    const level = e.currentTarget.dataset.level
+    this.updateDifficulty(level)
+    this.closeDifficultyPicker()
+  },
+
+  async updateDifficulty(level) {
+    try {
+      await userService.updateUserInfo({ difficulty_level: level })
+      this.setData({ difficultyLevel: level })
+      if (app.globalData.userInfo) {
+        app.globalData.userInfo.difficulty_level = level
+      }
+      wx.showToast({ title: '已更新', icon: 'success' })
+    } catch (err) {
+      wx.showToast({ title: '更新失败', icon: 'none' })
+    }
+  },
+
   // 关于页面
   goToAbout() {
     wx.navigateTo({ url: '/pages/about/about' })
@@ -129,6 +170,14 @@ Page({
   // 答题记录
   goToRecords() {
     wx.navigateTo({ url: '/pages/records/records' })
+  },
+
+  // 头像加载失败时使用默认头像
+  onAvatarError() {
+    const { userInfo } = this.data
+    if (userInfo && userInfo.avatar_url) {
+      this.setData({ 'userInfo.avatar_url': null })
+    }
   },
 
   // 清除缓存
@@ -172,7 +221,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '袋鼠数学智练',
+      title: '袋鼠数学助理',
       path: '/pages/index/index'
     }
   }

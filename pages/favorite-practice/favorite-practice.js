@@ -18,7 +18,9 @@ Page({
     completed: false,
     correctCount: 0,
 
-    questionType: '单选题'
+    questionType: '单选题',
+    topicTitle: '',
+    questionLevel: ''
   },
 
   onLoad(options) {
@@ -50,6 +52,8 @@ Page({
             id: fav.id,
             question_id: fav.question_id,
             topic_id: fav.question_topic_id,
+            topicTitle: fav.question_topic_title || '其他',
+            difficultyLevel: fav.question_difficulty_level || 0,
             content: fav.question_content?.text || fav.question_content || '',
             options: options,
             answer: fav.question_answer,
@@ -90,7 +94,11 @@ Page({
 
   updateQuestionMeta(question) {
     const questionType = question.question_type === 'multiple' ? '多选题' : '单选题'
-    this.setData({ questionType })
+    this.setData({
+      questionType,
+      topicTitle: question.topicTitle || '',
+      questionLevel: question.difficultyLevel ? `L${question.difficultyLevel}` : ''
+    })
   },
 
   selectOption(e) {
@@ -152,7 +160,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '收藏练习 - 袋鼠数学智练',
+      title: '收藏练习 - 袋鼠数学助理',
       path: '/pages/review/review'
     }
   }

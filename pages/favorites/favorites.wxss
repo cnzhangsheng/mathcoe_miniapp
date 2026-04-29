@@ -101,15 +101,6 @@
   color: #EC4899;
 }
 
-.fav-difficulty-tag {
-  padding: 8rpx 12rpx;
-  background-color: rgba(0,0,0,0.05);
-  border-radius: 8rpx;
-  font-size: 9px;
-  font-weight: 900;
-  color: rgba(0,0,0,0.4);
-}
-
 .favorite-title {
   font-size: 14px;
   line-height: 1.4;

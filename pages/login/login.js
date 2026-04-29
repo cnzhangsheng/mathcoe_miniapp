@@ -11,6 +11,8 @@ Page({
     isLoggedIn: false,
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
     gradeIndex: 0,  // 默认一年级（G1）
+    difficultyLevels: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6'],
+    difficultyIndex: 0,  // 默认Level 1（根据年级自动计算）
     isDevMode: false  // 开发模式标记
   },
 
@@ -24,18 +26,6 @@ Page({
         url: '/pages/index/index'
       })
     }
-  },
-
-  // 开发模式测试登录（跳过微信授权）
-  handleDevLogin() {
-    wx.setStorageSync('token', DEV_TOKEN)
-    wx.setStorageSync('userId', DEV_USER_ID)
-    app.globalData.token = DEV_TOKEN
-    app.globalData.isLoggedIn = true
-    wx.showToast({ title: '测试登录成功', icon: 'success' })
-    setTimeout(() => {
-      wx.switchTab({ url: '/pages/index/index' })
-    }, 1500)
   },
 
   // 微信授权登录
@@ -86,7 +76,8 @@ Page({
         code,
         nickname,
         avatar_url: userInfo.avatarUrl,
-        grade: "G" + (this.data.gradeIndex + 1)
+        grade: "G" + (this.data.gradeIndex + 1),
+        difficulty_level: this.data.difficultyIndex + 1
       },
       success: (res) => {
         if (res.statusCode === 200 && res.data && res.data.token) {
@@ -136,16 +127,19 @@ Page({
     })
   },
 
-  // 游客模式（不登录）
-  handleGuest() {
-    // 游客模式跳转到专题页面（允许浏览）
-    wx.switchTab({
-      url: '/pages/topics/topics'
+  // 年级选择变化
+  onGradeChange(e) {
+    const gradeIndex = parseInt(e.detail.value)
+    // G1-G2 → Lv.1, G3-G4 → Lv.2, G5-G6 → Lv.3
+    const defaultDifficulty = gradeIndex < 2 ? 0 : gradeIndex < 4 ? 1 : 2
+    this.setData({
+      gradeIndex,
+      difficultyIndex: defaultDifficulty
     })
   },
 
-  // 年级选择变化
-  onGradeChange(e) {
-    this.setData({ gradeIndex: parseInt(e.detail.value) })
+  // 难度等级选择变化
+  onDifficultyChange(e) {
+    this.setData({ difficultyIndex: parseInt(e.detail.value) })
   }
 })

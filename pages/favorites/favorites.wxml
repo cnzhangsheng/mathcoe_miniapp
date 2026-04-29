@@ -29,7 +29,6 @@
             <view class="favorite-info">
               <view class="fav-tags">
                 <view class="fav-category-tag">{{item.category}}</view>
-                <view class="fav-difficulty-tag">{{item.difficulty}}</view>
               </view>
               <text class="favorite-title text-bold">{{item.title}}</text>
               <text class="favorite-date text-small text-muted">收藏于 {{item.date}}</text>

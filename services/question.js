@@ -8,7 +8,6 @@ const { request } = require('./api')
 const getQuestions = (params = {}) => {
   let url = '/questions?'
   if (params.topic_id) url += `topic_id=${params.topic_id}&`
-  if (params.difficulty) url += `difficulty=${params.difficulty}&`
   if (params.year) url += `year=${params.year}&`
   if (params.limit) url += `limit=${params.limit}`
   return request(url)

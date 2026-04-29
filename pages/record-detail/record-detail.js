@@ -11,7 +11,8 @@ Page({
     correctAnswer: '',
     isCorrect: false,
     topicTitle: '',
-    questionType: '单选题'
+    questionType: '单选题',
+    questionLevel: ''
   },
 
   onLoad(options) {
@@ -60,14 +61,14 @@ Page({
           options: this.formatOptions(question.options),
           answer: question.answer,
           explanation: this.extractContent(question.explanation) || '暂无解析',
-          difficulty: question.difficulty
         }
 
         this.setData({
           loading: false,
           question: formattedQuestion,
           correctAnswer: question.answer,
-          questionType
+          questionType,
+          questionLevel: question.difficulty_level ? `L${question.difficulty_level}` : '',
         })
       } else {
         this.setData({ loading: false })

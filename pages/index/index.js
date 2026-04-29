@@ -10,7 +10,6 @@ Page({
     isLoggedIn: false,
     userInfo: null,
     greetingText: '早安！',
-    countdownDays: 158,
 
     // 今日目标
     dailyGoal: 10,
@@ -87,11 +86,10 @@ Page({
   // 加载所有数据
   async loadData() {
     try {
-      // 并行加载用户信息、推荐考卷、进度、能力雷达
-      const [userInfo, recommendedPapers, progress, abilityRadar] = await Promise.all([
+      // 并行加载用户信息、推荐考卷、能力雷达
+      const [userInfo, recommendedPapers, abilityRadar] = await Promise.all([
         userService.getUserInfo().catch(() => null),
         examPaperService.getRecommendedPapers(2).catch(() => []),
-        userService.getUserProgress().catch(() => []),
         userService.getAbilityRadar().catch(() => null)
       ])
 
@@ -110,8 +108,8 @@ Page({
           ...paper,
           typeIcon: this.getPaperTypeIcon(paper.paper_type),
           typeClass: paper.paper_type || 'daily',
-          levelLabel: paper.level,
-          levelClass: `level-${paper.level}`,
+          levelLabel: `Level ${paper.difficulty_level}`,
+          levelClass: `level-${paper.difficulty_level}`,
           paperTypeLabel: this.getPaperTypeLabel(paper.paper_type)
         }))
         this.setData({ recommendedPapers: formattedPapers })
@@ -131,23 +129,6 @@ Page({
 
         // 绘制雷达图（等待 DOM 更新）
         setTimeout(() => this.drawRadarChart(), 100)
-      }
-
-      // 处理进度数据 -> 找出最薄弱的专题
-      if (progress && progress.length > 0) {
-        const weakest = progress.reduce((min, p) => {
-          const rate = p.success_rate || p.progress || 0
-          return rate < (min.success_rate || min.progress || 100) ? p : min
-        }, progress[0])
-
-        if (weakest && weakest.success_rate < 100) {
-          this.setData({
-            weakTopic: {
-              id: weakest.topic_id,
-              title: weakest.topic_title || '该专题'
-            }
-          })
-        }
       }
 
       // 加载今日进度
@@ -258,6 +239,14 @@ Page({
       }
     } catch (err) {
       console.error('[loadStats] 请求失败:', err)
+    }
+  },
+
+  // 头像加载失败时使用默认头像
+  onAvatarError() {
+    const { userInfo } = this.data
+    if (userInfo && userInfo.avatar_url) {
+      this.setData({ 'userInfo.avatar_url': null })
     }
   },
 
@@ -457,7 +446,7 @@ Page({
   // 选择考卷进入练习
   selectExamPaper(e) {
     const paperId = e.currentTarget.dataset.id
-    wx.reLaunch({
+    wx.navigateTo({
       url: `/pages/practice/practice?exam_paper_id=${paperId}`
     })
   },
@@ -482,7 +471,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '袋鼠数学智练 - 每天10分钟，数学思维突飞猛进',
+      title: '袋鼠数学助理 - 每天10分钟，数学思维突飞猛进',
       path: '/pages/index/index'
     }
   }

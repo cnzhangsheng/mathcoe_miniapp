@@ -16,6 +16,7 @@ Page({
     question: null,
     questionContentHtml: '',
     questionTypeText: '单选题',
+    questionLevel: '',
     options: [],
     selectedOption: null,
     isSubmitted: false,
@@ -87,6 +88,7 @@ Page({
         questions: result.questions,
         questionContentHtml: this.extractContentHtml(firstQuestion),
         questionTypeText: this.getQuestionTypeText(firstQuestion),
+        questionLevel: firstQuestion.difficulty_level ? `L${firstQuestion.difficulty_level}` : '',
         options: this.formatOptions(firstQuestion.options),
         isLiked,
         isBookmarked,
@@ -248,7 +250,7 @@ Page({
       analysis: {
         logic: explanationText || '暂无解析',
         tip: '',
-        point: `${question.level ? 'L' + question.level : '基础'} ${question.question_type || '题型'}`
+        point: `${question.difficulty_level ? 'L' + question.difficulty_level : '基础'} ${question.question_type || '题型'}`
       }
     })
 
@@ -286,6 +288,7 @@ Page({
       question: nextQuestion,
       questionContentHtml: this.extractContentHtml(nextQuestion),
       questionTypeText: this.getQuestionTypeText(nextQuestion),
+      questionLevel: nextQuestion.difficulty_level ? `L${nextQuestion.difficulty_level}` : '',
       options: this.formatOptions(nextQuestion.options),
       selectedOption: null,
       isSubmitted: false,

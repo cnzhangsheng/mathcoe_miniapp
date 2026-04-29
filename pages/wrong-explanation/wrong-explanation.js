@@ -34,7 +34,8 @@ Page({
       correctAnswer: question.answer || '',
       userAnswer: question.user_answer || '',
       isCorrect: question.user_answer === question.answer,
-      explanation: question.explanation || ''
+      explanation: question.explanation || '',
+      questionLevel: question.level ? `L${question.level}` : ''
     })
   },
 

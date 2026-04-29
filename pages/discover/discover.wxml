@@ -30,6 +30,7 @@
     <!-- 题目信息 -->
     <view class="question-info-row">
       <text class="topic-badge text-small text-bold">{{topicTitle}}</text>
+      <text class="difficulty-badge text-small text-bold" wx:if="{{questionLevel}}">{{questionLevel}}</text>
       <text class="question-type-badge text-small text-muted">（{{questionType}}）</text>
     </view>
 
@@ -100,16 +101,6 @@
           <rich-text class="logic-text" nodes="{{question.explanation || '暂无解析'}}"></rich-text>
         </view>
 
-        <!-- Key Point -->
-        <view class="key-point-box" wx:if="{{question.difficulty}}">
-          <view class="key-icon-box">
-            <text class="key-icon">⭐</text>
-          </view>
-          <view class="key-content">
-            <text class="key-label text-xs text-bold">难度等级：</text>
-            <text class="key-text text-xs">{{question.difficulty}}</text>
-          </view>
-        </view>
       </view>
 
       <!-- Next Button -->

@@ -7,7 +7,7 @@
 
   <block wx:if="{{!loading}}">
     <!-- AI Mastery Insight -->
-    <view class="insight-card">
+    <view class="insight-card" wx:if="{{insightData}}">
       <view class="insight-decorator"></view>
       <view class="insight-content">
         <view class="insight-header flex-row">
@@ -17,14 +17,14 @@
           <text class="insight-title text-small text-bold">AI 学习洞察</text>
         </view>
         <view class="insight-message">
-          <text class="text-bold">你在 <text class="highlight">逻辑推理</text> 模块表现略显吃力，建议本周重点突破。</text>
+          <text class="text-bold">你在 <text class="highlight">{{insightData.weakest_topic_title}}</text> 模块表现略显吃力，建议本周重点突破。</text>
         </view>
         <view class="insight-footer flex-row">
           <view class="insight-badge">
             <text class="badge-icon">📈</text>
-            <text class="badge-text text-small text-bold">进度提升 12%</text>
+            <text class="badge-text text-small text-bold">进度提升 {{insightData.progress_gain}}%</text>
           </view>
-          <text class="insight-sub text-small">基于最近 50 道练习分析</text>
+          <text class="insight-sub text-small">基于最近 {{insightData.analysis_base}} 道练习分析</text>
         </view>
       </view>
     </view>
@@ -70,7 +70,7 @@
             <view class="exam-middle">
               <view class="exam-top flex-row">
                 <view class="level-badge">
-                  <text class="level-text text-bold">L{{item.level}}</text>
+                  <text class="level-text text-bold">Level {{item.difficulty_level}}</text>
                 </view>
                 <view class="new-badge" wx:if="{{item.isNew}}">
                   <text class="new-text text-bold">New</text>

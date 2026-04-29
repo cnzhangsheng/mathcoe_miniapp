@@ -7,11 +7,11 @@
   <!-- Logo 区域 -->
   <view class="logo-section">
     <view class="logo-box">
-      <text class="logo-icon">🦘</text>
+      <image class="logo-icon" src="/assets/logo.png" mode="aspectFit"></image>
     </view>
-    <text class="app-name text-bold">袋鼠数学智练</text>
-    <text class="app-slogan text-small">KANGAROO MATH BRAIN</text>
-    <text class="app-desc">专为小学生设计的趣味数学逻辑训练</text>
+    <text class="app-name text-bold">袋鼠数学助理</text>
+    <text class="app-slogan text-small">Kangaroo Math Assistant</text>
+    <text class="app-desc">您的 AI 数字化思维成长伙伴</text>
   </view>
 
   <!-- 特性展示 -->
@@ -20,40 +20,44 @@
       <view class="feature-icon-box primary-bg">
         <text>🎯</text>
       </view>
-      <text class="feature-title text-small text-bold">每日挑战</text>
-      <text class="feature-desc text-xs">精准提升薄弱环节</text>
+      <text class="feature-title text-small text-bold">AI深度测评</text>
+      <text class="feature-desc text-xs">雷达图分析思维模型</text>
     </view>
     <view class="feature-card">
       <view class="feature-icon-box blue-bg">
         <text>📊</text>
       </view>
-      <text class="feature-title text-small text-bold">能力雷达</text>
-      <text class="feature-desc text-xs">可视化学习进度</text>
+      <text class="feature-title text-small text-bold">全级真题实练</text>
+      <text class="feature-desc text-xs">历年L1至L6真题库</text>
     </view>
     <view class="feature-card">
       <view class="feature-icon-box amber-bg">
         <text>🏆</text>
       </view>
-      <text class="feature-title text-small text-bold">真题训练</text>
-      <text class="feature-desc text-xs">历年真题全收录</text>
+      <text class="feature-title text-small text-bold">成长轨迹追踪</text>
+      <text class="feature-desc text-xs">数字化记录进步点滴</text>
     </view>
   </view>
 
   <!-- 登录区域 -->
   <view class="login-section">
-    <view class="login-info">
-      <text class="login-info-title text-small text-bold">登录解锁完整功能</text>
-      <text class="login-info-desc text-xs">• 学习进度自动保存</text>
-      <text class="login-info-desc text-xs">• 错题收藏实时同步</text>
-      <text class="login-info-desc text-xs">• AI教练个性化指导</text>
-    </view>
-
     <!-- 年级选择 -->
     <view class="grade-section">
       <text class="grade-label text-small text-bold">选择年级</text>
       <picker mode="selector" range="{{grades}}" value="{{gradeIndex}}" bindchange="onGradeChange">
         <view class="grade-picker">
           <text class="grade-value">{{grades[gradeIndex]}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 难度等级选择 -->
+    <view class="grade-section">
+      <text class="grade-label text-small text-bold">难度等级</text>
+      <picker mode="selector" range="{{difficultyLevels}}" value="{{difficultyIndex}}" bindchange="onDifficultyChange">
+        <view class="grade-picker">
+          <text class="grade-value">{{difficultyLevels[difficultyIndex]}}</text>
           <text class="picker-arrow">›</text>
         </view>
       </picker>
@@ -70,11 +74,6 @@
         <text class="btn-icon" wx:if="{{!loading}}">📱</text>
         <text class="btn-text text-bold">{{loading ? '登录中...' : '微信授权登录'}}</text>
       </view>
-    </button>
-
-    <!-- 开发测试登录（仅真机调试使用） -->
-    <button class="dev-login-btn" bindtap="handleDevLogin">
-      <text class="dev-btn-text text-small">测试登录（开发模式）</text>
     </button>
 
     <!-- 提示 -->

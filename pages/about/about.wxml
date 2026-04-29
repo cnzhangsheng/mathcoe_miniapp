@@ -5,7 +5,7 @@
     <view class="logo-box">
       <text class="logo-icon">🧮</text>
     </view>
-    <text class="app-name text-bold">袋鼠数学智练</text>
+    <text class="app-name text-bold">袋鼠数学助理</text>
     <text class="app-desc text-small text-muted">每天10分钟，数学思维突飞猛进</text>
     <text class="app-version text-small text-muted">版本 1.0.0</text>
   </view>

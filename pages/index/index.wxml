@@ -16,7 +16,7 @@
     <view class="user-header">
       <view class="user-info">
         <view class="avatar-wrapper">
-          <image class="avatar" src="{{userInfo.avatar_url || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          <image class="avatar" src="/assets/default-avatar.png" mode="aspectFill"></image>
         </view>
         <view class="user-text">
           <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，{{greetingText}}</text>
@@ -112,22 +112,6 @@
       </view>
     </view>
 
-    <!-- 竞赛倒计时 -->
-    <view class="countdown-card">
-      <view class="countdown-left flex-row">
-        <view class="timer-icon-box">
-          <text>⏱️</text>
-        </view>
-        <view class="countdown-info">
-          <text class="countdown-label text-small text-muted">2025 袋鼠数学竞赛</text>
-          <text class="countdown-text text-bold">距离开赛还有 <text class="countdown-num primary-color">{{countdownDays}}</text> 天</text>
-        </view>
-      </view>
-      <view class="countdown-btn" bindtap="goToExamPaper">
-        <text class="countdown-btn-text text-small text-bold">立即报名</text>
-      </view>
-    </view>
-
     <!-- 能力雷达（多边形） -->
     <view class="radar-card">
       <view class="radar-header">
@@ -215,7 +199,7 @@
       <view class="prompt-icon-box">
         <text class="prompt-icon">🧮</text>
       </view>
-      <text class="prompt-title text-bold">袋鼠数学智练</text>
+      <text class="prompt-title text-bold">袋鼠数学助理</text>
       <text class="prompt-sub text-small text-muted">每天10分钟，数学思维突飞猛进</text>
       <view class="prompt-btn" bindtap="goToLogin">
         <text class="prompt-btn-text text-bold">开始学习</text>

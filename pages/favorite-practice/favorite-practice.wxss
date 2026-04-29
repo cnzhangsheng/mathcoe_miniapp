@@ -56,6 +56,30 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.topic-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  background-color: #DBEAFE;
+}
+
+.topic-badge .topic-text {
+  color: #2563EB;
+}
+
+.difficulty-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  background-color: #FEF3C7;
+  color: #D97706;
+}
+
 .question-content {
   font-size: 32rpx;
   color: rgba(0, 0, 0, 0.85);
@@ -297,6 +321,11 @@
 
 .primary-bg {
   background-color: #07C160;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
 }
 
 .flex-between {

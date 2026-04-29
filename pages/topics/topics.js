@@ -1,6 +1,6 @@
 // pages/topics/topics.js - 100%复刻 kangaroo-math-brain
-const questionService = require('../../services/question')
 const userService = require('../../services/user')
+const questionService = require('../../services/question')
 const examPaperService = require('../../services/examPaper')
 
 Page({
@@ -28,6 +28,9 @@ Page({
     totalExamPapers: 0,
     hasMoreExamPapers: true,
     examPapersLoading: false,
+
+    // AI学习洞察数据
+    insightData: null,
 
     paperTypes: {
       daily: { label: '每日一练', icon: '📅', color: 'emerald' },
@@ -68,20 +71,24 @@ Page({
 
   async loadTopics() {
     try {
-      const topics = await questionService.getTopics().catch(() => null)
-      const progress = await userService.getUserProgress().catch(() => [])
+      const [topics, insight] = await Promise.all([
+        questionService.getTopics().catch(() => null),
+        userService.getUserInsight().catch(() => null),
+      ])
+
+      if (insight && insight.analysis_base > 0) {
+        this.setData({ insightData: insight })
+      }
 
       if (topics && topics.length > 0) {
         const topicsWithProgress = topics.map(topic => {
-          const topicProgress = progress.find(p => p.topic_id === topic.id)
-          // 使用 API 返回的 color 字段
           const bgClass = `bg-${topic.color || 'blue'}`
           const progressClass = `progress-${topic.color || 'blue'}`
           return {
             ...topic,
-            progress: topicProgress?.progress || 0,
-            successRate: topicProgress?.success_rate || 0,
-            questionsDone: topicProgress?.questions_done || 0,
+            progress: 0,
+            successRate: 0,
+            questionsDone: 0,
             bgClass,
             progressClass,
             iconEmoji: this.getIconEmoji(topic.icon || topic.title),

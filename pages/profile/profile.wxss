@@ -137,6 +137,7 @@
 .menu-icon-box.gray-bg { background-color: #F3F4F6; }
 .menu-icon-box.blue-bg { background-color: #DBEAFE; }
 .menu-icon-box.amber-bg { background-color: #FEF3C7; }
+.menu-icon-box.orange-bg { background-color: #FFEDD5; }
 
 .menu-icon {
   font-size: 24rpx;

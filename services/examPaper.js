@@ -7,7 +7,7 @@ const { request } = require('./api')
  */
 const getExamPapers = (params = {}) => {
   let url = '/exam-papers?'
-  if (params.level) url += `level=${params.level}&`
+  if (params.difficulty_level) url += `difficulty_level=${params.difficulty_level}&`
   if (params.paper_type) url += `paper_type=${params.paper_type}&`
   return request(url)
 }

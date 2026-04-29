@@ -48,6 +48,7 @@
   height: 160rpx;
   background-color: #fff;
   border-radius: 48rpx;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,7 +58,8 @@
 }
 
 .logo-icon {
-  font-size: 64px;
+  width: 160rpx;
+  height: 160rpx;
 }
 
 .app-name {

@@ -9,17 +9,17 @@ const getUserInfo = () => {
 }
 
 /**
- * 获取用户进度
- */
-const getUserProgress = () => {
-  return request('/users/progress')
-}
-
-/**
  * 获取能力雷达
  */
 const getAbilityRadar = () => {
   return request('/users/ability-radar')
+}
+
+/**
+ * 获取 AI 学习洞察
+ */
+const getUserInsight = () => {
+  return request('/users/insight')
 }
 
 /**
@@ -42,8 +42,8 @@ const updateUserInfo = (data) => {
 
 module.exports = {
   getUserInfo,
-  getUserProgress,
   getAbilityRadar,
+  getUserInsight,
   getUserStats,
   updateUserInfo
 }

@@ -62,7 +62,6 @@ Page({
             options: options,
             answer: wrong.question_answer,
             explanation: wrong.question_explanation?.text || wrong.question_explanation || '',
-            difficulty: wrong.question_difficulty || 'L2',
             question_type: wrong.question_type || 'single'
           }
         }
@@ -225,7 +224,6 @@ Page({
           options: options,
           answer: wrong.question_answer,
           explanation: wrong.question_explanation?.text || wrong.question_explanation || '',
-          difficulty: wrong.question_difficulty || 'L2',
           question_type: wrong.question_type || 'single'
         }
       })
@@ -259,7 +257,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '错题复习 - 袋鼠数学智练',
+      title: '错题复习 - 袋鼠数学助理',
       path: '/pages/review/review'
     }
   }

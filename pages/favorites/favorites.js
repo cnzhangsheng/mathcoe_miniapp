@@ -9,7 +9,6 @@ Page({
         id: 101,
         title: '逻辑推理：真假话判定',
         category: '逻辑',
-        difficulty: 'L2',
         date: '2024.10.12',
         img: 'https://picsum.photos/seed/logic_fav/400/300'
       },
@@ -17,7 +16,6 @@ Page({
         id: 105,
         title: '空间几何：展开图还原',
         category: '几何',
-        difficulty: 'L3',
         date: '2024.10.10',
         img: 'https://picsum.photos/seed/geometry_fav/400/300'
       }

@@ -14,7 +14,8 @@ Page({
     isFavorited: false,
     likeCount: 0,
     topicTitle: '',
-    questionType: '单选题'
+    questionType: '单选题',
+    questionLevel: ''
   },
 
   onLoad() {
@@ -59,7 +60,6 @@ Page({
           })),
           answer: question.answer,
           explanation: (question.explanation && question.explanation.text) || question.explanation || '暂无解析',
-          difficulty: question.difficulty
         }
 
         // 获取点赞状态和收藏状态
@@ -75,6 +75,7 @@ Page({
           question: formattedQuestion,
           topicTitle,
           questionType,
+          questionLevel: question.difficulty_level ? `L${question.difficulty_level}` : '',
           selectedOption: null,
           showAnswer: false,
           isLiked,

@@ -34,6 +34,7 @@
     <!-- 题目信息 -->
     <view class="question-info-row">
       <text class="topic-badge text-small text-bold">{{topicTitle}}</text>
+      <text class="difficulty-badge text-small text-bold" wx:if="{{questionLevel}}">{{questionLevel}}</text>
       <text class="question-type-badge text-small text-muted">（{{questionTypeText}}）</text>
     </view>
 

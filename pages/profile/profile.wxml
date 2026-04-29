@@ -16,14 +16,10 @@
     <view class="user-card card">
       <view class="user-header flex-row">
         <view class="avatar-wrapper">
-          <image class="user-avatar" src="{{userInfo.avatar_url || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
+          <image class="user-avatar" src="/assets/default-avatar.png" mode="aspectFill"></image>
         </view>
         <view class="user-info">
           <text class="user-name text-bold">{{userInfo.nickname || '数学小达人'}}</text>
-          <view class="streak-row" wx:if="{{streakDays > 0}}">
-            <text class="streak-icon">🔥</text>
-            <text class="streak-text text-small">连续学习 {{streakDays}} 天</text>
-          </view>
         </view>
       </view>
     </view>
@@ -69,22 +65,25 @@
           <text class="menu-arrow">›</text>
         </view>
       </view>
+
+      <view class="menu-item" bindtap="openDifficultyPicker">
+        <view class="menu-left flex-row">
+          <view class="menu-icon-box orange-bg">
+            <text class="menu-icon">⭐</text>
+          </view>
+          <text class="menu-text">难度等级</text>
+        </view>
+        <view class="menu-right flex-row">
+          <text class="menu-value text-bold">{{difficultyLabels[difficultyLevel - 1].label}}</text>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
     </view>
 
     <!-- 系统设置 -->
     <view class="section-card card">
       <view class="section-header">
         <text class="section-title text-bold">系统设置</text>
-      </view>
-
-      <view class="menu-item" bindtap="goToAbout">
-        <view class="menu-left flex-row">
-          <view class="menu-icon-box gray-bg">
-            <text class="menu-icon">📖</text>
-          </view>
-          <text class="menu-text">关于袋鼠数学</text>
-        </view>
-        <text class="menu-arrow">›</text>
       </view>
 
       <view class="menu-item" bindtap="clearCache">
@@ -154,7 +153,26 @@
         <block wx:for="{{gradeLabels}}" wx:key="value">
           <view class="picker-option {{gradeIndex === index ? 'active' : ''}}" bindtap="selectGrade" data-index="{{index}}">
             <text class="option-text text-bold">{{item.label}}</text>
-            <text class="option-desc text-small text-muted">{{item.desc}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 难度等级选择弹窗 -->
+  <view wx:if="{{showDifficultyPicker}}" class="picker-modal">
+    <view class="picker-mask" bindtap="closeDifficultyPicker"></view>
+    <view class="picker-content">
+      <view class="picker-header flex-between">
+        <text class="picker-title text-bold">选择难度等级</text>
+        <view class="picker-close" bindtap="closeDifficultyPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="picker-options">
+        <block wx:for="{{difficultyLabels}}" wx:key="value">
+          <view class="picker-option {{difficultyLevel === item.value ? 'active' : ''}}" bindtap="selectDifficulty" data-level="{{item.value}}">
+            <text class="option-text text-bold">{{item.label}}</text>
           </view>
         </block>
       </view>
