@@ -38,6 +38,31 @@
       <text class="question-type-badge text-small text-muted">（{{questionTypeText}}）</text>
     </view>
 
+    <!-- 排序选择器 -->
+    <view class="sort-bar">
+      <view class="sort-trigger" bindtap="toggleSortPicker">
+        <text class="sort-label">排序：</text>
+        <text class="sort-value">
+          <block wx:for="{{sortOptions}}" wx:key="value">
+            <block wx:if="{{item.value === sortBy}}">{{item.label}}</block>
+          </block>
+        </text>
+        <text class="sort-arrow">{{showSortPicker ? '▲' : '▼'}}</text>
+      </view>
+      <view class="sort-dropdown" wx:if="{{showSortPicker}}">
+        <view
+          class="sort-option {{item.value === sortBy ? 'sort-option-active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          bindtap="handleSortChange"
+        >
+          <text class="sort-option-text">{{item.label}}</text>
+          <text class="sort-option-check" wx:if="{{item.value === sortBy}}">✓</text>
+        </view>
+      </view>
+    </view>
+
     <!-- Question Card -->
     <view class="question-card">
       <!-- 题目内容使用 rich-text 渲染 -->

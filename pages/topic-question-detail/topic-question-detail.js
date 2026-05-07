@@ -10,6 +10,18 @@ Page({
     topicTitle: '',
     sessionId: null,
 
+    // 排序
+    sortBy: 'default',
+    sortOptions: [
+      { value: 'default', label: '默认排序' },
+      { value: 'time', label: '最新时间' },
+      { value: 'random', label: '随机排序' },
+      { value: 'likes', label: '点赞最多' },
+      { value: 'favorites', label: '收藏最多' },
+      { value: 'wrong_count', label: '易错优先' },
+    ],
+    showSortPicker: false,
+
     // 题目数据
     currentIndex: 1,
     totalQuestions: 0,
@@ -43,6 +55,7 @@ Page({
   onLoad(options) {
     const topicId = options.topic_id
     const title = options.title || '专题详情'
+    const sortBy = options.sort_by || 'default'
 
     if (!topicId) {
       wx.showToast({ title: '缺少专题参数', icon: 'none' })
@@ -50,7 +63,7 @@ Page({
       return
     }
 
-    this.setData({ topicId, topicTitle: decodeURIComponent(title) })
+    this.setData({ topicId, topicTitle: decodeURIComponent(title), sortBy })
     this.loadQuestion(topicId)
   },
 
@@ -63,7 +76,7 @@ Page({
         return
       }
 
-      const result = await practiceService.startPractice({ topic_id: topicId })
+      const result = await practiceService.startPractice({ topic_id: topicId, sort_by: this.data.sortBy })
       if (!result || !result.questions || result.questions.length === 0) {
         this.setData({ noQuestions: true })
         return
@@ -82,6 +95,7 @@ Page({
       const isBookmarked = await reviewService.isFavorited(firstQuestion.id).catch(() => false)
 
       this.setData({
+        currentIndex: 1,
         sessionId: result.session_id,
         totalQuestions: result.questions.length,
         question: firstQuestion,
@@ -298,6 +312,18 @@ Page({
       isBookmarked,
       likeCount
     })
+  },
+
+  // 排序选择
+  handleSortChange(e) {
+    const sortBy = e.currentTarget.dataset.value
+    this.setData({ sortBy, showSortPicker: false })
+    // 重新加载题目
+    this.loadQuestion(this.data.topicId)
+  },
+
+  toggleSortPicker() {
+    this.setData({ showSortPicker: !this.data.showSortPicker })
   },
 
   // 返回
