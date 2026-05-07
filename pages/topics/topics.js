@@ -156,6 +156,43 @@ Page({
     })
   },
 
+  // 导出考卷 PDF
+  async downloadPdf(e) {
+    const paperId = e.currentTarget.dataset.id
+
+    wx.showLoading({ title: '正在下载PDF...', mask: true })
+
+    try {
+      const url = examPaperService.getDownloadPdfUrl(paperId)
+      const downloadResult = await new Promise((resolve, reject) => {
+        wx.downloadFile({
+          url,
+          timeout: 120000,
+          success: resolve,
+          fail: (err) => reject(new Error(err.errMsg || '下载失败')),
+        })
+      })
+
+      if (downloadResult.statusCode !== 200) {
+        throw new Error('下载失败')
+      }
+
+      await new Promise((resolve, reject) => {
+        wx.openDocument({
+          filePath: downloadResult.tempFilePath,
+          showMenu: true,
+          success: resolve,
+          fail: (err) => reject(new Error(err.errMsg || '打开失败')),
+        })
+      })
+    } catch (err) {
+      console.error('downloadPdf error:', err)
+      wx.showToast({ title: '导出失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
+  },
+
   // 错题溯源
   goErrors() {
     wx.showToast({ title: '错题溯源功能开发中', icon: 'none' })

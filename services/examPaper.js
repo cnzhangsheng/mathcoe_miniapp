@@ -93,6 +93,17 @@ const getTestDetail = (testId) => {
   return request(`/exam-papers/tests/${testId}`)
 }
 
+/**
+ * 下载已生成的考卷 PDF（直接返回下载 URL）
+ * @param {number} examPaperId
+ * @returns {string} 下载 URL
+ */
+const getDownloadPdfUrl = (examPaperId) => {
+  const app = getApp()
+  const token = wx.getStorageSync('token') || app.globalData.token
+  return `${app.globalData.baseUrl}/exam-papers/${examPaperId}/download-pdf?token=${token}`
+}
+
 module.exports = {
   getExamPapers,
   getRecommendedPapers,
@@ -103,5 +114,6 @@ module.exports = {
   submitExamPaper,
   getExamPaperTests,
   getTestDetail,
-  getTestReport
+  getTestReport,
+  getDownloadPdfUrl
 }

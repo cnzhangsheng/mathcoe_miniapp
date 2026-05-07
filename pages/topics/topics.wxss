@@ -351,6 +351,25 @@
 
 .exam-right {
   margin-left: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.download-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 32rpx;
+  background-color: rgba(99, 102, 241, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-icon {
+  font-size: 28rpx;
+  color: #6366F1;
 }
 
 .arrow-box {

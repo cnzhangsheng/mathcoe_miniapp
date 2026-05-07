@@ -55,7 +55,7 @@
     <!-- Exam Papers Section -->
     <view class="exam-section">
       <view class="section-header flex-row">
-        <text class="section-title text-bold">模拟考场 ({{totalExamPapers}}张)</text>
+        <text class="section-title text-bold">考卷 ({{totalExamPapers}}张)</text>
         <text class="section-more text-small text-bold">More Exams</text>
       </view>
 
@@ -89,6 +89,9 @@
               </view>
             </view>
             <view class="exam-right">
+              <view class="download-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
+                <text class="download-icon">⬇</text>
+              </view>
               <view class="arrow-box">
                 <text class="arrow-icon">›</text>
               </view>
