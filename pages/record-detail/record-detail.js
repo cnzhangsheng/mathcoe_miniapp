@@ -1,4 +1,5 @@
 // pages/record-detail/record-detail.js - 答题记录题目详情
+const { processRichText } = require('../../utils/util')
 const app = getApp()
 const discoverService = require('../../services/discover')
 
@@ -57,10 +58,10 @@ Page({
         const formattedQuestion = {
           id: question.id,
           title: question.title || '题目',
-          content: this.extractContent(question.content),
+          content: processRichText(this.extractContent(question.content)),
           options: this.formatOptions(question.options),
           answer: question.answer,
-          explanation: this.extractContent(question.explanation) || '暂无解析',
+          explanation: processRichText(this.extractContent(question.explanation) || '暂无解析'),
         }
 
         this.setData({
@@ -92,7 +93,7 @@ Page({
     if (!options || !Array.isArray(options)) return []
     return options.map(opt => ({
       label: opt.label || 'A',
-      text: this.extractContent(opt.content) || opt.text || ''
+      text: processRichText(this.extractContent(opt.content) || opt.text || '')
     }))
   },
 

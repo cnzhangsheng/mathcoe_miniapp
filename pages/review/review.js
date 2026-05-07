@@ -13,7 +13,7 @@ Page({
     favoriteCount: 0,
 
     // 筛选专题列表
-    filterTopics: [{ id: 0, title: '全部', icon: '📚' }],
+    filterTopics: [{ id: 0, title: '全部' }],
 
     // 专题分组
     topicGroups: [],
@@ -80,11 +80,10 @@ Page({
 
       // 构建筛选专题列表 - 使用真实专题数据
       const filterTopics = [
-        { id: 0, title: '全部', icon: '📚' },
+        { id: 0, title: '全部' },
         ...(topics || []).map(t => ({
           id: t.id,
           title: t.title,
-          icon: t.icon || '📝'
         }))
       ]
 
@@ -214,7 +213,8 @@ Page({
         user_answer: q.user_answer,
         retry_count: q.retry_count || 0,
         created_at: q.created_at,
-        dateLabel: this.getDateLabel(q.created_at)
+        last_retry_at: q.last_retry_at,
+        dateLabel: this.getDateLabel(q.last_retry_at || q.created_at, true)
       }
     })
   },
@@ -237,7 +237,9 @@ Page({
         content: q.question_content?.text || q.content || '',
         options: optionsList,
         answer: q.question_answer,
-        explanation: q.question_explanation?.text || ''
+        explanation: q.question_explanation?.text || '',
+        created_at: q.created_at,
+        dateLabel: this.getDateLabel(q.created_at, true)
       }
     })
   },
@@ -288,18 +290,20 @@ Page({
   },
 
   // 获取日期标签
-  getDateLabel(dateStr) {
+  getDateLabel(dateStr, showTime = false) {
     if (!dateStr) return ''
     const date = new Date(dateStr)
     const today = new Date()
     const yesterday = new Date(today)
     yesterday.setDate(yesterday.getDate() - 1)
 
-    const formatDate = d => `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`
+    const pad = n => n.toString().padStart(2, '0')
+    const formatDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`
+    const timeStr = showTime ? ` ${pad(date.getHours())}:${pad(date.getMinutes())}` : ''
 
-    if (formatDate(date) === formatDate(today)) return '今天'
-    if (formatDate(date) === formatDate(yesterday)) return '昨天'
-    return `${date.getMonth()+1}/${date.getDate()}`
+    if (formatDate(date) === formatDate(today)) return '今天' + timeStr
+    if (formatDate(date) === formatDate(yesterday)) return '昨天' + timeStr
+    return `${date.getMonth()+1}/${date.getDate()}${timeStr}`
   },
 
   // Tab切换

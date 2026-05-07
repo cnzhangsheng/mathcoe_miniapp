@@ -1,4 +1,5 @@
 // pages/practice/practice.js - 100%复刻 kangaroo-math-brain Practice.tsx
+const { processRichText } = require('../../utils/util')
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
 const reviewService = require('../../services/review')
@@ -240,7 +241,7 @@ Page({
       return {
         label: opt?.label || 'A',
         text,
-        textHtml
+        textHtml: processRichText(textHtml)
       }
     })
     this.setData({ options: formattedOptions })

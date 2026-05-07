@@ -17,7 +17,7 @@
   <view class="practice-card">
     <!-- Question Header -->
     <view class="question-header flex-row">
-      <text class="question-number text-bold">题目{{currentIndex}}</text>
+      <text class="question-number text-bold">题目{{currentIndex}}/{{totalQuestions}}</text>
       <text class="question-type-text">（{{questionTypeText}}）</text>
     </view>
 

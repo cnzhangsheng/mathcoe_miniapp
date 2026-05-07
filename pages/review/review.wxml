@@ -32,8 +32,7 @@
       <view class="filter-row">
         <block wx:for="{{filterTopics}}" wx:key="id">
           <view class="filter-btn {{selectedTopicId === item.id ? 'active' : ''}}" bindtap="selectTopic" data-id="{{item.id}}">
-            <text class="filter-btn-icon">{{item.icon}}</text>
-            <text class="filter-btn-text">{{item.title}}</text>
+<text class="filter-btn-text">{{item.title}}</text>
           </view>
         </block>
       </view>
@@ -106,6 +105,7 @@
                       <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
                     </view>
                     <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">L{{item.level}}</text>
+                    <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
                   </view>
                   <view class="remove-btn" catchtap="removeFavorite" data-id="{{item.question_id}}">
                     <text class="remove-icon">✕</text>

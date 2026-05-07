@@ -14,20 +14,8 @@ Page({
 
     filteredTopics: [],
 
-    // 知识点分布
-    knowledgeItems: [
-      { label: '数字敏感度', val: 90, color: 'knowledge-emerald' },
-      { label: '空间思维', val: 45, color: 'knowledge-amber' },
-      { label: '逻辑链推导', val: 65, color: 'knowledge-indigo' }
-    ],
-
     // 考卷数据
     examPapers: [],
-    examPapersPage: 1,
-    examPapersPageSize: 10,
-    totalExamPapers: 0,
-    hasMoreExamPapers: true,
-    examPapersLoading: false,
 
     // AI学习洞察数据
     insightData: null,
@@ -45,11 +33,9 @@ Page({
     this.loadExamPapers()
   },
 
-  // 下拉加载更多考卷
-  onReachBottom() {
-    if (this.data.hasMoreExamPapers && !this.data.examPapersLoading) {
-      this.loadMoreExamPapers()
-    }
+  onShow() {
+    // 每次切到此tab时刷新考卷列表，避免新增的考卷不显示
+    this.loadExamPapers()
   },
 
   // 筛选专题
@@ -129,60 +115,35 @@ Page({
   },
 
   // 加载考卷列表
-  async loadExamPapers(isLoadMore = false) {
-    if (this.data.examPapersLoading) return
-
-    this.setData({ examPapersLoading: true })
-
+  async loadExamPapers() {
     try {
-      const { examPapersPage, examPapersPageSize, examPapers } = this.data
-      const page = isLoadMore ? examPapersPage + 1 : 1
-
       const allPapers = await examPaperService.getExamPapers().catch(() => [])
 
       if (allPapers && allPapers.length > 0) {
-        const papersWithType = allPapers.map((paper, index) => {
+        const papersWithType = allPapers.map(paper => {
           const typeInfo = this.data.paperTypes[paper.paper_type] || this.data.paperTypes.daily
           return {
             ...paper,
             typeLabel: typeInfo.label,
             typeIcon: typeInfo.icon,
             typeColor: typeInfo.color,
-            isNew: index < 2,
-            year: 2024,
             duration: 75
           }
         })
 
-        const startIndex = (page - 1) * examPapersPageSize
-        const endIndex = startIndex + examPapersPageSize
-        const newPapers = papersWithType.slice(startIndex, endIndex)
-        const total = papersWithType.length
-        const hasMore = endIndex < total
-
         this.setData({
-          examPapers: isLoadMore ? [...examPapers, ...newPapers] : newPapers,
-          examPapersPage: page,
-          totalExamPapers: total,
-          hasMoreExamPapers: hasMore,
-          examPapersLoading: false
+          examPapers: papersWithType,
+          totalExamPapers: papersWithType.length
         })
       } else {
         this.setData({
           examPapers: [],
-          hasMoreExamPapers: false,
-          examPapersLoading: false
+          totalExamPapers: 0
         })
       }
     } catch (err) {
       console.error('loadExamPapers error:', err)
-      this.setData({ examPapersLoading: false })
     }
-  },
-
-  // 加载更多考卷
-  loadMoreExamPapers() {
-    this.loadExamPapers(true)
   },
 
   // 选择专题 - 进入题目详情页面

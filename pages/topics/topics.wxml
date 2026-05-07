@@ -72,10 +72,12 @@
                 <view class="level-badge">
                   <text class="level-text text-bold">Level {{item.difficulty_level}}</text>
                 </view>
-                <view class="new-badge" wx:if="{{item.isNew}}">
+                <view class="new-badge" wx:if="{{item.is_new}}">
                   <text class="new-text text-bold">New</text>
                 </view>
-                <text class="exam-year">{{item.year}} 真题集</text>
+                <view class="done-badge" wx:if="{{item.user_completed}}">
+                  <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
+                </view>
               </view>
               <text class="exam-title text-bold">{{item.title}}</text>
               <view class="exam-bottom flex-row">
@@ -95,18 +97,8 @@
         </block>
       </view>
 
-      <!-- 加载更多提示 -->
-      <view class="load-more" wx:if="{{examPapersLoading}}">
-        <text class="load-more-text text-small text-muted">加载中...</text>
-      </view>
-
-      <!-- 底部提示 -->
-      <view class="end-tip" wx:if="{{!hasMoreExamPapers && examPapers.length > 0}}">
-        <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
-      </view>
-
       <!-- 无数据提示 -->
-      <view class="no-data" wx:if="{{examPapers.length === 0 && !examPapersLoading}}">
+      <view class="no-data" wx:if="{{examPapers.length === 0}}">
         <text class="no-data-text text-small">暂无考卷数据</text>
       </view>
     </view>

@@ -21,7 +21,20 @@ const formatDate = (date) => {
   return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
 }
 
+/**
+ * 处理富文本中的图片，限制最大宽度防止溢出屏幕
+ * 微信小程序 <rich-text> 不会应用外部 CSS，需要给 <img> 添加内联样式
+ * @param {string} html - 原始 HTML
+ * @returns {string} - 处理后的 HTML
+ */
+const processRichText = (html) => {
+  if (!html || typeof html !== 'string') return html
+  // 给所有 <img> 标签添加 max-width 和 height:auto 样式
+  return html.replace(/<img\s/gi, '<img style="max-width:100%;height:auto;display:block" ')
+}
+
 module.exports = {
   formatTime,
-  formatDate
+  formatDate,
+  processRichText
 }

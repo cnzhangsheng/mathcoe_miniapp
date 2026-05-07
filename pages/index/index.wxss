@@ -510,6 +510,18 @@
   color: #fff;
 }
 
+.done-badge {
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  background-color: #F59E0B;
+  margin-left: 8rpx;
+}
+
+.done-text {
+  font-size: 20rpx;
+  color: #fff;
+}
+
 .exam-title {
   font-size: 28rpx;
   color: rgba(0, 0, 0, 0.9);
@@ -543,6 +555,33 @@
 
 .stats-header {
   padding: 16rpx 0;
+}
+
+.stats-tabs {
+  gap: 0;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 24rpx;
+  padding: 4rpx;
+}
+
+.stats-tab {
+  padding: 12rpx 28rpx;
+  border-radius: 20rpx;
+  transition: all 0.2s;
+}
+
+.stats-tab-active {
+  background-color: #fff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.stats-tab-text {
+  font-size: 26rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.stats-tab-active .stats-tab-text {
+  color: #07C160;
 }
 
 .stats-title-row {

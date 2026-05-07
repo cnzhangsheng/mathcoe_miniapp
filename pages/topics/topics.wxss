@@ -312,9 +312,15 @@
   font-size: 9px;
 }
 
-.exam-year {
-  color: rgba(0,0,0,0.4);
-  font-size: 10px;
+.done-badge {
+  padding: 8rpx 12rpx;
+  background-color: #10B981;
+  border-radius: 8rpx;
+}
+
+.done-text {
+  color: #fff;
+  font-size: 9px;
 }
 
 .exam-title {

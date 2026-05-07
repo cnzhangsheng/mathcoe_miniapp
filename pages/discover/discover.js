@@ -1,4 +1,5 @@
 // pages/discover/discover.js
+const { processRichText } = require('../../utils/util')
 const app = getApp()
 const discoverService = require('../../services/discover')
 const reviewService = require('../../services/review')
@@ -53,13 +54,13 @@ Page({
         const formattedQuestion = {
           id: question.id,
           title: question.title || '题目',
-          content: (question.content && question.content.text) || question.content || '',
+          content: processRichText((question.content && question.content.text) || question.content || ''),
           options: (question.options || []).map(opt => ({
             label: opt.label,
-            text: (opt.content && opt.content.text) || opt.text || ''
+            text: processRichText((opt.content && opt.content.text) || opt.text || '')
           })),
           answer: question.answer,
-          explanation: (question.explanation && question.explanation.text) || question.explanation || '暂无解析',
+          explanation: processRichText((question.explanation && question.explanation.text) || question.explanation || '暂无解析'),
         }
 
         // 获取点赞状态和收藏状态

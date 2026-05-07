@@ -1,4 +1,6 @@
 // pages/question-explanation/question-explanation.js
+const { processRichText } = require('../../utils/util')
+
 Page({
   data: {
     currentIndex: 1,
@@ -32,12 +34,15 @@ Page({
     const item = this.data.answerSheet[index - 1]
     if (item) {
       this.setData({
-        questionContent: item.question_content?.text || '',
-        options: item.question_options || [],
+        questionContent: processRichText(item.question_content?.text || ''),
+        options: (item.question_options || []).map(opt => ({
+          ...opt,
+          text: processRichText(opt.text || '')
+        })),
         userAnswer: item.user_answer,
         correctAnswer: item.correct_answer,
         isCorrect: item.is_correct,
-        explanation: item.question_explanation?.text || ''
+        explanation: processRichText(item.question_explanation?.text || '')
       })
     }
   },

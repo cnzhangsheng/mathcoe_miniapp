@@ -28,12 +28,18 @@ Page({
     // 推荐考卷
     recommendedPapers: [],
 
-    // 本周学习统计
+    // 本周/本月学习统计
     weekQuestions: 0,
     weekCorrectRate: 0,
     weekWrongCount: 0,
     weekRange: '',
     favoriteCount: 0,
+    // 本月统计
+    monthQuestions: 0,
+    monthCorrectRate: 0,
+    monthWrongCount: 0,
+    monthRange: '',
+    statsTab: 'week',  // week | month
 
     // 薄弱专题
     weakTopic: null
@@ -46,8 +52,7 @@ Page({
 
   onShow() {
     if (this.data.isLoggedIn) {
-      this.loadTodayProgress()
-      this.loadStats()  // 每次显示时重新加载本周统计
+      this.loadData()
     }
   },
 
@@ -80,7 +85,7 @@ Page({
     }
 
     this.setData({ isLoggedIn: true })
-    this.loadData()
+    // onShow 中会调用 loadData() 加载完整数据
   },
 
   // 加载所有数据
@@ -206,11 +211,14 @@ Page({
           weekQuestions: stats.total_questions || 0,
           weekCorrectRate: stats.correct_rate || 0,
           weekWrongCount: stats.wrong_count || 0,
-          favoriteCount: stats.favorite_count || 0
+          favoriteCount: stats.favorite_count || 0,
+          monthQuestions: stats.month_total_questions || 0,
+          monthCorrectRate: stats.month_correct_rate || 0,
+          monthWrongCount: stats.month_wrong_count || 0,
+          monthRange: `${stats.month_start} ~ ${stats.month_end}`
         })
       } else {
         console.log('[loadStats] API返回无效，使用备用数据')
-        // 使用本地存储的统计数据（仅作为备用）
         const totalQuestions = wx.getStorageSync('totalQuestions') || 0
         const wrongCount = wx.getStorageSync('wrongCount') || 0
         const favoriteCount = wx.getStorageSync('favoriteCount') || 0
@@ -229,16 +237,32 @@ Page({
         const formatDate = (d) => `${d.getMonth() + 1}/${d.getDate()}`
         const weekRange = `${formatDate(weekStart)} ~ ${formatDate(weekEnd)}`
 
+        // 本月范围（本地计算）
+        const monthStart = `${now.getFullYear()}/${now.getMonth() + 1}/1`
+        const monthEnd = `${now.getFullYear()}/${now.getMonth() + 1}/${new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()}`
+
         this.setData({
           weekRange,
           weekQuestions: totalQuestions,
           weekCorrectRate: correctRate,
           weekWrongCount: wrongCount,
-          favoriteCount
+          favoriteCount,
+          monthQuestions: totalQuestions,
+          monthCorrectRate: correctRate,
+          monthWrongCount: wrongCount,
+          monthRange: `${monthStart} ~ ${monthEnd}`
         })
       }
     } catch (err) {
       console.error('[loadStats] 请求失败:', err)
+    }
+  },
+
+  // 切换本周/本月统计tab
+  switchStatsTab(e) {
+    const tab = e.currentTarget.dataset.tab
+    if (tab !== this.data.statsTab) {
+      this.setData({ statsTab: tab })
     }
   },
 

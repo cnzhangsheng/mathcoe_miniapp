@@ -46,18 +46,22 @@
       </view>
     </view>
 
-    <!-- 本周学习统计 -->
+    <!-- 本周/本月学习统计 -->
     <view class="stats-section">
       <view class="stats-header flex-between">
-        <view class="stats-title-row flex-row">
-          <view class="stats-icon-box">
-            <text>📈</text>
+        <view class="stats-tabs flex-row">
+          <view class="stats-tab {{statsTab === 'week' ? 'stats-tab-active' : ''}}" data-tab="week" bindtap="switchStatsTab">
+            <text class="stats-tab-text text-bold">本周学习</text>
           </view>
-          <text class="stats-title text-bold">本周学习</text>
+          <view class="stats-tab {{statsTab === 'month' ? 'stats-tab-active' : ''}}" data-tab="month" bindtap="switchStatsTab">
+            <text class="stats-tab-text text-bold">本月学习</text>
+          </view>
         </view>
-        <text class="stats-week text-small text-muted">{{weekRange}}</text>
+        <text class="stats-week text-small text-muted">{{statsTab === 'week' ? weekRange : monthRange}}</text>
       </view>
-      <view class="stats-grid">
+
+      <!-- 本周统计 -->
+      <view class="stats-grid" wx:if="{{statsTab === 'week'}}">
         <view class="stat-item">
           <text class="stat-value text-bold">{{weekQuestions}}</text>
           <text class="stat-label text-small text-muted">答题数</text>
@@ -69,6 +73,26 @@
         <view class="stat-item">
           <text class="stat-value text-bold rose-color">{{weekWrongCount}}</text>
           <text class="stat-label text-small text-muted">本周错题</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value text-bold amber-color">{{favoriteCount}}</text>
+          <text class="stat-label text-small text-muted">收藏数</text>
+        </view>
+      </view>
+
+      <!-- 本月统计 -->
+      <view class="stats-grid" wx:if="{{statsTab === 'month'}}">
+        <view class="stat-item">
+          <text class="stat-value text-bold">{{monthQuestions}}</text>
+          <text class="stat-label text-small text-muted">答题数</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value text-bold primary-color">{{monthCorrectRate}}%</text>
+          <text class="stat-label text-small text-muted">正确率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value text-bold rose-color">{{monthWrongCount}}</text>
+          <text class="stat-label text-small text-muted">本月错题</text>
         </view>
         <view class="stat-item">
           <text class="stat-value text-bold amber-color">{{favoriteCount}}</text>
@@ -153,6 +177,9 @@
               <view class="exam-top flex-row">
                 <view class="level-badge {{item.levelClass}}">
                   <text class="level-text text-bold">{{item.levelLabel}}</text>
+                </view>
+                <view class="done-badge" wx:if="{{item.user_completed}}">
+                  <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
                 </view>
                 <text class="exam-title text-bold">{{item.title}}</text>
               </view>
