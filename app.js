@@ -3,7 +3,8 @@ App({
   globalData: {
     userInfo: null,
     token: null,
-    baseUrl: 'http://172.17.14.127:8000/api/v1',  // 开发环境（本地调试）
+    // baseUrl: 'http://172.17.14.127:8000/api/v1',  // 开发环境（本地调试）
+    baseUrl: 'http://124.222.75.232:8000/api/v1',  // 生产环境（线上部署）
     isLoggedIn: false
   },
 
