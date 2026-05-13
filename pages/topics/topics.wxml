@@ -29,7 +29,7 @@
       </view>
     </view>
 
-    <!-- Topics Grid (1 row, 3 columns) -->
+    <!-- Topics Grid (4 columns) -->
     <view class="topics-section">
       <view class="section-header flex-row">
         <text class="section-title text-bold">重点突破专题</text>
@@ -37,13 +37,14 @@
 
       <view class="topics-grid">
         <block wx:for="{{filteredTopics}}" wx:key="id">
-          <view class="topic-card" data-id="{{item.id}}" bindtap="selectTopic">
+          <view class="topic-card {{item.cardBgClass}}" data-id="{{item.id}}" bindtap="selectTopic">
             <view class="topic-icon-box {{item.bgClass}}">
-              <text class="topic-icon">{{item.iconEmoji}}</text>
+              <image wx:if="{{item.iconImage}}" src="{{item.iconImage}}" class="topic-icon-img" mode="aspectFill" />
+              <text wx:else class="topic-icon">{{item.iconEmoji}}</text>
             </view>
             <view class="topic-info">
               <text class="topic-title text-small text-bold">{{item.title}}</text>
-              <view class="topic-progress-bar">
+              <view class="topic-progress-bar" wx:if="{{item.progress > 0}}">
                 <view class="topic-progress-fill {{item.progressClass}}" style="width: {{item.progress}}%;"></view>
               </view>
             </view>
@@ -75,9 +76,6 @@
                 <view class="new-badge" wx:if="{{item.is_new}}">
                   <text class="new-text text-bold">New</text>
                 </view>
-                <view class="done-badge" wx:if="{{item.user_completed}}">
-                  <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
-                </view>
               </view>
               <text class="exam-title text-bold">{{item.title}}</text>
               <view class="exam-bottom flex-row">
@@ -86,6 +84,9 @@
                   <text class="meta-text">{{item.duration || 75}} 分钟</text>
                 </view>
                 <text class="meta-text">{{item.total_questions}} 题</text>
+              </view>
+              <view class="done-badge" wx:if="{{item.user_completed}}">
+                <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
               </view>
             </view>
             <view class="exam-right">

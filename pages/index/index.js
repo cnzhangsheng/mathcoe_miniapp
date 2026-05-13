@@ -306,7 +306,7 @@ Page({
   // 绘制多边形雷达图（带标签）
   drawRadarChart() {
     const abilities = this.data.abilities
-    if (!abilities || abilities.length < 5) return
+    if (!abilities || abilities.length === 0) return
 
     wx.createSelectorQuery()
       .select('#radarCanvas')
@@ -334,13 +334,15 @@ Page({
         const primaryColor = '#10B981'   // 绿色
         const secondaryColor = '#6366F1' // 紫色
 
-        // 绘制背景五边形网格（5层）
+        const count = abilities.length
+
+        // 绘制背景多边形网格（5层）
         const layers = 5
         for (let layer = layers; layer >= 1; layer--) {
           const layerRadius = radius * (layer / layers)
           ctx.beginPath()
-          for (let i = 0; i < 5; i++) {
-            const angle = (Math.PI * 2 * i / 5) - Math.PI / 2
+          for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i / count) - Math.PI / 2
             const x = centerX + layerRadius * Math.cos(angle)
             const y = centerY + layerRadius * Math.sin(angle)
             if (i === 0) ctx.moveTo(x, y)
@@ -359,8 +361,8 @@ Page({
         // 绘制轴线
         ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)'
         ctx.lineWidth = 1
-        for (let i = 0; i < 5; i++) {
-          const angle = (Math.PI * 2 * i / 5) - Math.PI / 2
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i / count) - Math.PI / 2
           ctx.beginPath()
           ctx.moveTo(centerX, centerY)
           ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle))
@@ -369,9 +371,9 @@ Page({
 
         // 计算数据点位置
         const dataPoints = []
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < count; i++) {
           const value = abilities[i]?.value || 0
-          const angle = (Math.PI * 2 * i / 5) - Math.PI / 2
+          const angle = (Math.PI * 2 * i / count) - Math.PI / 2
           const dataRadius = radius * (value / 100)
           const x = centerX + dataRadius * Math.cos(angle)
           const y = centerY + dataRadius * Math.sin(angle)

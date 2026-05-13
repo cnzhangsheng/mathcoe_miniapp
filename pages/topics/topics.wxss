@@ -138,13 +138,13 @@
 
 .topics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24rpx;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
 }
 
 .topic-card {
   background-color: #fff;
-  padding: 32rpx;
+  padding: 16rpx 12rpx;
   border-radius: 48rpx;
   box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
   border: 2rpx solid rgba(0,0,0,0.05);
@@ -152,20 +152,26 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 24rpx;
+  gap: 10rpx;
 }
 
 .topic-icon-box {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 32rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 28rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .topic-icon {
-  font-size: 24px;
+  font-size: 28px;
+}
+
+.topic-icon-img {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 28rpx;
 }
 
 /* 颜色映射 */
@@ -192,6 +198,27 @@
 .bg-rose {
   background-color: rgba(244,63,94,0.1);
   color: #F43F5E;
+}
+
+/* 卡片背景色 */
+.card-bg-blue {
+  background-color: rgba(59,130,246,0.12);
+}
+
+.card-bg-purple {
+  background-color: rgba(168,85,247,0.12);
+}
+
+.card-bg-emerald {
+  background-color: rgba(16,185,129,0.12);
+}
+
+.card-bg-amber {
+  background-color: rgba(251,191,36,0.12);
+}
+
+.card-bg-rose {
+  background-color: rgba(244,63,94,0.12);
 }
 
 .topic-info {
@@ -316,6 +343,8 @@
   padding: 8rpx 12rpx;
   background-color: #10B981;
   border-radius: 8rpx;
+  margin-top: 12rpx;
+  align-self: flex-start;
 }
 
 .done-text {
@@ -376,7 +405,7 @@
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background-color: rgba(0,0,0,0.02);
+  background-color: #07C160;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -384,7 +413,7 @@
 
 .arrow-icon {
   font-size: 20px;
-  color: rgba(0,0,0,0.2);
+  color: #fff;
 }
 
 /* Load More */

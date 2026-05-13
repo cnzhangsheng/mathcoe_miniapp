@@ -70,6 +70,7 @@ Page({
         const topicsWithProgress = topics.map(topic => {
           const bgClass = `bg-${topic.color || 'blue'}`
           const progressClass = `progress-${topic.color || 'blue'}`
+          const cardBgClass = `card-bg-${topic.color || 'blue'}`
           return {
             ...topic,
             progress: 0,
@@ -77,7 +78,9 @@ Page({
             questionsDone: 0,
             bgClass,
             progressClass,
+            cardBgClass,
             iconEmoji: this.getIconEmoji(topic.icon || topic.title),
+            iconImage: this.getTopicIconImage(topic.icon || topic.title),
             isHighFreq: topic.is_high_freq || false
           }
         })
@@ -112,6 +115,24 @@ Page({
       }
     }
     return '📚'
+  },
+
+  // 获取专题自定义图标
+  getTopicIconImage(iconOrTitle) {
+    const iconMap = [
+      { keywords: ['几何', 'Columns', '图形', '空间'], image: '/assets/icons/tuxing_icon.png' },
+      { keywords: ['逻辑', 'Brain', '数理'], image: '/assets/icons/shuliluoji_icon.png' },
+      { keywords: ['应用', 'ShoppingBag', '综合'], image: '/assets/icons/yingyong_icon.png' },
+      { keywords: ['算术', 'Calculator', '运算', '计算'], image: '/assets/icons/yunsuan_icon.png' },
+    ]
+    for (const entry of iconMap) {
+      for (const keyword of entry.keywords) {
+        if (iconOrTitle.includes(keyword)) {
+          return entry.image
+        }
+      }
+    }
+    return null
   },
 
   // 加载考卷列表
