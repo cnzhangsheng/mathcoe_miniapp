@@ -213,7 +213,7 @@
 
 .option-label {
   font-size: 30rpx;
-  color: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .option-label-box.active .option-label,
@@ -225,7 +225,7 @@
 .option-text {
   flex: 1;
   font-size: 30rpx;
-  color: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 0.85);
   line-height: 1.5;
 }
 
