@@ -67,10 +67,10 @@ const removeFavorite = (questionId) => {
 }
 
 /**
- * 获取错题列表
+ * 获取错题列表（分页）
  */
-const getWrongQuestions = () => {
-  return request('/favorites/wrong')
+const getWrongQuestions = (page = 1, pageSize = 10) => {
+  return request('/favorites/wrong', { data: { page, page_size: pageSize } })
 }
 
 /**

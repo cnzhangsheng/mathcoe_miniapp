@@ -15,40 +15,31 @@ Page({
     // 筛选专题列表
     filterTopics: [{ id: 0, title: '全部' }],
 
-    // 专题分组
-    topicGroups: [],
-
     // 错题列表（分页）
     wrongQuestions: [],
     wrongPage: 1,
     wrongPageSize: 10,
     wrongHasMore: true,
+    wrongTotal: 0,
     wrongLoading: false,
-
-    // 最近错题（首页展示）
-    recentWrongQuestions: [],
 
     // 收藏列表（分页）
     favoriteQuestions: [],
     favoritePage: 1,
     favoritePageSize: 10,
     favoriteHasMore: true,
+    favoriteTotal: 0,
     favoriteLoading: false,
-
-    // 全部收藏（用于分页）
-    allFavoriteQuestions: [],
-
-    // 全部错题（用于统计和分组）
-    allWrongQuestions: []
   },
 
   onLoad() {
-    this.loadData()
+    this.loadInitialData()
   },
 
   onShow() {
-    // 每次显示时重新加载数据
-    this.loadData()
+    if (!this.data.loading) {
+      this.loadInitialData()
+    }
   },
 
   // 下拉加载更多
@@ -60,7 +51,8 @@ Page({
     }
   },
 
-  async loadData() {
+  // 初始化加载：专题列表 + 当前 tab 第一页
+  async loadInitialData() {
     wx.showLoading({ title: '加载中...', mask: true })
 
     try {
@@ -71,67 +63,23 @@ Page({
         return
       }
 
-      // 并行加载专题、错题和收藏
-      const [topics, wrongQuestions, favoriteQuestions] = await Promise.all([
+      const [topics] = await Promise.all([
         reviewService.getTopics().catch(() => []),
-        reviewService.getWrongQuestions().catch(() => []),
-        reviewService.getFavorites().catch(() => [])
       ])
 
-      // 构建筛选专题列表 - 使用真实专题数据
       const filterTopics = [
         { id: 0, title: '全部' },
-        ...(topics || []).map(t => ({
-          id: t.id,
-          title: t.title,
-        }))
+        ...(topics || []).map(t => ({ id: t.id, title: t.title }))
       ]
 
-      // 处理错题数据
-      const processedWrong = this.processWrongQuestions(wrongQuestions || [])
+      this.setData({ filterTopics })
 
-      // 处理收藏数据
-      const processedFavorites = this.processFavoriteQuestions(favoriteQuestions || [])
-
-      // 统计
-      const pendingWrongCount = processedWrong.length
-      const favoriteCount = processedFavorites.length
-
-      // 根据筛选过滤错题
-      let filteredWrong = processedWrong
-      if (this.data.selectedTopicId > 0) {
-        filteredWrong = processedWrong.filter(q => parseInt(q.topic_id) === this.data.selectedTopicId)
+      // 加载当前 tab 的第一页
+      if (this.data.activeTab === 'wrong') {
+        await this.loadWrongQuestions(1)
+      } else {
+        await this.loadFavoriteQuestions(1)
       }
-
-      // 按时间排序
-      const sortedWrong = filteredWrong.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-
-      // 分页加载第一页错题
-      const firstWrongPage = sortedWrong.slice(0, this.data.wrongPageSize)
-      const wrongHasMore = sortedWrong.length > this.data.wrongPageSize
-
-      // 收藏数据按时间排序
-      const sortedFavorites = processedFavorites.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-
-      // 分页加载第一页收藏
-      const firstFavoritePage = sortedFavorites.slice(0, this.data.favoritePageSize)
-      const favoriteHasMore = sortedFavorites.length > this.data.favoritePageSize
-
-      this.setData({
-        loading: false,
-        allWrongQuestions: processedWrong,
-        allFavoriteQuestions: processedFavorites,
-        pendingWrongCount,
-        favoriteCount,
-        filterTopics,
-        wrongQuestions: firstWrongPage,
-        wrongPage: 1,
-        wrongHasMore: wrongHasMore,
-        recentWrongQuestions: firstWrongPage.slice(0, 5),
-        favoriteQuestions: firstFavoritePage,
-        favoritePage: 1,
-        favoriteHasMore: favoriteHasMore
-      })
 
       wx.hideLoading()
     } catch (err) {
@@ -141,60 +89,77 @@ Page({
     }
   },
 
+  // 加载错题某一页
+  async loadWrongQuestions(page, append = false) {
+    this.setData({ wrongLoading: true })
+    try {
+      const result = await reviewService.getWrongQuestions(
+        page,
+        this.data.wrongPageSize,
+        this.data.selectedTopicId > 0 ? this.data.selectedTopicId : undefined
+      )
+      if (!result) {
+        this.setData({ wrongLoading: false, wrongHasMore: false })
+        return
+      }
+
+      const items = this.processWrongQuestions(result.items || [])
+      this.setData({
+        wrongQuestions: append ? [...this.data.wrongQuestions, ...items] : items,
+        wrongPage: page,
+        wrongTotal: result.total || 0,
+        wrongHasMore: (result.page * result.page_size) < result.total,
+        wrongLoading: false,
+        pendingWrongCount: result.total || 0,
+        loading: false,
+      })
+    } catch (err) {
+      console.error('loadWrongQuestions error:', err)
+      this.setData({ wrongLoading: false })
+    }
+  },
+
+  // 加载收藏某一页
+  async loadFavoriteQuestions(page, append = false) {
+    this.setData({ favoriteLoading: true })
+    try {
+      const result = await reviewService.getFavorites(page, this.data.favoritePageSize)
+      if (!result) {
+        this.setData({ favoriteLoading: false, favoriteHasMore: false })
+        return
+      }
+
+      const items = this.processFavoriteQuestions(result.items || [])
+      this.setData({
+        favoriteQuestions: append ? [...this.data.favoriteQuestions, ...items] : items,
+        favoritePage: page,
+        favoriteTotal: result.total || 0,
+        favoriteHasMore: (result.page * result.page_size) < result.total,
+        favoriteLoading: false,
+        favoriteCount: result.total || 0,
+        loading: false,
+      })
+    } catch (err) {
+      console.error('loadFavoriteQuestions error:', err)
+      this.setData({ favoriteLoading: false })
+    }
+  },
+
   // 加载更多错题
   loadMoreWrongQuestions() {
     if (!this.data.wrongHasMore || this.data.wrongLoading) return
-
-    this.setData({ wrongLoading: true })
-
-    // 根据筛选过滤错题
-    let filteredWrong = this.data.allWrongQuestions
-    if (this.data.selectedTopicId > 0) {
-      filteredWrong = this.data.allWrongQuestions.filter(q => parseInt(q.topic_id) === this.data.selectedTopicId)
-    }
-
-    // 按时间排序
-    const sortedWrong = filteredWrong.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-
-    const nextPage = this.data.wrongPage + 1
-    const startIndex = (nextPage - 1) * this.data.wrongPageSize
-    const endIndex = startIndex + this.data.wrongPageSize
-    const newQuestions = sortedWrong.slice(startIndex, endIndex)
-
-    this.setData({
-      wrongQuestions: [...this.data.wrongQuestions, ...newQuestions],
-      wrongPage: nextPage,
-      wrongHasMore: endIndex < sortedWrong.length,
-      wrongLoading: false
-    })
+    this.loadWrongQuestions(this.data.wrongPage + 1, true)
   },
 
   // 加载更多收藏
   loadMoreFavoriteQuestions() {
     if (!this.data.favoriteHasMore || this.data.favoriteLoading) return
-
-    this.setData({ favoriteLoading: true })
-
-    // 按时间排序
-    const sortedFavorites = this.data.allFavoriteQuestions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-
-    const nextPage = this.data.favoritePage + 1
-    const startIndex = (nextPage - 1) * this.data.favoritePageSize
-    const endIndex = startIndex + this.data.favoritePageSize
-    const newQuestions = sortedFavorites.slice(startIndex, endIndex)
-
-    this.setData({
-      favoriteQuestions: [...this.data.favoriteQuestions, ...newQuestions],
-      favoritePage: nextPage,
-      favoriteHasMore: endIndex < sortedFavorites.length,
-      favoriteLoading: false
-    })
+    this.loadFavoriteQuestions(this.data.favoritePage + 1, true)
   },
 
   // 处理错题数据
   processWrongQuestions(questions) {
     return questions.map(q => {
-      // 转换 options 格式: [{label: 'A', text: '内容'}] -> [{key: 'A', value: '内容'}]
       const optionsList = (q.question_options || []).map(opt => ({
         key: opt.label || opt.key,
         value: opt.text || opt.value || opt.content?.text || ''
@@ -222,7 +187,6 @@ Page({
   // 处理收藏数据
   processFavoriteQuestions(questions) {
     return questions.map(q => {
-      // 转换 options 格式
       const optionsList = (q.question_options || []).map(opt => ({
         key: opt.label || opt.key,
         value: opt.text || opt.value || opt.content?.text || ''
@@ -242,39 +206,6 @@ Page({
         dateLabel: this.getDateLabel(q.created_at, true)
       }
     })
-  },
-
-  // 按专题分组
-  groupByTopic(questions) {
-    const topicIcons = {
-      1: { icon: '🔢', iconClass: 'blue-bg', title: '算术与计数' },
-      2: { icon: '🧩', iconClass: 'purple-bg', title: '逻辑与推理' },
-      3: { icon: '📐', iconClass: 'green-bg', title: '几何与空间' },
-      4: { icon: '🔍', iconClass: 'amber-bg', title: '规律与观察' },
-      5: { icon: '📖', iconClass: 'rose-bg', title: '综合应用题' }
-    }
-
-    const groups = {}
-    questions.forEach(q => {
-      const topicId = q.topic_id || 0
-      if (!groups[topicId]) {
-        groups[topicId] = {
-          topic_id: topicId,
-          topic_title: q.topicTitle || topicIcons[topicId]?.title || '其他',
-          icon: topicIcons[topicId]?.icon || '📝',
-          iconClass: topicIcons[topicId]?.iconClass || 'gray-bg',
-          count: 0,
-          questions: []
-        }
-      }
-      groups[topicId].count++
-      groups[topicId].questions.push(q)
-    })
-
-    // 转换为数组并按错题数量排序
-    return Object.values(groups)
-      .filter(g => g.topic_id > 0)
-      .sort((a, b) => b.count - a.count)
   },
 
   // 获取专题标题
@@ -309,54 +240,38 @@ Page({
   // Tab切换
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab })
+    this.setData({ activeTab: tab, selectedTopicId: 0 })
+    // 切换后加载对应 tab 数据
+    if (!this.data.loading) {
+      if (tab === 'wrong' && this.data.wrongQuestions.length === 0) {
+        this.loadWrongQuestions(1)
+      } else if (tab === 'favorite' && this.data.favoriteQuestions.length === 0) {
+        this.loadFavoriteQuestions(1)
+      }
+    }
   },
 
   // 专题筛选
   selectTopic(e) {
     const topicId = parseInt(e.currentTarget.dataset.id) || 0
-    this.setData({ selectedTopicId: topicId })
-
-    // 根据筛选重新过滤错题
-    let filteredWrong = this.data.allWrongQuestions
-    if (topicId > 0) {
-      filteredWrong = this.data.allWrongQuestions.filter(q => parseInt(q.topic_id) === topicId)
-    }
-
-    // 按时间排序
-    const sortedWrong = filteredWrong.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-
-    // 重置分页，显示第一页
-    const firstPage = sortedWrong.slice(0, this.data.wrongPageSize)
-    const hasMore = sortedWrong.length > this.data.wrongPageSize
-
     this.setData({
-      wrongQuestions: firstPage,
+      selectedTopicId: topicId,
+      wrongQuestions: [],
       wrongPage: 1,
-      wrongHasMore: hasMore,
-      recentWrongQuestions: firstPage.slice(0, 5)
+      wrongHasMore: true,
     })
+    this.loadWrongQuestions(1)
   },
 
-  // 开始复习（根据筛选专题复习）
+  // 开始复习
   startReview() {
-    // 获取当前筛选的错题
-    let filteredWrong = this.data.allWrongQuestions
-    if (this.data.selectedTopicId > 0) {
-      filteredWrong = this.data.allWrongQuestions.filter(q => parseInt(q.topic_id) === this.data.selectedTopicId)
-    }
-
-    if (filteredWrong.length === 0) {
+    const questions = this.data.wrongQuestions
+    if (questions.length === 0) {
       wx.showToast({ title: '没有错题', icon: 'none' })
       return
     }
 
-    // 随机抽取最多10题
-    const shuffled = filteredWrong.sort(() => Math.random() - 0.5)
-    const selected = shuffled.slice(0, 10)
-
-    // 构建答题卡数据并跳转到练习页面，传递专题 ID
-    const questionIds = selected.map(q => q.question_id)
+    const questionIds = questions.map(q => q.question_id)
     const topicId = this.data.selectedTopicId || 0
     wx.navigateTo({
       url: `/pages/review-practice/review-practice?ids=${questionIds.join(',')}&topicId=${topicId}`
@@ -407,7 +322,8 @@ Page({
             const result = await reviewService.removeWrongQuestion(questionId)
             if (result) {
               wx.showToast({ title: '已移除', icon: 'success' })
-              this.loadData()
+              // 重新加载当前页
+              this.loadWrongQuestions(this.data.wrongPage)
             } else {
               wx.showToast({ title: '操作失败', icon: 'none' })
             }
@@ -432,7 +348,8 @@ Page({
             const result = await reviewService.removeFavorite(questionId)
             if (result) {
               wx.showToast({ title: '已取消收藏', icon: 'success' })
-              this.loadData()
+              // 重新加载当前页
+              this.loadFavoriteQuestions(this.data.favoritePage)
             } else {
               wx.showToast({ title: '操作失败', icon: 'none' })
             }

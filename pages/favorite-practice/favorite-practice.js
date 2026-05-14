@@ -36,7 +36,7 @@ Page({
 
     try {
       // 获取收藏列表
-      const favorites = await reviewService.getFavorites() || []
+      const favorites = await reviewService.getAllFavorites() || []
 
       // 根据ID筛选题目
       const questions = ids.map(id => {

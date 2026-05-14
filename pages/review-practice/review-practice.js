@@ -41,7 +41,7 @@ Page({
 
     try {
       // 获取错题列表
-      const wrongQuestions = await reviewService.getWrongQuestions() || []
+      const wrongQuestions = await reviewService.getAllWrongQuestions() || []
 
       // 根据ID筛选题目
       const questions = ids.map(id => {
@@ -187,7 +187,7 @@ Page({
 
     try {
       // 获取错题列表
-      const wrongQuestions = await reviewService.getWrongQuestions() || []
+      const wrongQuestions = await reviewService.getAllWrongQuestions() || []
 
       // 根据专题筛选
       let filtered = wrongQuestions

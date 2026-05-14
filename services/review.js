@@ -9,10 +9,15 @@ const getTopics = async () => {
 }
 
 /**
- * 获取错题列表
+ * 获取错题列表（分页）
+ * @param {number} page - 页码
+ * @param {number} pageSize - 每页条数
+ * @param {number} [topicId] - 专题ID筛选
  */
-const getWrongQuestions = async () => {
-  return request('/favorites/wrong')
+const getWrongQuestions = async (page = 1, pageSize = 10, topicId) => {
+  const params = { page, page_size: pageSize }
+  if (topicId) params.topic_id = topicId
+  return request('/favorites/wrong', { data: params })
 }
 
 /**
@@ -44,15 +49,17 @@ const removeWrongQuestion = async (questionId) => {
  * @param {number} questionId - 题目ID
  */
 const isFavorited = async (questionId) => {
-  const favorites = await request('/favorites') || []
-  return favorites.some(f => f.question_id === questionId)
+  const result = await request('/favorites', { data: { page: 1, page_size: 50 } })
+  return (result.items || []).some(f => f.question_id === questionId)
 }
 
 /**
- * 获取收藏列表
+ * 获取收藏列表（分页）
+ * @param {number} page - 页码
+ * @param {number} pageSize - 每页条数
  */
-const getFavorites = async () => {
-  return request('/favorites')
+const getFavorites = async (page = 1, pageSize = 10) => {
+  return request('/favorites', { data: { page, page_size: pageSize } })
 }
 
 /**
@@ -71,14 +78,32 @@ const removeFavorite = async (questionId) => {
   return request('/favorites', { method: 'DELETE', data: { question_id: questionId } })
 }
 
+/**
+ * 获取全部错题（不分页，用于需要全量数据的页面）
+ */
+const getAllWrongQuestions = async () => {
+  const result = await request('/favorites/wrong', { data: { page: 1, page_size: 999 } })
+  return result?.items || []
+}
+
+/**
+ * 获取全部收藏（不分页，用于需要全量数据的页面）
+ */
+const getAllFavorites = async () => {
+  const result = await request('/favorites', { data: { page: 1, page_size: 999 } })
+  return result?.items || []
+}
+
 module.exports = {
   getTopics,
   isFavorited,
   getWrongQuestions,
+  getAllWrongQuestions,
   addWrongQuestion,
   markMastered,
   removeWrongQuestion,
   getFavorites,
+  getAllFavorites,
   addFavorite,
   removeFavorite
 }

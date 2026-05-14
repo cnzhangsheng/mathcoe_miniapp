@@ -39,7 +39,7 @@ Page({
     wx.showLoading({ title: '加载中...', mask: true })
 
     try {
-      const wrongQuestions = await reviewService.getWrongQuestions() || []
+      const wrongQuestions = await reviewService.getAllWrongQuestions() || []
 
       // 筛选该专题的错题
       const topicQuestions = wrongQuestions

@@ -17,7 +17,7 @@ Page({
     wx.showLoading({ title: '加载中...', mask: true })
 
     try {
-      const wrongQuestions = await reviewService.getWrongQuestions() || []
+      const wrongQuestions = await reviewService.getAllWrongQuestions() || []
 
       const processed = wrongQuestions.map(q => ({
         id: q.id,
