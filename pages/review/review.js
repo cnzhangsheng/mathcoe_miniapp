@@ -1,6 +1,7 @@
 // pages/review/review.js - 复习中心页面逻辑
 const app = getApp()
 const reviewService = require('../../services/review')
+const { getTopicTitle, getTopicClass } = require('../../services/topics')
 
 Page({
   data: {
@@ -213,26 +214,10 @@ Page({
   },
 
   // 获取专题标题
-  getTopicTitle(topicId) {
-    const titles = {
-      1001: '图形类',
-      1002: '数理逻辑',
-      1003: '应用类',
-      1004: '运算类',
-    }
-    return titles[topicId] || '其他'
-  },
+  getTopicTitle(topicId) { return getTopicTitle(topicId) },
 
   // 获取专题标签颜色样式
-  getTopicClass(topicId) {
-    const classes = {
-      1001: 'topic-tuxing',    // 图形类 - 草莓粉
-      1002: 'topic-luoji',     // 数理逻辑 - 薄荷青
-      1003: 'topic-yingyong',  // 应用类 - 糖果绿
-      1004: 'topic-yunsuan',   // 运算类 - 蜜桃橙
-    }
-    return classes[topicId] || 'topic-default'
-  },
+  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   // 获取日期标签
   getDateLabel(dateStr, showTime = false) {

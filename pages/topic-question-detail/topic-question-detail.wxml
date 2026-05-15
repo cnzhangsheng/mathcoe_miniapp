@@ -158,4 +158,8 @@
     </view>
   </block>
 
+  <!-- 图片预加载 -->
+  <block wx:if="{{preloadedImageUrls.length > 0}}">
+    <image wx:for="{{preloadedImageUrls}}" wx:key="*this" src="{{item}}" style="display:none;" />
+  </block>
 </view>

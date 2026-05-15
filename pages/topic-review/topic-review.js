@@ -25,11 +25,10 @@ Page({
 
   setTopicIcon(topicId) {
     const icons = {
-      1: { icon: '🔢', iconClass: 'blue-bg' },
-      2: { icon: '🧩', iconClass: 'purple-bg' },
-      3: { icon: '📐', iconClass: 'green-bg' },
-      4: { icon: '🔍', iconClass: 'amber-bg' },
-      5: { icon: '📖', iconClass: 'rose-bg' }
+      1001: { icon: '🔢', iconClass: 'blue-bg' },
+      1002: { icon: '🧩', iconClass: 'purple-bg' },
+      1003: { icon: '📐', iconClass: 'green-bg' },
+      1004: { icon: '🔍', iconClass: 'amber-bg' },
     }
     const iconData = icons[topicId] || { icon: '📝', iconClass: 'gray-bg' }
     this.setData({ icon: iconData.icon, iconClass: iconData.iconClass })

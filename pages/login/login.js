@@ -1,10 +1,6 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
 
-// 开发环境测试 token（仅用于真机调试测试）
-const DEV_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxNjg5MzY5MzEzMjgiLCJleHAiOjE4MDg1Mzg3MTR9.Fs1uGh0mzR4Qq9iGZ5gdffF6hkWCk87WcrEsqXBOzuI'
-const DEV_USER_ID = '168936931328'
-
 Page({
   data: {
     loading: false,
@@ -13,7 +9,6 @@ Page({
     gradeIndex: 0,  // 默认一年级（G1）
     difficultyLevels: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6'],
     difficultyIndex: 0,  // 默认Level 1（根据年级自动计算）
-    isDevMode: false  // 开发模式标记
   },
 
   onLoad() {

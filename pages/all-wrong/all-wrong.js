@@ -1,5 +1,6 @@
 // pages/all-wrong/all-wrong.js
 const reviewService = require('../../services/review')
+const { getTopicTitle, getTopicClass } = require('../../services/topics')
 
 Page({
   data: {
@@ -44,18 +45,8 @@ Page({
     }
   },
 
-  getTopicTitle(topicId) {
-    const titles = { 1001: '图形类', 1002: '数理逻辑', 1003: '应用类', 1004: '运算类' }
-    return titles[topicId] || '其他'
-  },
-
-  getTopicClass(topicId) {
-    const classes = {
-      1001: 'topic-tuxing', 1002: 'topic-luoji',
-      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
-    }
-    return classes[topicId] || 'topic-default'
-  },
+  getTopicTitle(topicId) { return getTopicTitle(topicId) },
+  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   getDateLabel(dateStr) {
     if (!dateStr) return ''

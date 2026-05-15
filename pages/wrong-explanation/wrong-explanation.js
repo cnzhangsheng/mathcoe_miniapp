@@ -1,5 +1,6 @@
 // pages/wrong-explanation/wrong-explanation.js - 错题解析页面
 const { processRichText } = require('../../utils/util')
+const { getTopicClass } = require('../../services/topics')
 const reviewService = require('../../services/review')
 
 Page({
@@ -16,13 +17,7 @@ Page({
     explanation: ''
   },
 
-  getTopicClass(topicId) {
-    const classes = {
-      1001: 'topic-tuxing', 1002: 'topic-luoji',
-      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
-    }
-    return classes[topicId] || 'topic-default'
-  },
+  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   onLoad(options) {
     const question = JSON.parse(decodeURIComponent(options.question || '{}'))

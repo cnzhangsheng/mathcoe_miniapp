@@ -56,7 +56,7 @@
     <!-- Exam Papers Section -->
     <view class="exam-section">
       <view class="section-header flex-row">
-        <text class="section-title text-bold">考卷（{{totalExamPapers}}张）</text>
+        <text class="section-title text-bold">考卷</text>
       </view>
 
       <!-- 考卷类型筛选 -->

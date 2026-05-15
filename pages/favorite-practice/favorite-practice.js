@@ -1,6 +1,7 @@
 // pages/favorite-practice/favorite-practice.js - 收藏练习逻辑
 const app = getApp()
 const reviewService = require('../../services/review')
+const { getTopicClass } = require('../../services/topics')
 
 Page({
   data: {
@@ -23,13 +24,7 @@ Page({
     questionLevel: ''
   },
 
-  getTopicClass(topicId) {
-    const classes = {
-      1001: 'topic-tuxing', 1002: 'topic-luoji',
-      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
-    }
-    return classes[topicId] || 'topic-default'
-  },
+  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   onLoad(options) {
     if (options.ids) {

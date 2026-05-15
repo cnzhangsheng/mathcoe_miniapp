@@ -3,6 +3,7 @@ const app = getApp()
 const userService = require('../../services/user')
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
+const cache = require('../../services/cache')
 
 Page({
   data: {
@@ -89,6 +90,17 @@ Page({
 
   // 加载所有数据
   async loadData() {
+    // 优先显示缓存数据
+    const cachedRadar = cache.get('abilityRadar')
+    if (cachedRadar) {
+      this.setData({ abilities: cachedRadar })
+      setTimeout(() => this.drawRadarChart(), 100)
+    }
+    const cachedPapers = cache.get('recommendedPapers')
+    if (cachedPapers) {
+      this.setData({ recommendedPapers: cachedPapers })
+    }
+
     try {
       // 并行加载用户信息、推荐考卷、能力雷达
       const [userInfo, recommendedPapers, abilityRadar] = await Promise.all([
@@ -115,6 +127,7 @@ Page({
           levelClass: `level-${paper.difficulty_level}`,
           paperTypeLabel: this.getPaperTypeLabel(paper.paper_type)
         }))
+        cache.set('recommendedPapers', formattedPapers, 120000) // 缓存 2 分钟
         this.setData({ recommendedPapers: formattedPapers })
       }
 
@@ -129,6 +142,7 @@ Page({
         this.setData({
           abilities: abilities.length > 0 ? abilities : this.data.abilities
         })
+        if (abilities.length > 0) cache.set('abilityRadar', abilities, 300000) // 缓存 5 分钟
 
         // 绘制雷达图（等待 DOM 更新）
         setTimeout(() => this.drawRadarChart(), 100)

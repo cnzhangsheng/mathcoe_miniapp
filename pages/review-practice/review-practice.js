@@ -1,6 +1,7 @@
 // pages/review-practice/review-practice.js - 错题复习练习逻辑
 const app = getApp()
 const reviewService = require('../../services/review')
+const { getTopicTitle } = require('../../services/topics')
 
 Page({
   data: {
@@ -101,15 +102,7 @@ Page({
     }
   },
 
-  getTopicTitle(topicId) {
-    const titles = {
-      1001: '图形类',
-      1002: '数理逻辑',
-      1003: '应用类',
-      1004: '运算类',
-    }
-    return titles[topicId] || '其他'
-  },
+  getTopicTitle(topicId) { return getTopicTitle(topicId) },
 
   updateQuestionMeta(question) {
     const questionType = question.question_type === 'multiple' ? '多选题' : '单选题'

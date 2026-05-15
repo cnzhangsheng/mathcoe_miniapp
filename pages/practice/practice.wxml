@@ -8,7 +8,8 @@
       <text class="exam-title text-bold">{{examPaper.title || '考卷测试'}}</text>
     </view>
     <!-- 计时器 -->
-    <view class="timer-box {{timeLeft >= 300 ? '' : 'urgent'}}">
+    <view class="timer-box {{countdownTotal > 0 ? (timeLeft <= 300 ? 'urgent' : '') : (timeLeft >= 300 ? '' : 'urgent')}}">
+      <text class="timer-label">{{countdownTotal > 0 ? '剩余' : '用时'}}</text>
       <text class="timer-text text-bold">{{formattedTime || '0:00'}}</text>
     </view>
   </view>
@@ -125,4 +126,8 @@
     </view>
   </view>
 
-  </view>
+  <!-- 图片预加载（利用 <image> 提前下载到微信缓存） -->
+  <block wx:if="{{preloadedImageUrls.length > 0}}">
+    <image wx:for="{{preloadedImageUrls}}" wx:key="*this" src="{{item}}" style="display:none;" />
+  </block>
+</view>

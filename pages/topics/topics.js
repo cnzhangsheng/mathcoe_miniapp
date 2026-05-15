@@ -2,6 +2,7 @@
 const userService = require('../../services/user')
 const questionService = require('../../services/question')
 const examPaperService = require('../../services/examPaper')
+const cache = require('../../services/cache')
 
 Page({
   data: {
@@ -70,6 +71,12 @@ Page({
   },
 
   async loadTopics() {
+    // 显示缓存数据
+    const cached = cache.get('topics')
+    if (cached) {
+      this.setData({ topics: cached })
+      this.filterTopics()
+    }
     try {
       const [topics, insight] = await Promise.all([
         questionService.getTopics().catch(() => null),
@@ -98,6 +105,7 @@ Page({
             isHighFreq: topic.is_high_freq || false
           }
         })
+        cache.set('topics', topicsWithProgress, 300000) // 缓存 5 分钟
         this.setData({ topics: topicsWithProgress })
         this.filterTopics()
       }
@@ -151,6 +159,13 @@ Page({
 
   // 加载考卷列表（分页）
   async loadExamPapers(reset = true) {
+    // 显示缓存数据
+    const cachedKey = 'examPapers_' + (this.data.selectedPaperType || 'all')
+    const cached = cache.get(cachedKey)
+    if (cached && reset) {
+      this.setData({ examPapers: cached })
+    }
+
     try {
       if (reset) {
         this.setData({ examPage: 1 })
@@ -180,6 +195,7 @@ Page({
           totalExamPapers: result.total,
           hasMore: result.total > (reset ? papersWithType.length : this.data.examPapers.length + papersWithType.length)
         })
+        if (reset) cache.set(cachedKey, papersWithType, 120000) // 缓存 2 分钟
       } else {
         if (reset) {
           this.setData({ examPapers: [], totalExamPapers: 0, hasMore: false })

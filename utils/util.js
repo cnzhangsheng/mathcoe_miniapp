@@ -33,8 +33,49 @@ const processRichText = (html) => {
   return html.replace(/<img\s/gi, '<img style="max-width:100%;height:auto;display:block" ')
 }
 
+/**
+ * 从 HTML 中提取所有图片 URL
+ * @param {string} html - HTML 字符串
+ * @returns {string[]} 图片 URL 数组
+ */
+const extractImageUrls = (html) => {
+  if (!html || typeof html !== 'string') return []
+  const urls = []
+  const regex = /<img[^>]+src=["']([^"']+)["']/gi
+  let match
+  while ((match = regex.exec(html)) !== null) {
+    urls.push(match[1])
+  }
+  return urls
+}
+
+/**
+ * 预加载图片 - 提取题目内容中的图片并提前下载到微信缓存
+ * 用户切到题目时，图片直接从缓存加载，避免白屏等待
+ * @param {string|string[]} htmlContents - HTML 内容或内容数组
+ */
+const preloadImages = (htmlContents) => {
+  if (!htmlContents) return
+  const contents = Array.isArray(htmlContents) ? htmlContents : [htmlContents]
+
+  // 收集去重 URL
+  const urlSet = new Set()
+  contents.forEach(html => {
+    extractImageUrls(html).forEach(url => urlSet.add(url))
+  })
+
+  // 静默预下载
+  urlSet.forEach(url => {
+    wx.getImageInfo({
+      src: url,
+      fail: () => {} // 预加载失败不影响主流程
+    })
+  })
+}
+
 module.exports = {
   formatTime,
   formatDate,
-  processRichText
+  processRichText,
+  preloadImages,
 }

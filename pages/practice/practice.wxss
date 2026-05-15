@@ -87,6 +87,12 @@
   color: rgba(0,0,0,0.7);
 }
 
+.timer-label {
+  font-size: 24rpx;
+  color: rgba(0,0,0,0.4);
+  margin-right: 12rpx;
+}
+
 .timer-box.urgent .timer-text {
   color: #EF4444;
 }

@@ -29,6 +29,9 @@ Page({
     timeLeft: 0,
     formattedTime: '0:00',
     startTime: null,
+    duration: 0,          // 考卷总时长（分钟），0=不限时
+    countdownTotal: 0,    // 倒计时总秒数，0=不计时
+    timeUp: false,        // 时间到标记
 
     // Feedback (Practice Mode)
     showFeedback: false,
@@ -44,7 +47,10 @@ Page({
 
     // Result Report - removed, will redirect to exam-report page
     estimatedScore: 0,
-    completionRate: 0
+    completionRate: 0,
+
+    // 预加载图片
+    preloadedImageUrls: []
   },
 
   onLoad(options) {
@@ -96,17 +102,22 @@ Page({
         const totalQuestions = Math.max(1, questions.length)
         const firstQuestion = questions[0] || {}
 
+        const duration = examPaper.duration || 75 // 默认 75 分钟
         this.setData({
           examPaper,
           questions,
           totalQuestions: totalQuestions,
           currentQuestion: this.formatQuestion(firstQuestion),
           questionTypeText: this.getQuestionTypeText(firstQuestion),
+          duration,
+          countdownTotal: duration * 60,
           startTime: Date.now()
         })
         this.buildOptions(firstQuestion)
         this.updateProgress()
         this.startTimer()
+        // 预加载所有题目的图片，用户切题时直接从微信缓存加载
+        this.preloadQuestionImages(questions)
       } else {
         wx.showToast({ title: '考卷无题目', icon: 'none' })
         setTimeout(() => {
@@ -158,6 +169,8 @@ Page({
         this.buildOptions(firstQuestion)
         this.updateProgress()
         this.startTimer()
+        // 预加载所有题目的图片
+        this.preloadQuestionImages(questions)
       } else {
         wx.showToast({ title: '专题无题目', icon: 'none' })
         setTimeout(() => {
@@ -196,7 +209,53 @@ Page({
     }
     return {
       ...question,
-      contentHtml
+      contentHtml: processRichText(contentHtml)
+    }
+  },
+
+  // 预加载所有题目的图片
+  preloadQuestionImages(questions) {
+    if (!questions || !Array.isArray(questions)) return
+    const urlSet = new Set()
+    questions.forEach(q => {
+      if (!q) return
+      // 从 HTML 内容中提取
+      const htmlSources = []
+      if (q.content) {
+        if (typeof q.content === 'string') htmlSources.push(q.content)
+        else if (q.content.text) htmlSources.push(q.content.text)
+        // 从 images 数组中收集
+        if (q.content.images && Array.isArray(q.content.images)) {
+          q.content.images.forEach(url => urlSet.add(url))
+        }
+      }
+      // 从选项内容中提取
+      if (q.options) {
+        q.options.forEach(opt => {
+          if (opt.content) {
+            if (typeof opt.content === 'string') htmlSources.push(opt.content)
+            else if (opt.content.text) htmlSources.push(opt.content.text)
+          }
+          if (opt.text) htmlSources.push(opt.text)
+          // 选项也可能有 images
+          if (opt.content && opt.content.images && Array.isArray(opt.content.images)) {
+            opt.content.images.forEach(url => urlSet.add(url))
+          }
+        })
+      }
+      // 从 HTML 中提取 <img> 的 src
+      htmlSources.forEach(html => {
+        if (!html || typeof html !== 'string') return
+        const regex = /<img[^>]+src=["']([^"']+)["']/gi
+        let match
+        while ((match = regex.exec(html)) !== null) {
+          urlSet.add(match[1])
+        }
+      })
+    })
+    const urls = Array.from(urlSet)
+    if (urls.length > 0) {
+      this.setData({ preloadedImageUrls: urls })
     }
   },
 
@@ -273,10 +332,25 @@ Page({
     this.timer = setInterval(() => {
       const elapsed = Math.floor((Date.now() - this.startTime) / 1000)
 
-      this.setData({
-        timeLeft: elapsed,
-        formattedTime: this.formatTime(elapsed)
-      })
+      if (this.data.countdownTotal > 0) {
+        // 倒计时模式（考卷）
+        const remain = Math.max(0, this.data.countdownTotal - elapsed)
+        this.setData({
+          timeLeft: remain,
+          formattedTime: this.formatTime(remain)
+        })
+        if (remain <= 0 && !this._submitting) {
+          this._submitting = true
+          clearInterval(this.timer)
+          this.autoSubmitDueToTimeout()
+        }
+      } else {
+        // 计时模式（专题练习）
+        this.setData({
+          timeLeft: elapsed,
+          formattedTime: this.formatTime(elapsed)
+        })
+      }
     }, 1000)
   },
 
@@ -450,6 +524,14 @@ Page({
     })
     this.buildOptions(targetQuestion)
     this.updateProgress()
+  },
+
+  // 时间到自动交卷
+  autoSubmitDueToTimeout() {
+    wx.showToast({ title: '时间到，自动交卷', icon: 'none' })
+    this.saveCurrentAnswer()
+    // 跳过未作答检查，直接提交
+    this.confirmSubmit()
   },
 
   // Submit Exam

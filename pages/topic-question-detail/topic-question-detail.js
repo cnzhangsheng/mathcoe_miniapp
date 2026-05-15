@@ -2,7 +2,8 @@
 const practiceService = require('../../services/practice')
 const discoverService = require('../../services/discover')
 const reviewService = require('../../services/review')
-const app = getApp()
+const { getTopicClass } = require('../../services/topics')
+const { processRichText } = require('../../utils/util')
 
 Page({
   data: {
@@ -49,18 +50,13 @@ Page({
       logic: '',
       tip: '',
       point: ''
-    }
+    },
+
+    // 预加载图片
+    preloadedImageUrls: []
   },
 
-  getTopicClass(topicId) {
-    const classes = {
-      1001: 'topic-tuxing',    // 图形类 - 草莓粉
-      1002: 'topic-luoji',     // 数理逻辑 - 薄荷青
-      1003: 'topic-yingyong',  // 应用类 - 糖果绿
-      1004: 'topic-yunsuan',   // 运算类 - 蜜桃橙
-    }
-    return classes[topicId] || 'topic-default'
-  },
+  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   onLoad(options) {
     const topicId = parseInt(options.topic_id)
@@ -118,6 +114,46 @@ Page({
         isBookmarked,
         likeCount
       })
+
+      // 预加载所有题目的图片
+      if (result.questions && result.questions.length > 0) {
+        const urlSet = new Set()
+        result.questions.forEach(q => {
+          if (!q) return
+          const htmlSources = []
+          if (q.content) {
+            if (typeof q.content === 'string') htmlSources.push(q.content)
+            else if (q.content.text) htmlSources.push(q.content.text)
+            if (q.content.images && Array.isArray(q.content.images)) {
+              q.content.images.forEach(url => urlSet.add(url))
+            }
+          }
+          if (q.options) {
+            q.options.forEach(opt => {
+              if (opt.content) {
+                if (typeof opt.content === 'string') htmlSources.push(opt.content)
+                else if (opt.content.text) htmlSources.push(opt.content.text)
+                if (opt.content.images && Array.isArray(opt.content.images)) {
+                  opt.content.images.forEach(url => urlSet.add(url))
+                }
+              }
+              if (opt.text) htmlSources.push(opt.text)
+            })
+          }
+          htmlSources.forEach(html => {
+            if (!html || typeof html !== 'string') return
+            const regex = /<img[^>]+src=["']([^"']+)["']/gi
+            let match
+            while ((match = regex.exec(html)) !== null) {
+              urlSet.add(match[1])
+            }
+          })
+        })
+        const urls = Array.from(urlSet)
+        if (urls.length > 0) {
+          this.setData({ preloadedImageUrls: urls })
+        }
+      }
     } catch (err) {
       console.error('Load question failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
@@ -139,9 +175,9 @@ Page({
     // 从 content.text 提取
     if (question.content) {
       if (typeof question.content === 'string') {
-        return question.content
+        return processRichText(question.content)
       } else if (typeof question.content === 'object' && question.content.text) {
-        return question.content.text
+        return processRichText(question.content.text)
       }
     }
     // fallback 到 title
@@ -170,7 +206,7 @@ Page({
       return {
         id: opt.label || 'A',
         label: label || '选项内容',
-        labelHtml: labelHtml
+        labelHtml: processRichText(labelHtml)
       }
     })
   },
