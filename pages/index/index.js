@@ -111,7 +111,6 @@ Page({
         const formattedPapers = recommendedPapers.map(paper => ({
           ...paper,
           typeIcon: this.getPaperTypeIcon(paper.paper_type),
-          typeClass: paper.paper_type || 'daily',
           levelLabel: `Level ${paper.difficulty_level}`,
           levelClass: `level-${paper.difficulty_level}`,
           paperTypeLabel: this.getPaperTypeLabel(paper.paper_type)
@@ -276,19 +275,21 @@ Page({
   // 获取考卷类型图标
   getPaperTypeIcon(type) {
     const icons = {
-      daily: '📅',
-      mock: '📝',
-      topic: '🎯'
+      daily: '/assets/icons/icon-exam-daily.png',
+      mock: '/assets/icons/icon-exam-sim.png',
+      topic: '/assets/icons/icon-exam-topic.png',
+      past: '/assets/icons/icon-exam-past.png'
     }
-    return icons[type] || '📝'
+    return icons[type] || '/assets/icons/icon-exam-daily.png'
   },
 
   // 获取考卷类型标签
   getPaperTypeLabel(type) {
     const labels = {
-      daily: '每日练习',
-      mock: '模拟考试',
-      topic: '专项训练'
+      daily: '日常练习',
+      mock: '模拟卷',
+      topic: '专题训练',
+      past: '真题卷'
     }
     return labels[type] || '练习'
   },
@@ -473,6 +474,37 @@ Page({
     wx.navigateTo({
       url: `/pages/practice/practice?exam_paper_id=${paperId}`
     })
+  },
+
+  // 下载PDF
+  async downloadPdf(e) {
+    const paperId = e.currentTarget.dataset.id
+    wx.showLoading({ title: '正在下载PDF...', mask: true })
+    try {
+      const url = examPaperService.getDownloadPdfUrl(paperId)
+      const downloadResult = await new Promise((resolve, reject) => {
+        wx.downloadFile({
+          url,
+          timeout: 120000,
+          success: resolve,
+          fail: (err) => reject(new Error(err.errMsg || '下载失败')),
+        })
+      })
+      if (downloadResult.statusCode !== 200) throw new Error('下载失败')
+      await new Promise((resolve, reject) => {
+        wx.openDocument({
+          filePath: downloadResult.tempFilePath,
+          showMenu: true,
+          success: resolve,
+          fail: (err) => reject(new Error(err.errMsg || '打开失败')),
+        })
+      })
+    } catch (err) {
+      console.error('downloadPdf error:', err)
+      wx.showToast({ title: '导出失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
   },
 
   // 跳转到薄弱专题详情

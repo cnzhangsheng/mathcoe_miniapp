@@ -447,59 +447,52 @@
 .exam-card {
   display: flex;
   align-items: center;
-  padding: 24rpx 32rpx;
+  padding: 40rpx;
   background-color: #fff;
-  border-radius: 32rpx;
+  border-radius: 56rpx;
   gap: 24rpx;
   border: 2rpx solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
 }
 
 .exam-left {
   flex-shrink: 0;
+  margin-right: 32rpx;
 }
 
 .exam-icon-box {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 24rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 32rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgba(99, 102, 241, 0.1);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
 }
 
-.exam-icon-box.daily {
-  background-color: rgba(7, 193, 96, 0.15);
-}
-
-.exam-icon-box.mock {
-  background-color: rgba(251, 191, 36, 0.15);
-}
-
-.exam-icon-box.topic {
-  background-color: rgba(99, 102, 241, 0.15);
-}
-
-.exam-icon {
-  font-size: 32rpx;
+.exam-icon-img {
+  width: 52rpx;
+  height: 52rpx;
 }
 
 .exam-middle {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
 }
 
 .exam-top {
-  gap: 12rpx;
+  gap: 16rpx;
   align-items: center;
+  margin-bottom: 8rpx;
 }
 
 .level-badge {
-  padding: 4rpx 16rpx;
+  padding: 6rpx 14rpx;
   border-radius: 8rpx;
-  background-color: #07C160;
+  background-color: #6366F1;
 }
 
 .level-text {
@@ -507,41 +500,91 @@
   color: #fff;
 }
 
-.done-badge {
-  padding: 4rpx 12rpx;
+.new-badge {
+  padding: 8rpx 12rpx;
+  background-color: #F43F5E;
   border-radius: 8rpx;
-  background-color: #F59E0B;
-  margin-left: 8rpx;
+}
+
+.new-text {
+  color: #fff;
+  font-size: 18rpx;
+}
+
+.done-badge {
+  padding: 8rpx 12rpx;
+  background-color: #10B981;
+  border-radius: 8rpx;
+  margin-top: 12rpx;
+  align-self: flex-start;
 }
 
 .done-text {
-  font-size: 20rpx;
   color: #fff;
+  font-size: 18rpx;
 }
 
 .exam-title {
-  font-size: 28rpx;
-  color: rgba(0, 0, 0, 0.9);
+  display: block;
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 14px;
+  margin-bottom: 16rpx;
 }
 
 .exam-bottom {
-  gap: 24rpx;
+  gap: 32rpx;
+  color: rgba(0, 0, 0, 0.3);
+  align-items: center;
 }
 
 .exam-meta {
-  color: rgba(0, 0, 0, 0.4);
+  gap: 8rpx;
+  align-items: center;
+}
+
+.meta-icon {
+  font-size: 12px;
+}
+
+.meta-text {
+  font-size: 10px;
 }
 
 .exam-right {
-  flex-shrink: 0;
+  margin-left: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
 }
 
-.start-btn {
-  padding: 16rpx 32rpx;
-  border-radius: 24rpx;
+.download-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 32rpx;
+  background-color: rgba(99, 102, 241, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.start-text {
+.download-icon {
+  font-size: 28rpx;
+  color: #6366F1;
+}
+
+.arrow-box {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #07C160;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-icon {
+  font-size: 20px;
   color: #fff;
 }
 

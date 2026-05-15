@@ -56,8 +56,16 @@
     <!-- Exam Papers Section -->
     <view class="exam-section">
       <view class="section-header flex-row">
-        <text class="section-title text-bold">考卷 ({{totalExamPapers}}张)</text>
-        <text class="section-more text-small text-bold">More Exams</text>
+        <text class="section-title text-bold">考卷（{{totalExamPapers}}张）</text>
+      </view>
+
+      <!-- 考卷类型筛选 -->
+      <view class="paper-type-filter flex-row">
+        <block wx:for="{{paperTypeTabs}}" wx:key="value">
+          <view class="type-tab {{selectedPaperType === item.value ? 'type-tab-active' : ''}}" data-type="{{item.value}}" bindtap="selectPaperType">
+            <text class="type-tab-text">{{item.label}}</text>
+          </view>
+        </block>
       </view>
 
       <view class="exam-list">
@@ -65,7 +73,7 @@
           <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
             <view class="exam-left">
               <view class="exam-icon-box">
-                <text class="exam-icon">📝</text>
+                <image class="exam-icon-img" src="{{item.typeIcon}}" mode="aspectFit"></image>
               </view>
             </view>
             <view class="exam-middle">
@@ -84,21 +92,27 @@
                   <text class="meta-text">{{item.duration || 75}} 分钟</text>
                 </view>
                 <text class="meta-text">{{item.total_questions}} 题</text>
-              </view>
-              <view class="done-badge" wx:if="{{item.user_completed}}">
-                <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
+                <text class="done-inline-text" wx:if="{{item.user_completed}}">· 正确率{{item.user_score}}%</text>
               </view>
             </view>
             <view class="exam-right">
               <view class="download-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
                 <text class="download-icon">⬇</text>
               </view>
+              <view class="download-placeholder" wx:else></view>
               <view class="arrow-box">
                 <text class="arrow-icon">›</text>
               </view>
             </view>
           </view>
         </block>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{hasMore}}">
+        <view class="load-more-btn" bindtap="loadMoreExamPapers">
+          <text class="load-more-text">加载更多考卷</text>
+        </view>
       </view>
 
       <!-- 无数据提示 -->

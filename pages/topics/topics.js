@@ -11,19 +11,33 @@ Page({
 
     // 专题数据（静态数据作为 fallback，实际从 API 获取）
     topics: [],
-
     filteredTopics: [],
 
     // 考卷数据
     examPapers: [],
+    totalExamPapers: 0,
+    examPage: 1,
+    examPageSize: 20,
+    hasMore: false,
+
+    // 考卷类型筛选
+    selectedPaperType: '',
+    paperTypeTabs: [
+      { value: '', label: '全部' },
+      { value: 'daily', label: '日常练习' },
+      { value: 'mock', label: '模拟卷' },
+      { value: 'topic', label: '专题训练' },
+      { value: 'past', label: '真题卷' },
+    ],
 
     // AI学习洞察数据
     insightData: null,
 
     paperTypes: {
-      daily: { label: '每日一练', icon: '📅', color: 'emerald' },
-      mock: { label: '模拟卷', icon: '📝', color: 'amber' },
-      topic: { label: '专项训练', icon: '🎯', color: 'purple' }
+      daily: { label: '日常练习', icon: '/assets/icons/icon-exam-daily.png', color: 'emerald' },
+      mock: { label: '模拟卷', icon: '/assets/icons/icon-exam-sim.png', color: 'amber' },
+      topic: { label: '专题训练', icon: '/assets/icons/icon-exam-topic.png', color: 'purple' },
+      past: { label: '真题卷', icon: '/assets/icons/icon-exam-past.png', color: 'blue' }
     }
   },
 
@@ -34,7 +48,7 @@ Page({
   },
 
   onShow() {
-    // 每次切到此tab时刷新考卷列表，避免新增的考卷不显示
+    // 每次切到此tab时刷新考卷列表
     this.loadExamPapers()
   },
 
@@ -135,13 +149,21 @@ Page({
     return null
   },
 
-  // 加载考卷列表
-  async loadExamPapers() {
+  // 加载考卷列表（分页）
+  async loadExamPapers(reset = true) {
     try {
-      const allPapers = await examPaperService.getExamPapers().catch(() => [])
+      if (reset) {
+        this.setData({ examPage: 1 })
+      }
+      const { examPage, examPageSize, selectedPaperType } = this.data
+      const result = await examPaperService.getExamPapers({
+        page: examPage,
+        page_size: examPageSize,
+        paper_type: selectedPaperType || undefined
+      }).catch(() => null)
 
-      if (allPapers && allPapers.length > 0) {
-        const papersWithType = allPapers.map(paper => {
+      if (result && result.items && result.items.length > 0) {
+        const papersWithType = result.items.map(paper => {
           const typeInfo = this.data.paperTypes[paper.paper_type] || this.data.paperTypes.daily
           return {
             ...paper,
@@ -153,18 +175,34 @@ Page({
         })
 
         this.setData({
-          examPapers: papersWithType,
-          totalExamPapers: papersWithType.length
+          examPapers: reset ? papersWithType : [...this.data.examPapers, ...papersWithType],
+          totalExamPapers: result.total,
+          hasMore: result.total > (reset ? papersWithType.length : this.data.examPapers.length + papersWithType.length)
         })
       } else {
-        this.setData({
-          examPapers: [],
-          totalExamPapers: 0
-        })
+        if (reset) {
+          this.setData({ examPapers: [], totalExamPapers: 0, hasMore: false })
+        }
       }
     } catch (err) {
       console.error('loadExamPapers error:', err)
     }
+  },
+
+  // 选择考卷类型筛选
+  selectPaperType(e) {
+    const type = e.currentTarget.dataset.type
+    if (type === this.data.selectedPaperType) return
+    this.setData({ selectedPaperType: type })
+    this.loadExamPapers(true)
+  },
+
+  // 加载更多考卷
+  loadMoreExamPapers() {
+    if (!this.data.hasMore) return
+    const nextPage = this.data.examPage + 1
+    this.setData({ examPage: nextPage })
+    this.loadExamPapers(false)
   },
 
   // 选择专题 - 进入题目详情页面
