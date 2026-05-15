@@ -315,8 +315,8 @@
 
 .exam-card {
   background-color: #fff;
-  padding: 40rpx;
-  border-radius: 56rpx;
+  padding: 24rpx 32rpx;
+  border-radius: 48rpx;
   box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
   border: 2rpx solid rgba(0,0,0,0.05);
   display: flex;
@@ -325,15 +325,15 @@
 }
 
 .exam-left {
-  margin-right: 32rpx;
+  margin-right: 20rpx;
 }
 
 .exam-icon-box {
-  width: 96rpx;
-  height: 96rpx;
+  width: 72rpx;
+  height: 72rpx;
   background-color: rgba(99,102,241,0.1);
   color: #6366F1;
-  border-radius: 32rpx;
+  border-radius: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,8 +341,8 @@
 }
 
 .exam-icon-img {
-  width: 52rpx;
-  height: 52rpx;
+  width: 40rpx;
+  height: 40rpx;
 }
 
 .exam-middle {
@@ -438,21 +438,6 @@
 .download-icon {
   font-size: 28rpx;
   color: #6366F1;
-}
-
-.arrow-box {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background-color: #07C160;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.arrow-icon {
-  font-size: 20px;
-  color: #fff;
 }
 
 /* Load More */

@@ -53,6 +53,22 @@ Page({
     this.loadExamPapers()
   },
 
+  // 下拉刷新
+  async onPullDownRefresh() {
+    await Promise.all([
+      this.loadTopics(),
+      this.loadExamPapers(true)
+    ])
+    wx.stopPullDownRefresh()
+  },
+
+  // 上拉加载更多考卷
+  onReachBottom() {
+    if (this.data.hasMore) {
+      this.loadMoreExamPapers()
+    }
+  },
+
   // 筛选专题
   filterTopics() {
     const { topics, activeTab } = this.data
@@ -235,6 +251,9 @@ Page({
   // 导出考卷 PDF
   async downloadPdf(e) {
     const paperId = e.currentTarget.dataset.id
+    const paper = this.data.examPapers.find(p => p.id === paperId)
+    const fileName = (paper ? paper.title : `考卷_${paperId}`).replace(/[\\/:*?"<>|]/g, '_') + '.pdf'
+    const filePath = wx.env.USER_DATA_PATH + '/' + fileName
 
     wx.showLoading({ title: '正在下载PDF...', mask: true })
 
@@ -243,6 +262,7 @@ Page({
       const downloadResult = await new Promise((resolve, reject) => {
         wx.downloadFile({
           url,
+          filePath,
           timeout: 120000,
           success: resolve,
           fail: (err) => reject(new Error(err.errMsg || '下载失败')),
@@ -255,7 +275,7 @@ Page({
 
       await new Promise((resolve, reject) => {
         wx.openDocument({
-          filePath: downloadResult.tempFilePath,
+          filePath: downloadResult.filePath,
           showMenu: true,
           success: resolve,
           fail: (err) => reject(new Error(err.errMsg || '打开失败')),

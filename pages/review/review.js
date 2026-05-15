@@ -53,6 +53,24 @@ Page({
     }
   },
 
+  // 下拉刷新
+  async onPullDownRefresh() {
+    this.setData({
+      wrongPage: 1,
+      wrongQuestions: [],
+      wrongHasMore: true,
+      favoritePage: 1,
+      favoriteQuestions: [],
+      favoriteHasMore: true,
+    })
+    if (this.data.activeTab === 'wrong') {
+      await this.loadWrongQuestions(1)
+    } else {
+      await this.loadFavoriteQuestions(1)
+    }
+    wx.stopPullDownRefresh()
+  },
+
   // 初始化加载：专题列表 + 当前 tab 第一页
   async loadInitialData() {
     wx.showLoading({ title: '加载中...', mask: true })

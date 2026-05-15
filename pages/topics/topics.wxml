@@ -100,9 +100,6 @@
                 <text class="download-icon">⬇</text>
               </view>
               <view class="download-placeholder" wx:else></view>
-              <view class="arrow-box">
-                <text class="arrow-icon">›</text>
-              </view>
             </view>
           </view>
         </block>
@@ -110,9 +107,7 @@
 
       <!-- 加载更多 -->
       <view class="load-more" wx:if="{{hasMore}}">
-        <view class="load-more-btn" bindtap="loadMoreExamPapers">
-          <text class="load-more-text">加载更多考卷</text>
-        </view>
+        <text class="load-more-text">加载更多...</text>
       </view>
 
       <!-- 无数据提示 -->
