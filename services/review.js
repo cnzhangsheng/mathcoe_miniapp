@@ -49,7 +49,7 @@ const removeWrongQuestion = async (questionId) => {
  * @param {number} questionId - 题目ID
  */
 const isFavorited = async (questionId) => {
-  const result = await request('/favorites', { data: { page: 1, page_size: 50 } })
+  const result = await request('/favorites', { data: { page: 1, page_size: 50 }, silent: true })
   return (result.items || []).some(f => f.question_id === questionId)
 }
 

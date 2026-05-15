@@ -37,12 +37,27 @@ const request = (url, options = {}) => {
         if (res.statusCode === 200) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
-          // Token过期，清除登录状态
-          console.warn('[API Error] Token expired')
-          wx.removeStorageSync('token')
-          app.globalData.token = null
-          app.globalData.isLoggedIn = false
-          resolve(null)
+          if (options.silent) {
+            // 辅助请求（点赞状态等）静默降级，不干扰用户
+            console.warn('[API 401 ignored]', url)
+            resolve(null)
+          } else {
+            console.warn('[API Error] Token expired')
+            wx.removeStorageSync('token')
+            app.globalData.token = null
+            app.globalData.isLoggedIn = false
+            resolve(null)
+            // 非静默请求 401 → token 过期，跳转登录
+            wx.showToast({ title: '登录已过期，请重新登录', icon: 'none', duration: 2000 })
+            setTimeout(() => {
+              // 防止已在登录页时循环跳转
+              const pages = getCurrentPages()
+              const currentPage = pages[pages.length - 1]
+              if (currentPage && currentPage.route !== 'pages/login/login') {
+                wx.reLaunch({ url: '/pages/login/login' })
+              }
+            }, 1500)
+          }
         } else if (res.statusCode === 500) {
           // 服务端错误 - 详细输出
           console.error('========================================')

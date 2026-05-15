@@ -15,7 +15,7 @@ const getRandomQuestion = async () => {
  * @param {number} questionId - 题目ID
  */
 const getLikeStatus = async (questionId) => {
-  return request(`/likes/${questionId}/status`)
+  return request(`/likes/${questionId}/status`, { silent: true })
 }
 
 /**
@@ -23,7 +23,7 @@ const getLikeStatus = async (questionId) => {
  * @param {number} questionId - 题目ID
  */
 const addLike = async (questionId) => {
-  return request('/likes', { method: 'POST', data: { question_id: questionId } })
+  return request('/likes', { method: 'POST', data: { question_id: questionId }, silent: true })
 }
 
 /**
@@ -31,7 +31,7 @@ const addLike = async (questionId) => {
  * @param {number} questionId - 题目ID
  */
 const removeLike = async (questionId) => {
-  return request('/likes', { method: 'DELETE', data: { question_id: questionId } })
+  return request('/likes', { method: 'DELETE', data: { question_id: questionId }, silent: true })
 }
 
 /**
