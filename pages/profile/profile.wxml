@@ -123,16 +123,16 @@
           <text class="option-text text-bold">5 题/天</text>
           <text class="option-desc text-small text-muted">轻松入门</text>
         </view>
-        <view class="picker-option {{dailyGoal === 10 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{10}}">
-          <text class="option-text text-bold">10 题/天</text>
+        <view class="picker-option {{dailyGoal === 12 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{12}}">
+          <text class="option-text text-bold">12 题/天</text>
           <text class="option-desc text-small text-muted">推荐</text>
         </view>
-        <view class="picker-option {{dailyGoal === 15 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{15}}">
-          <text class="option-text text-bold">15 题/天</text>
+        <view class="picker-option {{dailyGoal === 24 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{24}}">
+          <text class="option-text text-bold">24 题/天</text>
           <text class="option-desc text-small text-muted">进阶提升</text>
         </view>
-        <view class="picker-option {{dailyGoal === 20 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{20}}">
-          <text class="option-text text-bold">20 题/天</text>
+        <view class="picker-option {{dailyGoal === 48 ? 'active' : ''}}" bindtap="setDailyGoal" data-goal="{{48}}">
+          <text class="option-text text-bold">48 题/天</text>
           <text class="option-desc text-small text-muted">冲刺满分</text>
         </view>
       </view>
