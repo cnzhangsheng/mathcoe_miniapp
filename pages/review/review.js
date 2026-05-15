@@ -170,6 +170,7 @@ Page({
         question_id: q.question_id,
         topic_id: parseInt(q.question_topic_id) || parseInt(q.topic_id) || 0,
         topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
+        topicClass: this.getTopicClass(parseInt(q.question_topic_id) || parseInt(q.topic_id)),
         level: q.question_difficulty_level,
         content: q.question_content?.text || q.content || '',
         options: optionsList,
@@ -197,6 +198,7 @@ Page({
         question_id: q.question_id,
         topic_id: q.question_topic_id,
         topicTitle: q.question_topic_title || this.getTopicTitle(q.question_topic_id),
+        topicClass: this.getTopicClass(q.question_topic_id),
         level: q.question_difficulty_level,
         content: q.question_content?.text || q.content || '',
         options: optionsList,
@@ -211,13 +213,23 @@ Page({
   // 获取专题标题
   getTopicTitle(topicId) {
     const titles = {
-      1: '算术与计数',
-      2: '逻辑与推理',
-      3: '几何与空间',
-      4: '规律与观察',
-      5: '综合应用题'
+      1001: '图形类',
+      1002: '数理逻辑',
+      1003: '应用类',
+      1004: '运算类',
     }
     return titles[topicId] || '其他'
+  },
+
+  // 获取专题标签颜色样式
+  getTopicClass(topicId) {
+    const classes = {
+      1001: 'topic-tuxing',    // 图形类 - 草莓粉
+      1002: 'topic-luoji',     // 数理逻辑 - 薄荷青
+      1003: 'topic-yingyong',  // 应用类 - 糖果绿
+      1004: 'topic-yunsuan',   // 运算类 - 蜜桃橙
+    }
+    return classes[topicId] || 'topic-default'
   },
 
   // 获取日期标签
@@ -264,18 +276,39 @@ Page({
   },
 
   // 开始复习
-  startReview() {
-    const questions = this.data.wrongQuestions
-    if (questions.length === 0) {
-      wx.showToast({ title: '没有错题', icon: 'none' })
-      return
-    }
+  async startReview() {
+    wx.showLoading({ title: '加载中...', mask: true })
+    try {
+      // 直接从 API 获取最新错题数据（不受分页限制）
+      const allWrong = await reviewService.getAllWrongQuestions()
+      if (!allWrong || allWrong.length === 0) {
+        wx.hideLoading()
+        wx.showToast({ title: '没有错题', icon: 'none' })
+        return
+      }
 
-    const questionIds = questions.map(q => q.question_id)
-    const topicId = this.data.selectedTopicId || 0
-    wx.navigateTo({
-      url: `/pages/review-practice/review-practice?ids=${questionIds.join(',')}&topicId=${topicId}`
-    })
+      // 按专题筛选
+      let filtered = allWrong
+      if (this.data.selectedTopicId > 0) {
+        filtered = allWrong.filter(q => parseInt(q.question_topic_id) === this.data.selectedTopicId)
+      }
+
+      if (filtered.length === 0) {
+        wx.hideLoading()
+        wx.showToast({ title: '该专题没有错题', icon: 'none' })
+        return
+      }
+
+      const questionIds = filtered.map(q => q.question_id)
+      const topicId = this.data.selectedTopicId || 0
+      wx.hideLoading()
+      wx.navigateTo({
+        url: `/pages/review-practice/review-practice?ids=${questionIds.join(',')}&topicId=${topicId}`
+      })
+    } catch (err) {
+      wx.hideLoading()
+      wx.showToast({ title: '加载失败', icon: 'none' })
+    }
   },
 
   // 查看全部错题

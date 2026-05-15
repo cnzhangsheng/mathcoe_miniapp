@@ -23,7 +23,7 @@
         <view class="question-item card" bindtap="viewQuestion" data-question="{{item}}">
           <view class="question-top flex-between">
             <view class="question-meta flex-row">
-              <view class="topic-badge">
+              <view class="topic-badge {{item.topicClass}}">
                 <text class="topic-text text-small">{{item.topicTitle}}</text>
               </view>
             </view>

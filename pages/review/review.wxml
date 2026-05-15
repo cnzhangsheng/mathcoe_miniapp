@@ -50,7 +50,7 @@
               <view class="question-item card" bindtap="viewWrongQuestion" data-question="{{item}}">
                 <view class="question-top flex-between">
                   <view class="question-meta flex-row">
-                    <view class="topic-badge">
+                    <view class="topic-badge {{item.topicClass}}">
                       <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
                     </view>
                     <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">L{{item.level}}</text>
@@ -101,7 +101,7 @@
               <view class="question-item card" bindtap="practiceFavorite" data-question="{{item}}">
                 <view class="question-top flex-between">
                   <view class="question-meta flex-row">
-                    <view class="topic-badge">
+                    <view class="topic-badge {{item.topicClass}}">
                       <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
                     </view>
                     <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">L{{item.level}}</text>

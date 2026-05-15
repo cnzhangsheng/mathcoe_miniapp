@@ -16,13 +16,12 @@ Page({
     todayDone: 0,
     goalProgress: 0,
 
-    // 能力雷达（默认5个专题）
+    // 能力雷达
     abilities: [
-      { label: '算术与计数', value: 0, barClass: 'bar-blue' },
-      { label: '逻辑与推理', value: 0, barClass: 'bar-purple' },
-      { label: '几何与空间', value: 0, barClass: 'bar-green' },
-      { label: '规律与观察', value: 0, barClass: 'bar-amber' },
-      { label: '综合应用题', value: 0, barClass: 'bar-rose' }
+      { label: '运算类', value: 0, barClass: 'bar-orange' },
+      { label: '数理逻辑', value: 0, barClass: 'bar-purple' },
+      { label: '图形类', value: 0, barClass: 'bar-blue' },
+      { label: '应用类', value: 0, barClass: 'bar-green' },
     ],
 
     // 推荐考卷
@@ -299,8 +298,7 @@ Page({
     if (value >= 85) return 'bar-blue'
     if (value >= 70) return 'bar-purple'
     if (value >= 55) return 'bar-green'
-    if (value >= 40) return 'bar-amber'
-    return 'bar-rose'
+    return 'bar-orange'
   },
 
   // 绘制多边形雷达图（带标签）

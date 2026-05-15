@@ -171,7 +171,7 @@ Page({
   goToDetail(e) {
     const record = e.currentTarget.dataset.record
     wx.navigateTo({
-      url: `/pages/record-detail/record-detail?question_id=${record.questionId}&user_answer=${record.userAnswer}&topic_title=${encodeURIComponent(record.topicTitle)}&is_correct=${record.result === 'excellent'}`
+      url: `/pages/record-detail/record-detail?question_id=${record.questionId}&user_answer=${record.userAnswer}&topic_title=${encodeURIComponent(record.topicTitle)}&topic_id=${record.topicId || ''}&is_correct=${record.result === 'excellent'}`
     })
   }
 })

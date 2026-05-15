@@ -16,6 +16,14 @@ Page({
     explanation: ''
   },
 
+  getTopicClass(topicId) {
+    const classes = {
+      1001: 'topic-tuxing', 1002: 'topic-luoji',
+      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
+    }
+    return classes[topicId] || 'topic-default'
+  },
+
   onLoad(options) {
     const question = JSON.parse(decodeURIComponent(options.question || '{}'))
 
@@ -29,6 +37,7 @@ Page({
       questionId: question.question_id,
       wrongId: question.id,
       topicTitle: question.topicTitle || '',
+      topicClass: this.getTopicClass(question.topic_id),
       dateLabel: question.dateLabel || '',
       content: processRichText(question.content || ''),
       options: optionsList,

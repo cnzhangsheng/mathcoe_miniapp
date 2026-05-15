@@ -52,8 +52,18 @@ Page({
     }
   },
 
+  getTopicClass(topicId) {
+    const classes = {
+      1001: 'topic-tuxing',    // 图形类 - 草莓粉
+      1002: 'topic-luoji',     // 数理逻辑 - 薄荷青
+      1003: 'topic-yingyong',  // 应用类 - 糖果绿
+      1004: 'topic-yunsuan',   // 运算类 - 蜜桃橙
+    }
+    return classes[topicId] || 'topic-default'
+  },
+
   onLoad(options) {
-    const topicId = options.topic_id
+    const topicId = parseInt(options.topic_id)
     const title = options.title || '专题详情'
     const sortBy = options.sort_by || 'default'
 
@@ -63,7 +73,7 @@ Page({
       return
     }
 
-    this.setData({ topicId, topicTitle: decodeURIComponent(title), sortBy })
+    this.setData({ topicId, topicTitle: decodeURIComponent(title), topicClass: this.getTopicClass(topicId), sortBy })
     this.loadQuestion(topicId)
   },
 

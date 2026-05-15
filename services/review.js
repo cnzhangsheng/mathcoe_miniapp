@@ -82,7 +82,7 @@ const removeFavorite = async (questionId) => {
  * 获取全部错题（不分页，用于需要全量数据的页面）
  */
 const getAllWrongQuestions = async () => {
-  const result = await request('/favorites/wrong', { data: { page: 1, page_size: 999 } })
+  const result = await request('/favorites/wrong', { data: { page: 1, page_size: 200 } })
   return result?.items || []
 }
 
@@ -90,7 +90,7 @@ const getAllWrongQuestions = async () => {
  * 获取全部收藏（不分页，用于需要全量数据的页面）
  */
 const getAllFavorites = async () => {
-  const result = await request('/favorites', { data: { page: 1, page_size: 999 } })
+  const result = await request('/favorites', { data: { page: 1, page_size: 200 } })
   return result?.items || []
 }
 

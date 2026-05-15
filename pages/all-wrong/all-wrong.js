@@ -22,7 +22,9 @@ Page({
       const processed = wrongQuestions.map(q => ({
         id: q.id,
         question_id: q.question_id,
+        topic_id: q.question_topic_id,
         topicTitle: this.getTopicTitle(q.question_topic_id),
+        topicClass: this.getTopicClass(q.question_topic_id),
         content: q.question_content?.text || q.question_content || '',
         retry_count: q.retry_count || 0,
         created_at: q.created_at,
@@ -43,8 +45,16 @@ Page({
   },
 
   getTopicTitle(topicId) {
-    const titles = { 1: '算术', 2: '逻辑', 3: '几何', 4: '规律', 5: '综合' }
+    const titles = { 1001: '图形类', 1002: '数理逻辑', 1003: '应用类', 1004: '运算类' }
     return titles[topicId] || '其他'
+  },
+
+  getTopicClass(topicId) {
+    const classes = {
+      1001: 'topic-tuxing', 1002: 'topic-luoji',
+      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
+    }
+    return classes[topicId] || 'topic-default'
   },
 
   getDateLabel(dateStr) {

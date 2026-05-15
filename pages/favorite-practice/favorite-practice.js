@@ -23,6 +23,14 @@ Page({
     questionLevel: ''
   },
 
+  getTopicClass(topicId) {
+    const classes = {
+      1001: 'topic-tuxing', 1002: 'topic-luoji',
+      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
+    }
+    return classes[topicId] || 'topic-default'
+  },
+
   onLoad(options) {
     if (options.ids) {
       const ids = options.ids.split(',').map(id => parseInt(id))
@@ -53,6 +61,7 @@ Page({
             question_id: fav.question_id,
             topic_id: fav.question_topic_id,
             topicTitle: fav.question_topic_title || '其他',
+            topicClass: this.getTopicClass(fav.question_topic_id),
             difficultyLevel: fav.question_difficulty_level || 0,
             content: fav.question_content?.text || fav.question_content || '',
             options: options,
@@ -97,6 +106,7 @@ Page({
     this.setData({
       questionType,
       topicTitle: question.topicTitle || '',
+      topicClass: question.topicClass || '',
       questionLevel: question.difficultyLevel ? `L${question.difficultyLevel}` : ''
     })
   },

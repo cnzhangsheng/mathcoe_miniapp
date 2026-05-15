@@ -374,24 +374,20 @@
   transition: width 0.3s;
 }
 
-.bar-blue {
-  background-color: #6366F1;
+.bar-orange {
+  background-color: #FF8A00;
 }
 
 .bar-purple {
-  background-color: #A855F7;
+  background-color: #8B6CF6;
+}
+
+.bar-blue {
+  background-color: #FF6B8A;
 }
 
 .bar-green {
-  background-color: #07C160;
-}
-
-.bar-amber {
-  background-color: #F59E0B;
-}
-
-.bar-rose {
-  background-color: #F43F5E;
+  background-color: #38D9A9;
 }
 
 /* Section Header */

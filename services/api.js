@@ -63,6 +63,12 @@ const request = (url, options = {}) => {
           console.error('Request Data:', options.data || {})
           console.error('Response:', res.data)
           resolve(null)
+        } else if (res.statusCode === 422) {
+          console.error('[API Error 422] Validation Error')
+          console.error('URL:', url)
+          console.error('Request Data:', options.data || {})
+          console.error('Response:', res.data)
+          resolve(null)
         } else {
           console.error(`[API Error ${res.statusCode}]`, url, res.data)
           resolve(null)

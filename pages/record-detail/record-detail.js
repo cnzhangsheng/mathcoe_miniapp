@@ -16,11 +16,20 @@ Page({
     questionLevel: ''
   },
 
+  getTopicClass(topicId) {
+    const classes = {
+      1001: 'topic-tuxing', 1002: 'topic-luoji',
+      1003: 'topic-yingyong', 1004: 'topic-yunsuan',
+    }
+    return classes[topicId] || 'topic-default'
+  },
+
   onLoad(options) {
     // 从参数获取题目ID和用户答案
     const questionId = options.question_id
     const userAnswer = options.user_answer || ''
     const topicTitle = decodeURIComponent(options.topic_title || '日常练习')
+    const topicId = parseInt(options.topic_id) || 0
     const isCorrect = options.is_correct === 'true' || options.is_correct === '1'
 
     if (!questionId) {
@@ -33,7 +42,8 @@ Page({
       questionId: parseInt(questionId),
       userAnswer,
       isCorrect,
-      topicTitle
+      topicTitle,
+      topicClass: this.getTopicClass(topicId),
     })
 
     this.loadQuestionDetail(questionId)
