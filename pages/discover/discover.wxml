@@ -61,11 +61,11 @@
     <!-- Like + Bookmark - 在选项下面 -->
     <view class="action-icons-right">
       <view class="action-icon-btn {{isLiked ? 'liked' : ''}}" bindtap="toggleLike">
-        <text class="action-icon">{{isLiked ? '👍' : '👍🏻'}}</text>
+        <image class="action-icon-img" src="{{isLiked ? '/assets/icons/icon_like_fill.png' : '/assets/icons/icon_like.png'}}" mode="aspectFit"></image>
         <text class="action-count">{{likeCount || 0}}</text>
       </view>
       <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
-        <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
+        <image class="action-icon-img" src="{{isFavorited ? '/assets/icons/icon_bookmark_fill.png' : '/assets/icons/icon_bookmark.png'}}" mode="aspectFit"></image>
         <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
       </view>
     </view>

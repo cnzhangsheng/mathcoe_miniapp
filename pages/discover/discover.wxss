@@ -329,7 +329,7 @@
 .action-icon-btn {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  gap: 12rpx;
   padding: 16rpx 24rpx;
   border-radius: 32rpx;
   background-color: rgba(0, 0, 0, 0.03);
@@ -343,8 +343,9 @@
   background-color: rgba(251, 191, 36, 0.1);
 }
 
-.action-icon {
-  font-size: 28rpx;
+.action-icon-img {
+  width: 36rpx;
+  height: 36rpx;
 }
 
 .action-count {

@@ -94,6 +94,15 @@
 
     <!-- 收藏夹内容 -->
     <block wx:if="{{activeTab === 'favorite'}}">
+      <!-- 专题筛选 -->
+      <view class="filter-row">
+        <block wx:for="{{filterTopics}}" wx:key="id">
+          <view class="filter-btn {{selectedFavoriteTopicId === item.id ? 'active' : ''}}" bindtap="selectFavoriteTopic" data-id="{{item.id}}">
+            <text class="filter-btn-text">{{item.title}}</text>
+          </view>
+        </block>
+      </view>
+
       <view class="section-card card">
         <block wx:if="{{favoriteQuestions.length > 0}}">
           <view class="question-list">

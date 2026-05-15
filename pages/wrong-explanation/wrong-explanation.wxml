@@ -23,16 +23,12 @@
     <view class="options-list">
       <block wx:for="{{options}}" wx:key="key">
         <view class="option-item {{item.key === correctAnswer ? 'correct' : ''}} {{item.key === userAnswer && item.key !== correctAnswer ? 'wrong' : ''}}">
-          <view class="option-left">
-            <view class="option-key-box {{item.key === correctAnswer ? 'correct-bg' : ''}} {{item.key === userAnswer && item.key !== correctAnswer ? 'wrong-bg' : ''}}">
-              <text class="option-key text-bold">{{item.key}}</text>
-            </view>
+          <view class="option-label-box {{item.key === correctAnswer ? 'correct-label' : ''}} {{item.key === userAnswer && item.key !== correctAnswer ? 'wrong-label' : ''}}">
+            <text class="option-label text-bold">{{item.key}}</text>
           </view>
-          <view class="option-right">
-            <rich-text class="option-text" nodes="{{item.value}}"></rich-text>
-            <text class="option-tag" wx:if="{{item.key === correctAnswer}}">✓ 正确答案</text>
-            <text class="option-tag wrong-tag" wx:if="{{item.key === userAnswer && item.key !== correctAnswer}}">✗ 你的选择</text>
-          </view>
+          <rich-text class="option-text" nodes="{{item.value}}"></rich-text>
+          <text class="option-status" wx:if="{{item.key === correctAnswer}}">✓</text>
+          <text class="option-status wrong-status" wx:if="{{item.key === userAnswer && item.key !== correctAnswer}}">✗</text>
         </view>
       </block>
     </view>

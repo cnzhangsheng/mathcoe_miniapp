@@ -105,7 +105,7 @@
     <view class="quick-actions">
       <view class="action-item primary-action" bindtap="goToDiscover">
         <view class="action-icon-box primary-icon">
-          <text class="action-icon">🎯</text>
+          <image class="action-icon-img" src="/assets/icons/icon_explore.png" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">探索</text>
         <text class="action-sub text-small">随机刷题</text>
@@ -113,7 +113,7 @@
 
       <view class="action-item purple-action" bindtap="goToTopics">
         <view class="action-icon-box purple-icon">
-          <text class="action-icon">📚</text>
+          <image class="action-icon-img" src="/assets/icons/icon_topic.png" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">专题</text>
         <text class="action-sub text-small">专项训练</text>
@@ -121,7 +121,7 @@
 
       <view class="action-item amber-action" bindtap="goToExamPaper">
         <view class="action-icon-box amber-icon">
-          <text class="action-icon">📝</text>
+          <image class="action-icon-img" src="/assets/icons/icon_exam.png" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">模考</text>
         <text class="action-sub text-small">真题演练</text>
@@ -129,7 +129,7 @@
 
       <view class="action-item rose-action" bindtap="goToReview">
         <view class="action-icon-box rose-icon">
-          <text class="action-icon">❌</text>
+          <image class="action-icon-img" src="/assets/icons/icon_error.png" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">错题</text>
         <text class="action-sub text-small">{{wrongCount}}题待练</text>

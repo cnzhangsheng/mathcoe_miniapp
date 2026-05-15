@@ -58,8 +58,10 @@ const isFavorited = async (questionId) => {
  * @param {number} page - 页码
  * @param {number} pageSize - 每页条数
  */
-const getFavorites = async (page = 1, pageSize = 10) => {
-  return request('/favorites', { data: { page, page_size: pageSize } })
+const getFavorites = async (page = 1, pageSize = 10, topicId) => {
+  const params = { page, page_size: pageSize }
+  if (topicId) params.topic_id = topicId
+  return request('/favorites', { data: params })
 }
 
 /**

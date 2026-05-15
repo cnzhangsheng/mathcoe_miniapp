@@ -170,55 +170,56 @@
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16rpx;
-  margin-bottom: 24rpx;
+  gap: 20rpx;
+  margin-bottom: 28rpx;
 }
 
 .action-item {
   background-color: #fff;
-  border-radius: 32rpx;
-  padding: 24rpx 16rpx;
+  border-radius: 40rpx;
+  padding: 32rpx 12rpx;
   text-align: center;
-  border: 2rpx solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+  border: 2rpx solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
+  gap: 12rpx;
 }
 
 .action-icon-box {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 24rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 28rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .primary-icon {
-  background-color: rgba(7, 193, 96, 0.15);
+  background-color: rgba(7, 193, 96, 0.12);
 }
 
 .purple-icon {
-  background-color: rgba(99, 102, 241, 0.15);
+  background-color: rgba(99, 102, 241, 0.12);
 }
 
 .amber-icon {
-  background-color: rgba(251, 191, 36, 0.15);
+  background-color: rgba(251, 191, 36, 0.12);
 }
 
 .rose-icon {
-  background-color: rgba(244, 63, 94, 0.15);
+  background-color: rgba(244, 63, 94, 0.12);
 }
 
-.action-icon {
-  font-size: 32rpx;
+.action-icon-img {
+  width: 60rpx;
+  height: 60rpx;
 }
 
 .action-title {
   font-size: 26rpx;
-  color: rgba(0, 0, 0, 0.9);
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .action-sub {

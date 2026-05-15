@@ -30,6 +30,7 @@ Page({
     favoriteHasMore: true,
     favoriteTotal: 0,
     favoriteLoading: false,
+    selectedFavoriteTopicId: 0,
   },
 
   onLoad() {
@@ -123,7 +124,8 @@ Page({
   async loadFavoriteQuestions(page, append = false) {
     this.setData({ favoriteLoading: true })
     try {
-      const result = await reviewService.getFavorites(page, this.data.favoritePageSize)
+      const topicId = this.data.selectedFavoriteTopicId > 0 ? this.data.selectedFavoriteTopicId : undefined
+      const result = await reviewService.getFavorites(page, this.data.favoritePageSize, topicId)
       if (!result) {
         this.setData({ favoriteLoading: false, favoriteHasMore: false })
         return
@@ -252,7 +254,7 @@ Page({
   // Tab切换
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab
-    this.setData({ activeTab: tab, selectedTopicId: 0 })
+    this.setData({ activeTab: tab, selectedTopicId: 0, selectedFavoriteTopicId: 0 })
     // 切换后加载对应 tab 数据
     if (!this.data.loading) {
       if (tab === 'wrong' && this.data.wrongQuestions.length === 0) {
@@ -273,6 +275,18 @@ Page({
       wrongHasMore: true,
     })
     this.loadWrongQuestions(1)
+  },
+
+  // 收藏专题筛选
+  selectFavoriteTopic(e) {
+    const topicId = parseInt(e.currentTarget.dataset.id) || 0
+    this.setData({
+      selectedFavoriteTopicId: topicId,
+      favoriteQuestions: [],
+      favoritePage: 1,
+      favoriteHasMore: true,
+    })
+    this.loadFavoriteQuestions(1)
   },
 
   // 开始复习

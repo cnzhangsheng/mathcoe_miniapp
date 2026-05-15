@@ -27,8 +27,12 @@
           <view class="option-item {{selectedAnswer === item.key ? 'selected' : ''}} {{showResult && item.key === currentQuestion.answer ? 'correct' : ''}} {{showResult && selectedAnswer === item.key && selectedAnswer !== currentQuestion.answer ? 'wrong' : ''}}"
                 bindtap="selectOption"
                 data-key="{{item.key}}">
-            <view class="option-key">{{item.key}}</view>
-            <rich-text class="option-text" nodes="{{item.value}}"></rich-text>
+            <view class="option-label-box {{selectedAnswer === item.key ? 'active' : ''}} {{showResult && item.key === currentQuestion.answer ? 'correct-label' : ''}} {{showResult && selectedAnswer === item.key && selectedAnswer !== currentQuestion.answer ? 'wrong-label' : ''}}">
+              <text class="option-label text-bold">{{item.key}}</text>
+            </view>
+            <rich-text class="option-text {{selectedAnswer === item.key ? 'active-text' : ''}}" nodes="{{item.value}}"></rich-text>
+            <text class="option-status" wx:if="{{showResult && item.key === currentQuestion.answer}}">✓</text>
+            <text class="option-status wrong-status" wx:if="{{showResult && selectedAnswer === item.key && selectedAnswer !== currentQuestion.answer}}">✗</text>
           </view>
         </block>
       </view>

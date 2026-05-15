@@ -86,81 +86,85 @@
 .options-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
+  gap: 24rpx;
 }
 
 .option-item {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  padding: 16rpx 20rpx;
-  border-radius: 20rpx;
-  background-color: rgba(0, 0, 0, 0.02);
-  border: 2rpx solid transparent;
+  align-items: center;
+  gap: 32rpx;
+  padding: 32rpx 48rpx;
+  border-radius: 48rpx;
+  border: 4rpx solid rgba(0, 0, 0, 0.03);
+  background-color: #fff;
 }
 
 .option-item.correct {
-  background-color: #D1FAE5;
+  background-color: rgba(16, 185, 129, 0.1);
   border-color: #10B981;
+  box-shadow: 0 8rpx 16rpx rgba(16, 185, 129, 0.1);
 }
 
 .option-item.wrong {
-  background-color: #FEE2E2;
-  border-color: #EF4444;
+  background-color: rgba(244, 63, 94, 0.1);
+  border-color: #F43F5E;
+  box-shadow: 0 8rpx 16rpx rgba(244, 63, 94, 0.1);
 }
 
-.option-left {
-  flex-shrink: 0;
-}
-
-.option-key-box {
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 16rpx;
-  background-color: rgba(0, 0, 0, 0.05);
+.option-label-box {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 32rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.option-key-box.correct-bg {
+.option-label-box.correct-label {
   background-color: #10B981;
 }
 
-.option-key-box.wrong-bg {
-  background-color: #EF4444;
+.option-label-box.wrong-label {
+  background-color: #F43F5E;
 }
 
-.option-key {
-  font-size: 24rpx;
-  color: rgba(0, 0, 0, 0.7);
+.option-label {
+  font-size: 30rpx;
+  color: rgba(0, 0, 0, 0.85);
 }
 
-.option-key-box.correct-bg .option-key,
-.option-key-box.wrong-bg .option-key {
+.option-label-box.correct-label .option-label,
+.option-label-box.wrong-label .option-label {
   color: #fff;
 }
 
-.option-right {
-  flex: 1;
-  margin-left: 16rpx;
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
-}
-
 .option-text {
-  font-size: 28rpx;
+  flex: 1;
+  font-size: 30rpx;
   color: rgba(0, 0, 0, 0.85);
   line-height: 1.5;
 }
 
-.option-tag {
-  font-size: 22rpx;
+.option-text p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.option-item.correct .option-text,
+.option-item.wrong .option-text {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.option-status {
+  margin-left: auto;
+  font-size: 40rpx;
   color: #10B981;
 }
 
-.option-tag.wrong-tag {
-  color: #EF4444;
+.option-status.wrong-status {
+  color: #F43F5E;
 }
 
 /* Result Card */
