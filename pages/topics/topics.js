@@ -167,6 +167,7 @@ Page({
           const typeInfo = this.data.paperTypes[paper.paper_type] || this.data.paperTypes.daily
           return {
             ...paper,
+            is_new: paper.is_new === true,
             typeLabel: typeInfo.label,
             typeIcon: typeInfo.icon,
             typeColor: typeInfo.color,
