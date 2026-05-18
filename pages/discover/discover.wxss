@@ -109,26 +109,20 @@ page {
   height: 100%;
 }
 
+/* Swiper fills remaining height via flex */
+.discover-swiper {
+  height: 100%;
+  width: 100%;
+}
+
 /* Question Area - 每个 swiper 项 */
 .question-area {
   height: 100%;
-  padding: 0 4rpx 32rpx;
+  padding: 24rpx 4rpx 32rpx;
   box-sizing: border-box;
 }
 
-/* Prev Hint */
-.prev-hint {
-  text-align: center;
-  margin-bottom: 12rpx;
-  padding: 8rpx 0;
-}
-
-.prev-hint-text {
-  font-size: 22rpx;
-  color: rgba(0, 0, 0, 0.25);
-}
-
-/* Loading placeholder */
+/* Swiper Loading placeholder */
 .swiper-loading {
   display: flex;
   align-items: center;
@@ -501,6 +495,80 @@ page {
 .next-btn-arrow {
   font-size: 32rpx;
   color: #fff;
+}
+
+/* Swipe Hint Overlay */
+.swipe-hint {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swipe-hint-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.swipe-hint-row {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.hint-arrow {
+  font-size: 36rpx;
+  color: rgba(255, 255, 255, 0.9);
+  animation: hintPulse 2s ease-in-out infinite;
+}
+
+.hint-arrow.right {
+  animation-delay: 0.3s;
+}
+
+.hint-arrow.flip {
+  transform: scaleX(-1);
+}
+
+.hint-text {
+  font-size: 32rpx;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 2rpx;
+}
+
+.hint-sub {
+  font-size: 26rpx;
+  opacity: 0.7;
+  font-weight: normal;
+}
+
+.hint-tap {
+  margin-top: 48rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.4; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(12rpx); }
+}
+
+.hint-arrow.left {
+  animation-name: hintPulseLeft;
+}
+
+@keyframes hintPulseLeft {
+  0%, 100% { opacity: 0.4; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(-12rpx); }
 }
 
 /* Utility */

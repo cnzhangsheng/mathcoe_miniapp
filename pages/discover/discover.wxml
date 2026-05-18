@@ -27,14 +27,9 @@
 
   <!-- Swiper 滑动浏览 -->
   <block wx:if="{{swiperList.length > 0}}">
-    <swiper current="{{swiperCurrent}}" duration="300" bindchange="onSwiperChange" style="height: {{swiperHeight}}px;">
+    <swiper current="{{swiperCurrent}}" duration="300" bindchange="onSwiperChange" class="discover-swiper">
       <swiper-item wx:for="{{swiperList}}" wx:for-item="card" wx:for-index="idx" wx:key="id">
-        <scroll-view class="question-area" scroll-y enhanced show-scrollbar="{{false}}" >
-          <!-- 滑动提示 -->
-          <view class="prev-hint">
-            <text class="prev-hint-text" wx:if="{{idx > 0}}">▶ 右滑返回  ·  </text>
-            <text class="prev-hint-text">左滑下一题 ◀</text>
-          </view>
+        <scroll-view class="question-area" scroll-y>
 
           <block wx:if="{{card.question}}">
             <!-- 题目信息 -->
@@ -122,5 +117,22 @@
       </swiper-item>
     </swiper>
   </block>
+
+  <!-- 首次滑动引导 -->
+  <view class="swipe-hint" wx:if="{{showSwipeHint}}" bindtap="dismissSwipeHint">
+    <view class="swipe-hint-content">
+      <view class="swipe-hint-row">
+        <text class="hint-arrow left">◀</text>
+        <text class="hint-text">左滑进入下一题</text>
+        <text class="hint-arrow right">▶</text>
+      </view>
+      <view class="swipe-hint-row">
+        <text class="hint-arrow right flip">◀</text>
+        <text class="hint-text hint-sub">右滑返回上一题</text>
+        <text class="hint-arrow left flip">▶</text>
+      </view>
+      <text class="hint-tap">轻触关闭</text>
+    </view>
+  </view>
 
 </view>

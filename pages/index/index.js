@@ -13,7 +13,7 @@ Page({
     greetingText: '早安！',
 
     // 今日目标
-    dailyGoal: 10,
+    dailyGoal: 12,
     todayDone: 0,
     goalProgress: 0,
 
@@ -112,10 +112,10 @@ Page({
       if (userInfo && userInfo.id) {
         this.setData({
           userInfo,
-          dailyGoal: userInfo.daily_goal || 10
+          dailyGoal: userInfo.daily_goal || 12
         })
         // 同步保存到本地
-        wx.setStorageSync('dailyGoal', userInfo.daily_goal || 10)
+        wx.setStorageSync('dailyGoal', userInfo.daily_goal || 12)
       }
 
       // 处理推荐考卷数据（智能推荐，已排除完成的考卷）
@@ -165,7 +165,7 @@ Page({
   async loadTodayProgress() {
     try {
       console.log('[loadTodayProgress] 开始请求今日统计...')
-      const dailyGoal = wx.getStorageSync('dailyGoal') || 10
+      const dailyGoal = wx.getStorageSync('dailyGoal') || 12
 
       // 从后端获取今日答题统计
       const todayStats = await practiceService.getTodayStats()
@@ -196,7 +196,7 @@ Page({
     } catch (err) {
       console.error('[loadTodayProgress] 请求失败:', err)
       // 使用本地存储作为备用
-      const dailyGoal = wx.getStorageSync('dailyGoal') || 10
+      const dailyGoal = wx.getStorageSync('dailyGoal') || 12
       const todayKey = `todayDone_${new Date().toDateString()}`
       const todayDone = wx.getStorageSync(todayKey) || 0
       const goalProgress = Math.min(100, Math.round((todayDone / dailyGoal) * 100))

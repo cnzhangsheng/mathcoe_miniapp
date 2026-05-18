@@ -11,13 +11,14 @@ Page({
     loading: true,
     swiperList: [],
     swiperCurrent: 0,
-    swiperHeight: 600,
+    showSwipeHint: false,
   },
 
   _loadingNext: false,
 
   onLoad() {
     this.loadRandomQuestion()
+    this.checkSwipeHint()
   },
 
   onShow() {
@@ -26,10 +27,18 @@ Page({
     }
   },
 
-  // 计算 swiper 高度
-  calcSwiperHeight() {
-    const winInfo = wx.getWindowInfo()
-    this.setData({ swiperHeight: winInfo.windowHeight })
+  // 首次进入滑动提示
+  checkSwipeHint() {
+    const dismissed = wx.getStorageSync('swipeHintDismissed')
+    if (!dismissed) {
+      this.setData({ showSwipeHint: true })
+    }
+  },
+
+  dismissSwipeHint() {
+    if (!this.data.showSwipeHint) return
+    this.setData({ showSwipeHint: false })
+    wx.setStorageSync('swipeHintDismissed', true)
   },
 
   // 加载随机题目（首次或重试）
@@ -50,7 +59,6 @@ Page({
           swiperList: [item],
           swiperCurrent: 0,
         })
-        this.calcSwiperHeight()
         // 预加载下一题
         this.preloadNext()
       } else {
@@ -143,6 +151,7 @@ Page({
     const oldIndex = this.data.swiperCurrent
     if (newIndex === oldIndex) return
 
+    this.dismissSwipeHint()
     this.setData({ swiperCurrent: newIndex })
 
     // 当滑到倒数第二题时，触发预加载下一题

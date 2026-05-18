@@ -31,7 +31,7 @@ Page({
     difficultyLevel: 1,
 
     // 设置
-    dailyGoal: 5,
+    dailyGoal: 12,
     showGoalPicker: false,
     showGradePicker: false,
     showDifficultyPicker: false
@@ -61,7 +61,7 @@ Page({
           userInfo,
           gradeIndex,
           streakDays: userInfo.streak_days || 0,
-          dailyGoal: userInfo.daily_goal || 5,
+          dailyGoal: userInfo.daily_goal || 12,
           difficultyLevel: userInfo.difficulty_level || 1
         })
       }
