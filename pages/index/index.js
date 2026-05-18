@@ -4,6 +4,7 @@ const userService = require('../../services/user')
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
 const cache = require('../../services/cache')
+const { getBanners } = require('../../services/content')
 
 Page({
   data: {
@@ -42,7 +43,11 @@ Page({
     statsTab: 'week',  // week | month
 
     // 薄弱专题
-    weakTopic: null
+    weakTopic: null,
+
+    // Banner
+    banners: [],
+    bannerCurrent: 0,
   },
 
   onLoad() {
@@ -153,6 +158,9 @@ Page({
 
       // 加载统计数据
       this.loadStats()
+
+      // 加载 Banner
+      this.loadBanners()
 
       this.setData({ loading: false })
     } catch (err) {
@@ -329,7 +337,7 @@ Page({
 
         const canvas = res[0].node
         const ctx = canvas.getContext('2d')
-        const dpr = wx.getSystemInfoSync().pixelRatio || 2
+        const dpr = wx.getWindowInfo().pixelRatio || 2
 
         const displayWidth = res[0].width
         const displayHeight = res[0].height
@@ -537,10 +545,33 @@ Page({
     })
   },
 
-  // ========== 竞赛出分 Banner ==========
+  // ========== Banner ==========
 
-  onBannerTap() {
-    wx.showToast({ title: '竞赛成绩已出，请联系老师查询', icon: 'none' })
+  async loadBanners() {
+    try {
+      const banners = await getBanners()
+      if (banners && banners.length > 0) {
+        this.setData({ banners })
+      }
+    } catch (err) {
+      console.error('loadBanners error:', err)
+    }
+  },
+
+  onBannerChange(e) {
+    this.setData({ bannerCurrent: e.detail.current })
+  },
+
+  onBannerTap(e) {
+    const index = e.currentTarget?.dataset?.index ?? this.data.bannerCurrent
+    const banner = this.data.banners[index]
+    if (!banner) return
+
+    if (banner.link_type === 'content') {
+      wx.navigateTo({ url: `/pages/content/content?slug=${banner.link_value}` })
+    } else if (banner.link_type === 'external' && banner.link_value) {
+      wx.navigateTo({ url: `/pages/webview/webview?url=${encodeURIComponent(banner.link_value)}` })
+    }
   },
 
   // ========== 分享 ==========

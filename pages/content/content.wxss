@@ -1,0 +1,66 @@
+/* pages/content/content.wxss - 内容展示页 */
+page {
+  height: 100%;
+  background-color: #fff;
+}
+
+.content-page {
+  height: 100%;
+  padding-top: 108rpx;
+}
+
+.content-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 108rpx;
+  padding: 24rpx 32rpx 16rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.header-title {
+  flex: 1;
+  font-size: 36rpx;
+  color: #222;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.header-time {
+  position: absolute;
+  right: 32rpx;
+  bottom: 16rpx;
+  color: #b2b2b2;
+  font-size: 22rpx;
+}
+
+.content-scroll {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.content-loading,
+.content-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  color: #b2b2b2;
+  font-size: 28rpx;
+}
+
+.content-body {
+  padding: 40rpx 44rpx 60rpx;
+}

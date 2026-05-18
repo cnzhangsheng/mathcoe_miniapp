@@ -20,8 +20,8 @@
     "pages/records/records",
     "pages/record-detail/record-detail",
     "pages/about/about",
-    "pages/game/hanoi/hanoi",
-    "pages/game/sudoku/sudoku"
+    "pages/content/content",
+    "pages/webview/webview"
   ],
   "window": {
     "navigationBarBackgroundColor": "#07C160",

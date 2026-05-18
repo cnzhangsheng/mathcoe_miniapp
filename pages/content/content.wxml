@@ -1,0 +1,23 @@
+<!-- pages/content/content.wxml - 内容展示页 -->
+<view class="content-page">
+  <view class="content-header">
+    <text class="header-title">{{title}}</text>
+    <text class="header-time" wx:if="{{updatedAt}}">{{updatedAt}}</text>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y>
+    <view class="content-loading" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+
+    <view class="content-body" wx:if="{{!loading && content}}">
+      <view class="content-rich">
+        <rich-text nodes="{{content}}"></rich-text>
+      </view>
+    </view>
+
+    <view class="content-empty" wx:if="{{!loading && !content}}">
+      <text>内容不存在或已下架</text>
+    </view>
+  </scroll-view>
+</view>
