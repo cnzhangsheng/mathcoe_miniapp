@@ -537,6 +537,12 @@ Page({
     })
   },
 
+  // ========== 竞赛出分 Banner ==========
+
+  onBannerTap() {
+    wx.showToast({ title: '竞赛成绩已出，请联系老师查询', icon: 'none' })
+  },
+
   // ========== 分享 ==========
 
   onShareAppMessage() {

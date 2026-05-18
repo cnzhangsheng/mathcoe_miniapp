@@ -227,6 +227,44 @@
   color: rgba(0, 0, 0, 0.4);
 }
 
+/* Banner Card */
+.banner-card {
+  margin-bottom: 24rpx;
+  border-radius: 48rpx;
+  overflow: hidden;
+}
+
+.banner-bg {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx 40rpx;
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8A00 100%);
+  border-radius: 48rpx;
+}
+
+.banner-icon {
+  font-size: 56rpx;
+  flex-shrink: 0;
+}
+
+.banner-text-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.banner-title {
+  font-size: 30rpx;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.banner-sub {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 /* Countdown Card */
 .countdown-card {
   display: flex;

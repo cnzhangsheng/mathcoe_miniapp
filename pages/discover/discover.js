@@ -256,7 +256,15 @@ Page({
     this.setData({ swiperCurrent: nextIndex })
   },
 
-  onShareAppMessage() {
+  onShareAppMessage(e) {
+    const idx = e.target?.dataset?.index ?? this.data.swiperCurrent
+    const card = this.data.swiperList[idx]
+    if (card?.question) {
+      return {
+        title: `【数学探索】${card.topicTitle} - ${card.question.title || '一道有趣的数学题'}`,
+        path: '/pages/discover/discover'
+      }
+    }
     return { title: '数学探索', path: '/pages/discover/discover' }
   }
 })

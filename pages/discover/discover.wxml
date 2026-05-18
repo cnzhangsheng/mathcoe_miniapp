@@ -70,6 +70,10 @@
                 <image class="action-icon-img" src="{{card.isFavorited ? '/assets/icons/icon_bookmark_fill.png' : '/assets/icons/icon_bookmark.png'}}" mode="aspectFit"></image>
                 <text class="action-text">{{card.isFavorited ? '已收藏' : '收藏'}}</text>
               </view>
+              <button class="action-icon-btn share-btn" open-type="share" data-index="{{idx}}">
+                <image class="action-icon-img" src="/assets/icons/icon_share.png" mode="aspectFit"></image>
+                <text class="action-text">分享</text>
+              </button>
             </view>
 
             <!-- Submit Answer Button -->

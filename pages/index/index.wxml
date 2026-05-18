@@ -136,6 +136,17 @@
       </view>
     </view>
 
+    <!-- 竞赛出分 Banner -->
+    <view class="banner-card" bindtap="onBannerTap">
+      <view class="banner-bg">
+        <text class="banner-icon">🏆</text>
+        <view class="banner-text-area">
+          <text class="banner-title text-bold">2026赛季袋鼠数学竞赛已出分！</text>
+          <text class="banner-sub text-small">点击查看详情 ›</text>
+        </view>
+      </view>
+    </view>
+
     <!-- 能力雷达（多边形） -->
     <view class="radar-card">
       <view class="radar-header">
