@@ -26,8 +26,9 @@ Page({
       { label: '应用类', value: 0, barClass: 'bar-green' },
     ],
 
-    // 推荐考卷
-    recommendedPapers: [],
+    // 我的考卷
+    myPapers: [],
+    generatingPdfIds: [],
 
     // 本周/本月学习统计
     weekQuestions: 0,
@@ -101,16 +102,16 @@ Page({
       this.setData({ abilities: cachedRadar })
       setTimeout(() => this.drawRadarChart(), 100)
     }
-    const cachedPapers = cache.get('recommendedPapers')
+    const cachedPapers = cache.get('myPapers')
     if (cachedPapers) {
-      this.setData({ recommendedPapers: cachedPapers })
+      this.setData({ myPapers: cachedPapers })
     }
 
     try {
-      // 并行加载用户信息、推荐考卷、能力雷达
-      const [userInfo, recommendedPapers, abilityRadar] = await Promise.all([
+      // 并行加载用户信息、我的考卷、能力雷达
+      const [userInfo, myPapersResult, abilityRadar] = await Promise.all([
         userService.getUserInfo().catch(() => null),
-        examPaperService.getRecommendedPapers(2).catch(() => []),
+        examPaperService.getMyPapers(1, 5).catch(() => null),
         userService.getAbilityRadar().catch(() => null)
       ])
 
@@ -123,17 +124,18 @@ Page({
         wx.setStorageSync('dailyGoal', userInfo.daily_goal || 12)
       }
 
-      // 处理推荐考卷数据（智能推荐，已排除完成的考卷）
-      if (recommendedPapers && recommendedPapers.length > 0) {
-        const formattedPapers = recommendedPapers.map(paper => ({
-          ...paper,
-          typeIcon: this.getPaperTypeIcon(paper.paper_type),
-          levelLabel: `Level ${paper.difficulty_level}`,
-          levelClass: `level-${paper.difficulty_level}`,
-          paperTypeLabel: this.getPaperTypeLabel(paper.paper_type)
-        }))
-        cache.set('recommendedPapers', formattedPapers, 120000) // 缓存 2 分钟
-        this.setData({ recommendedPapers: formattedPapers })
+      // 处理我的考卷数据
+      if (myPapersResult && myPapersResult.items && myPapersResult.items.length > 0) {
+        const formattedPapers = myPapersResult.items.map(paper => {
+          console.log('[index] paper file_path:', paper.id, JSON.stringify(paper.file_path))
+          return {
+            ...paper,
+            levelLabel: `Level ${paper.difficulty_level}`,
+            noFile: !paper.file_path,
+          }
+        })
+        cache.set('myPapers', formattedPapers, 120000) // 缓存 2 分钟
+        this.setData({ myPapers: formattedPapers })
       }
 
       // 处理能力雷达（直接使用后端返回的数据）
@@ -484,6 +486,10 @@ Page({
   },
 
   // 跳转到考卷列表
+  goToGeneratePaper() {
+    wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
+  },
+
   goToExamPaper() {
     wx.switchTab({
       url: '/pages/topics/topics'
@@ -527,6 +533,54 @@ Page({
     } finally {
       wx.hideLoading()
     }
+  },
+
+  // 生成 PDF
+  async generatePdf(e) {
+    const paperId = e.currentTarget.dataset.id
+    const generatingIds = this.data.generatingPdfIds
+    if (generatingIds.includes(paperId)) return
+    this.setData({ generatingPdfIds: [...generatingIds, paperId] })
+    try {
+      const result = await examPaperService.generatePdf(paperId)
+      if (result && result.file_path) {
+        wx.showToast({ title: 'PDF 生成成功', icon: 'success' })
+        this.loadData()
+      } else {
+        wx.showToast({ title: '生成失败', icon: 'none' })
+      }
+    } catch (err) {
+      console.error('generatePdf error:', err)
+      wx.showToast({ title: '生成失败，请重试', icon: 'none' })
+    } finally {
+      this.setData({
+        generatingPdfIds: this.data.generatingPdfIds.filter(id => id !== paperId)
+      })
+    }
+  },
+
+  // 删除考卷
+  deletePaper(e) {
+    const paperId = e.currentTarget.dataset.id
+    wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复，确定删除此考卷？',
+      success: async (res) => {
+        if (!res.confirm) return
+        try {
+          const result = await examPaperService.deletePaper(paperId)
+          if (result && result.ok) {
+            wx.showToast({ title: '删除成功', icon: 'success' })
+            this.loadData()
+          } else {
+            wx.showToast({ title: '删除失败', icon: 'none' })
+          }
+        } catch (err) {
+          console.error('deletePaper error:', err)
+          wx.showToast({ title: '删除失败，请重试', icon: 'none' })
+        }
+      }
+    })
   },
 
   // 跳转到薄弱专题详情

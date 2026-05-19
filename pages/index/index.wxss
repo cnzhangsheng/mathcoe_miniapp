@@ -478,13 +478,58 @@
 }
 
 /* End Tip */
-.end-tip {
-  padding: 32rpx 0;
+.no-data {
+  padding: 48rpx;
   text-align: center;
 }
 
-.end-tip-text {
-  color: rgba(0, 0, 0, 0.3);
+.no-data-text {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 26rpx;
+}
+
+.generate-entry-card {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 40rpx;
+  background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(99,102,241,0.03));
+  border-radius: 56rpx;
+  gap: 24rpx;
+  border: 2rpx solid rgba(99,102,241,0.15);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.generate-entry-icon-box {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 24rpx;
+  background-color: rgba(99,102,241,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.generate-entry-icon {
+  font-size: 44rpx;
+}
+
+.generate-entry-middle {
+  flex: 1;
+}
+
+.generate-entry-title {
+  font-size: 28rpx;
+  color: #6366F1;
+  margin-bottom: 4rpx;
+}
+
+.generate-entry-sub {
+  color: rgba(99,102,241,0.5);
+}
+
+.generate-entry-arrow {
+  font-size: 36rpx;
+  color: rgba(99,102,241,0.3);
 }
 
 .exam-card {
@@ -514,6 +559,10 @@
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
 }
 
+.exam-icon-box-green {
+  background-color: rgba(7, 193, 96, 0.1);
+}
+
 .exam-icon-img {
   width: 52rpx;
   height: 52rpx;
@@ -536,6 +585,10 @@
   padding: 6rpx 14rpx;
   border-radius: 8rpx;
   background-color: #6366F1;
+}
+
+.level-badge-green {
+  background-color: #07C160;
 }
 
 .level-text {
@@ -601,34 +654,35 @@
   gap: 12rpx;
 }
 
-.download-btn {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 32rpx;
-  background-color: rgba(99, 102, 241, 0.1);
+.exam-actions {
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.action-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  background-color: rgba(7, 193, 96, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.download-icon {
-  font-size: 28rpx;
-  color: #6366F1;
+.action-btn-icon {
+  font-size: 24rpx;
 }
 
-.arrow-box {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background-color: #07C160;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.action-btn-loading {
+  opacity: 0.5;
 }
 
-.arrow-icon {
-  font-size: 20px;
-  color: #fff;
+.action-btn-danger {
+  background-color: rgba(244, 63, 94, 0.1);
+}
+
+.action-btn-icon-danger {
+  color: #F43F5E;
 }
 
 /* Stats Section */

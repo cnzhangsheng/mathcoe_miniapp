@@ -21,6 +21,9 @@ Page({
     examPageSize: 20,
     hasMore: false,
 
+    // 考卷模块 tab
+    paperTab: 'kangaroo', // kangaroo | my
+
     // 考卷类型筛选
     selectedPaperType: '',
     paperTypeTabs: [
@@ -31,6 +34,15 @@ Page({
       { value: 'past', label: '真题卷' },
     ],
 
+    // 我的考卷数据
+    myPapers: [],
+    totalMyPapers: 0,
+    myPapersPage: 1,
+    myPapersPageSize: 20,
+    myPapersHasMore: false,
+    loadingMyPapers: false,
+    generatingPdfIds: [],
+
     // AI学习洞察数据
     insightData: null,
 
@@ -38,7 +50,8 @@ Page({
       daily: { label: '日常练习', icon: '/assets/icons/icon-exam-daily.png', color: 'emerald' },
       mock: { label: '模拟卷', icon: '/assets/icons/icon-exam-sim.png', color: 'amber' },
       topic: { label: '专题训练', icon: '/assets/icons/icon-exam-topic.png', color: 'purple' },
-      past: { label: '真题卷', icon: '/assets/icons/icon-exam-past.png', color: 'blue' }
+      past: { label: '真题卷', icon: '/assets/icons/icon-exam-past.png', color: 'blue' },
+      custom: { label: '我的考卷', icon: '/assets/icons/icon-exam-topic.png', color: 'green' }
     }
   },
 
@@ -50,21 +63,42 @@ Page({
 
   onShow() {
     // 每次切到此tab时刷新考卷列表
-    this.loadExamPapers()
+    if (this.data.paperTab === 'my') {
+      this.loadMyPapers(true)
+    } else {
+      this.loadExamPapers()
+    }
   },
 
   // 下拉刷新
   async onPullDownRefresh() {
-    await Promise.all([
-      this.loadTopics(),
-      this.loadExamPapers(true)
-    ])
+    const tasks = [this.loadTopics()]
+    if (this.data.paperTab === 'my') {
+      tasks.push(this.loadMyPapers(true))
+    } else {
+      tasks.push(this.loadExamPapers(true))
+    }
+    await Promise.all(tasks)
     wx.stopPullDownRefresh()
+  },
+
+  // 切换考卷模块 tab
+  switchPaperTab(e) {
+    const tab = e.currentTarget.dataset.tab
+    if (tab === this.data.paperTab) return
+    this.setData({ paperTab: tab, selectedPaperType: '' })
+    if (tab === 'my') {
+      this.loadMyPapers(true)
+    } else {
+      this.loadExamPapers(true)
+    }
   },
 
   // 上拉加载更多考卷
   onReachBottom() {
-    if (this.data.hasMore) {
+    if (this.data.paperTab === 'my' && this.data.myPapersHasMore) {
+      this.loadMoreMyPapers()
+    } else if (this.data.hasMore) {
       this.loadMoreExamPapers()
     }
   },
@@ -238,6 +272,46 @@ Page({
     this.loadExamPapers(false)
   },
 
+  // 加载我的考卷列表
+  async loadMyPapers(reset = true) {
+    if (this.data.loadingMyPapers) return
+    this.setData({ loadingMyPapers: true })
+    try {
+      if (reset) this.setData({ myPapersPage: 1 })
+      const { myPapersPage, myPapersPageSize } = this.data
+      const result = await examPaperService.getMyPapers(myPapersPage, myPapersPageSize)
+      if (result && result.items) {
+        const papers = result.items.map(paper => ({
+          ...paper,
+          typeLabel: '我的考卷',
+          typeIcon: '/assets/icons/icon-exam-custom.png',
+          typeColor: 'green',
+          duration: 75,
+          noFile: !paper.file_path,
+        }))
+        this.setData({
+          myPapers: reset ? papers : [...this.data.myPapers, ...papers],
+          totalMyPapers: result.total,
+          myPapersHasMore: result.total > (reset ? papers.length : this.data.myPapers.length + papers.length)
+        })
+      } else {
+        if (reset) this.setData({ myPapers: [], totalMyPapers: 0, myPapersHasMore: false })
+      }
+    } catch (err) {
+      console.error('loadMyPapers error:', err)
+    } finally {
+      this.setData({ loadingMyPapers: false })
+    }
+  },
+
+  // 加载更多我的考卷
+  loadMoreMyPapers() {
+    if (!this.data.myPapersHasMore || this.data.loadingMyPapers) return
+    const nextPage = this.data.myPapersPage + 1
+    this.setData({ myPapersPage: nextPage })
+    this.loadMyPapers(false)
+  },
+
   // 选择专题 - 进入题目详情页面
   selectTopic(e) {
     const topicId = e.currentTarget.dataset.id
@@ -251,7 +325,7 @@ Page({
   // 导出考卷 PDF
   async downloadPdf(e) {
     const paperId = e.currentTarget.dataset.id
-    const paper = this.data.examPapers.find(p => p.id === paperId)
+    const paper = this.data.examPapers.find(p => p.id === paperId) || this.data.myPapers.find(p => p.id === paperId)
     const fileName = (paper ? paper.title : `考卷_${paperId}`).replace(/[\\/:*?"<>|]/g, '_') + '.pdf'
     const filePath = wx.env.USER_DATA_PATH + '/' + fileName
 
@@ -289,6 +363,54 @@ Page({
     }
   },
 
+  // 生成 PDF
+  async generatePdf(e) {
+    const paperId = e.currentTarget.dataset.id
+    const generatingIds = this.data.generatingPdfIds
+    if (generatingIds.includes(paperId)) return
+    this.setData({ generatingPdfIds: [...generatingIds, paperId] })
+    try {
+      const result = await examPaperService.generatePdf(paperId)
+      if (result && result.file_path) {
+        wx.showToast({ title: 'PDF 生成成功', icon: 'success' })
+        this.loadMyPapers(true)
+      } else {
+        wx.showToast({ title: '生成失败', icon: 'none' })
+      }
+    } catch (err) {
+      console.error('generatePdf error:', err)
+      wx.showToast({ title: '生成失败，请重试', icon: 'none' })
+    } finally {
+      this.setData({
+        generatingPdfIds: this.data.generatingPdfIds.filter(id => id !== paperId)
+      })
+    }
+  },
+
+  // 删除考卷
+  deletePaper(e) {
+    const paperId = e.currentTarget.dataset.id
+    wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复，确定删除此考卷？',
+      success: async (res) => {
+        if (!res.confirm) return
+        try {
+          const result = await examPaperService.deletePaper(paperId)
+          if (result && result.ok) {
+            wx.showToast({ title: '删除成功', icon: 'success' })
+            this.loadMyPapers(true)
+          } else {
+            wx.showToast({ title: '删除失败', icon: 'none' })
+          }
+        } catch (err) {
+          console.error('deletePaper error:', err)
+          wx.showToast({ title: '删除失败，请重试', icon: 'none' })
+        }
+      }
+    })
+  },
+
   // 错题溯源
   goErrors() {
     wx.showToast({ title: '错题溯源功能开发中', icon: 'none' })
@@ -305,6 +427,10 @@ Page({
   },
 
   // 选择考卷 - 进入考试页面
+  goToGeneratePaper() {
+    wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
+  },
+
   selectExamPaper(e) {
     const paperId = e.currentTarget.dataset.id
     wx.navigateTo({

@@ -105,6 +105,39 @@ const getDownloadPdfUrl = (examPaperId) => {
   return `${app.globalData.baseUrl}/exam-papers/${examPaperId}/download-pdf?token=${token}`
 }
 
+/**
+ * 用户生成考卷
+ * @param {object} params - { mode, topic_ids, difficulty_level, question_count }
+ */
+const generatePaper = (params) => {
+  return request('/exam-papers/generate', { method: 'POST', data: params })
+}
+
+/**
+ * 获取用户生成的考卷列表
+ * @param {number} page
+ * @param {number} page_size
+ */
+const getMyPapers = (page = 1, page_size = 20) => {
+  return request(`/exam-papers/my?page=${page}&page_size=${page_size}`)
+}
+
+/**
+ * 生成考卷 PDF
+ * @param {number} examPaperId
+ */
+const generatePdf = (examPaperId) => {
+  return request(`/exam-papers/${examPaperId}/generate-pdf`, { method: 'POST' })
+}
+
+/**
+ * 删除考卷
+ * @param {number} examPaperId
+ */
+const deletePaper = (examPaperId) => {
+  return request(`/exam-papers/${examPaperId}`, { method: 'DELETE' })
+}
+
 module.exports = {
   getExamPapers,
   getRecommendedPapers,
@@ -116,5 +149,9 @@ module.exports = {
   getExamPaperTests,
   getTestDetail,
   getTestReport,
-  getDownloadPdfUrl
+  getDownloadPdfUrl,
+  generatePaper,
+  getMyPapers,
+  generatePdf,
+  deletePaper,
 }

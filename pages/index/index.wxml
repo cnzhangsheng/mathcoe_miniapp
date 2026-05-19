@@ -176,25 +176,45 @@
       </view>
     </view>
 
-    <!-- 推荐考卷 -->
+    <!-- 智能组卷 -->
     <view class="recommend-section">
-      <view class="section-header flex-between">
-        <text class="section-title text-bold">推荐考卷</text>
-        <text class="section-more text-small text-muted" bindtap="goToTopics">更多 ›</text>
+      <view class="section-header flex-row">
+        <text class="section-title text-bold">智能组卷</text>
+      </view>
+      <view class="generate-entry-card" bindtap="goToGeneratePaper">
+        <view class="generate-entry-left">
+          <view class="generate-entry-icon-box">
+            <text class="generate-entry-icon">🤖</text>
+          </view>
+        </view>
+        <view class="generate-entry-middle">
+          <text class="generate-entry-title text-bold">AI 智能组卷</text>
+          <text class="generate-entry-sub text-small">选择专题和难度，生成专属考卷</text>
+        </view>
+        <view class="generate-entry-right">
+          <text class="generate-entry-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 我的考卷 -->
+    <view class="recommend-section">
+      <view class="section-header flex-row">
+        <text class="section-title text-bold">我的考卷</text>
       </view>
 
       <view class="exam-list">
-        <block wx:for="{{recommendedPapers}}" wx:key="id">
+        <block wx:for="{{myPapers}}" wx:key="id">
           <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
             <view class="exam-left">
-              <view class="exam-icon-box">
-                <image class="exam-icon-img" src="{{item.typeIcon}}" mode="aspectFit"></image>
+              <view class="exam-icon-box exam-icon-box-green">
+                <image class="exam-icon-img" src="/assets/icons/icon-exam-custom.png" mode="aspectFit"></image>
               </view>
             </view>
             <view class="exam-middle">
               <view class="exam-top flex-row">
-                <view class="level-badge">
-                  <text class="level-text text-bold">{{item.levelLabel}}</text>
+                <view class="level-badge level-badge-green">
+                  <text class="level-text text-bold">Level {{item.difficulty_level}}</text>
                 </view>
                 <view class="new-badge" wx:if="{{item.is_new}}">
                   <text class="new-text text-bold">New</text>
@@ -212,21 +232,27 @@
                 <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
               </view>
             </view>
-            <view class="exam-right">
-              <view class="download-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
-                <text class="download-icon">⬇</text>
+            <view class="exam-right exam-actions">
+              <view class="action-btn" wx:if="{{item.noFile && generatingPdfIds.indexOf(item.id) === -1}}" catchtap="generatePdf" data-id="{{item.id}}">
+                <text class="action-btn-icon">🖨</text>
               </view>
-              <view class="arrow-box">
-                <text class="arrow-icon">›</text>
+              <view class="action-btn action-btn-loading" wx:elif="{{item.noFile && generatingPdfIds.indexOf(item.id) > -1}}">
+                <text class="action-btn-icon">⏳</text>
+              </view>
+              <view class="action-btn" wx:else catchtap="downloadPdf" data-id="{{item.id}}">
+                <text class="action-btn-icon">⬇</text>
+              </view>
+              <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
+                <text class="action-btn-icon action-btn-icon-danger">🗑</text>
               </view>
             </view>
           </view>
         </block>
       </view>
 
-      <!-- 底部提示 -->
-      <view class="end-tip" wx:if="{{recommendedPapers.length > 0}}">
-        <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
+      <!-- 无数据提示 -->
+      <view class="no-data" wx:if="{{myPapers.length === 0}}">
+        <text class="no-data-text text-small">暂无我的考卷</text>
       </view>
     </view>
 

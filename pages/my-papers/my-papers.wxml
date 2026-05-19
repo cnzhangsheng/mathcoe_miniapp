@@ -1,0 +1,51 @@
+<view class="my-papers-page">
+  <view wx:if="{{papers.length === 0 && !loading}}" class="empty-state">
+    <view class="empty-card">
+      <view class="empty-icon-box">
+        <text class="empty-icon">📄</text>
+      </view>
+      <text class="empty-title text-bold">还没有生成过考卷</text>
+      <text class="empty-sub text-small">去首页使用「智能组卷」生成你的第一份考卷</text>
+    </view>
+  </view>
+
+  <view wx:if="{{papers.length > 0}}" class="paper-list">
+    <view
+      wx:for="{{papers}}"
+      wx:key="id"
+      class="paper-card"
+      data-id="{{item.id}}"
+      data-title="{{item.title}}"
+      bindtap="tapPaper"
+    >
+      <view class="paper-left">
+        <view class="paper-icon-box">
+          <text class="paper-icon">📝</text>
+        </view>
+      </view>
+      <view class="paper-middle">
+        <text class="paper-title text-bold">{{item.title}}</text>
+        <view class="paper-meta-row">
+          <text class="paper-meta">Level {{item.difficulty_level}}</text>
+          <text class="paper-meta">{{item.total_questions}}题</text>
+        </view>
+        <view class="paper-status" wx:if="{{item.user_completed}}">
+          <text class="score-text">得分: {{item.user_score}}分</text>
+        </view>
+        <view class="paper-status" wx:else>
+          <text class="status-text">未完成</text>
+        </view>
+      </view>
+      <view class="paper-right">
+        <text class="arrow-icon">›</text>
+      </view>
+    </view>
+
+    <view class="load-more" wx:if="{{hasMore && !loading}}" bindtap="loadMore">
+      <text class="load-more-text">加载更多</text>
+    </view>
+    <view class="loading-more" wx:if="{{loading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

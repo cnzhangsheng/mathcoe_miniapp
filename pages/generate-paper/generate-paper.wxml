@@ -1,0 +1,77 @@
+<view class="generate-page">
+  <scroll-view class="form-scroll" scroll-y>
+
+    <!-- Paper Title -->
+    <view class="form-section">
+      <view class="section-label">
+        <text class="label-text text-bold">考卷标题</text>
+        <text class="label-hint">（必填，最多50字）</text>
+      </view>
+      <input class="title-input" type="text" placeholder="输入考卷标题" value="{{title}}" maxlength="50" bindinput="onTitleInput" />
+    </view>
+
+    <!-- Topic Selection -->
+    <view class="form-section">
+      <view class="section-label">
+        <text class="label-text text-bold">选择专题</text>
+        <text class="label-hint">（可多选）</text>
+      </view>
+      <view class="topic-grid">
+        <view
+          wx:for="{{topics}}"
+          wx:key="id"
+          class="topic-chip {{selectedTopicSet[item.id] ? 'topic-chip-selected' : ''}}"
+          data-id="{{item.id}}"
+          catchtap="toggleTopic"
+        >
+          <text class="topic-chip-text">{{item.title}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Difficulty Selection -->
+    <view class="form-section">
+      <view class="section-label">
+        <text class="label-text text-bold">难度等级</text>
+      </view>
+      <view class="difficulty-row">
+        <view
+          wx:for="{{[1,2,3,4,5,6]}}"
+          wx:key="*this"
+          class="difficulty-item {{difficultyLevel === item ? 'difficulty-item-active' : ''}}"
+          data-level="{{item}}"
+          bindtap="selectDifficulty"
+        >
+          <text class="difficulty-text {{difficultyLevel === item ? 'difficulty-text-active' : ''}}">L{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Question Count -->
+    <view class="form-section">
+      <view class="section-label">
+        <text class="label-text text-bold">题目数量</text>
+      </view>
+      <view class="count-row">
+        <view
+          wx:for="{{[5,12,24,48]}}"
+          wx:key="*this"
+          class="count-item {{questionCount === item ? 'count-item-active' : ''}}"
+          data-count="{{item}}"
+          bindtap="selectQuestionCount"
+        >
+          <text class="count-item-text {{questionCount === item ? 'count-item-text-active' : ''}}">{{item}}题</text>
+        </view>
+      </view>
+    </view>
+
+    <view style="height: 160rpx;"></view>
+  </scroll-view>
+
+  <!-- Generate Button -->
+  <view class="bottom-bar">
+    <view class="generate-btn {{generating ? 'generate-btn-disabled' : ''}}" bindtap="generatePaper">
+      <text class="generate-btn-text text-bold">{{generating ? '生成中...' : '生成考卷'}}</text>
+    </view>
+  </view>
+</view>

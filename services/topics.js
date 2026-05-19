@@ -2,6 +2,7 @@
  * Topics service - 专题统一映射管理
  * 避免专题 ID 映射在 7 个页面中重复定义
  */
+const { request } = require('./api')
 
 const TOPIC_TITLES = {
   1001: '图形类',
@@ -35,9 +36,27 @@ const getTopicClass = (topicId) => {
   return TOPIC_CLASSES[topicId] || 'topic-default'
 }
 
+/**
+ * 获取专题列表
+ * @returns {Promise<Array>}
+ */
+const getTopics = () => {
+  return request('/topics')
+}
+
+/**
+ * 获取用户薄弱专题分析
+ * @returns {Promise<object>}
+ */
+const getWeakAnalysis = () => {
+  return request('/practice/weak-analysis').catch(() => null)
+}
+
 module.exports = {
   TOPIC_TITLES,
   TOPIC_CLASSES,
   getTopicTitle,
   getTopicClass,
+  getTopics,
+  getWeakAnalysis,
 }

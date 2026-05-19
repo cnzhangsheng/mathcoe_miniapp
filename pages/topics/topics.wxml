@@ -55,12 +55,23 @@
 
     <!-- Exam Papers Section -->
     <view class="exam-section">
-      <view class="section-header flex-row">
-        <text class="section-title text-bold">考卷</text>
+      <!-- 袋鼠考卷 / 我的考卷 tabs -->
+      <view class="paper-tab-bar">
+        <view class="paper-tab-left">
+          <view class="paper-tab {{paperTab === 'kangaroo' ? 'paper-tab-active' : ''}}" data-tab="kangaroo" bindtap="switchPaperTab">
+            <text class="paper-tab-text">袋鼠考卷</text>
+          </view>
+          <view class="paper-tab {{paperTab === 'my' ? 'paper-tab-active' : ''}}" data-tab="my" bindtap="switchPaperTab">
+            <text class="paper-tab-text">我的考卷</text>
+          </view>
+        </view>
+        <view class="generate-topic-btn" bindtap="goToGeneratePaper">
+          <text class="generate-topic-btn-text text-small text-bold">智能组卷</text>
+        </view>
       </view>
 
-      <!-- 考卷类型筛选 -->
-      <view class="paper-type-filter flex-row">
+      <!-- 考卷类型筛选（仅袋鼠考卷） -->
+      <view class="paper-type-filter flex-row" wx:if="{{paperTab === 'kangaroo'}}">
         <block wx:for="{{paperTypeTabs}}" wx:key="value">
           <view class="type-tab {{selectedPaperType === item.value ? 'type-tab-active' : ''}}" data-type="{{item.value}}" bindtap="selectPaperType">
             <text class="type-tab-text">{{item.label}}</text>
@@ -68,7 +79,54 @@
         </block>
       </view>
 
-      <view class="exam-list">
+      <!-- 我的考卷列表 -->
+      <view class="exam-list" wx:if="{{paperTab === 'my'}}">
+        <block wx:for="{{myPapers}}" wx:key="id">
+          <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
+            <view class="exam-left">
+              <view class="exam-icon-box exam-icon-box-green">
+                <image class="exam-icon-img" src="/assets/icons/icon-exam-custom.png" mode="aspectFit"></image>
+              </view>
+            </view>
+            <view class="exam-middle">
+              <view class="exam-top flex-row">
+                <view class="level-badge level-badge-green">
+                  <text class="level-text text-bold">Level {{item.difficulty_level}}</text>
+                </view>
+                <view class="new-badge" wx:if="{{item.is_new}}">
+                  <text class="new-text text-bold">New</text>
+                </view>
+              </view>
+              <text class="exam-title text-bold">{{item.title}}</text>
+              <view class="exam-bottom flex-row">
+                <view class="exam-meta flex-row">
+                  <text class="meta-icon">⏱</text>
+                  <text class="meta-text">{{item.duration || 75}} 分钟</text>
+                </view>
+                <text class="meta-text">{{item.total_questions}} 题</text>
+                <text class="done-inline-text" wx:if="{{item.user_completed}}">· 正确率{{item.user_score}}%</text>
+              </view>
+            </view>
+            <view class="exam-right exam-actions">
+              <view class="action-btn" wx:if="{{item.noFile && generatingPdfIds.indexOf(item.id) === -1}}" catchtap="generatePdf" data-id="{{item.id}}">
+                <text class="action-btn-icon">🖨</text>
+              </view>
+              <view class="action-btn action-btn-loading" wx:elif="{{item.noFile && generatingPdfIds.indexOf(item.id) > -1}}">
+                <text class="action-btn-icon">⏳</text>
+              </view>
+              <view class="action-btn" wx:else catchtap="downloadPdf" data-id="{{item.id}}">
+                <text class="action-btn-icon">⬇</text>
+              </view>
+              <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
+                <text class="action-btn-icon action-btn-icon-danger">🗑</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+
+      <!-- 系统考卷列表 -->
+      <view class="exam-list" wx:else>
         <block wx:for="{{examPapers}}" wx:key="id">
           <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
             <view class="exam-left">
@@ -106,13 +164,13 @@
       </view>
 
       <!-- 加载更多 -->
-      <view class="load-more" wx:if="{{hasMore}}">
+      <view class="load-more" wx:if="{{paperTab === 'my' && myPapersHasMore || paperTab === 'kangaroo' && hasMore}}">
         <text class="load-more-text">加载更多...</text>
       </view>
 
       <!-- 无数据提示 -->
-      <view class="no-data" wx:if="{{examPapers.length === 0}}">
-        <text class="no-data-text text-small">暂无考卷数据</text>
+      <view class="no-data" wx:if="{{paperTab === 'my' && myPapers.length === 0 || paperTab === 'kangaroo' && examPapers.length === 0}}">
+        <text class="no-data-text text-small">{{paperTab === 'my' ? '暂无我的考卷' : '暂无袋鼠考卷数据'}}</text>
       </view>
     </view>
   </block>

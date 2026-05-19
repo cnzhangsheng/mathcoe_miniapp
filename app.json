@@ -21,6 +21,8 @@
     "pages/record-detail/record-detail",
     "pages/about/about",
     "pages/content/content",
+    "pages/generate-paper/generate-paper",
+    "pages/my-papers/my-papers",
     "pages/webview/webview"
   ],
   "window": {

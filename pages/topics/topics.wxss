@@ -15,7 +15,7 @@
 
 /* ============ AI Mastery Insight ============ */
 .insight-card {
-  background: linear-gradient(135deg, #4F46E5 0%, #9333EA 100%);
+  background: linear-gradient(135deg, #059669 0%, #10B981 100%);
   border-radius: 64rpx;
   padding: 48rpx;
   color: #fff;
@@ -97,6 +97,16 @@
 .section-title {
   font-size: 15px;
   color: rgba(0,0,0,0.8);
+}
+
+.generate-topic-btn {
+  padding: 12rpx 24rpx;
+  background-color: #07C160;
+  border-radius: 24rpx;
+}
+
+.generate-topic-btn-text {
+  color: #fff;
 }
 
 .section-more {
@@ -269,6 +279,40 @@
   margin-bottom: 32rpx;
 }
 
+/* 袋鼠考卷 / 我的考卷 tabs */
+.paper-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+  padding: 0 16rpx;
+}
+
+.paper-tab-left {
+  display: flex;
+  gap: 12rpx;
+}
+
+.paper-tab {
+  padding: 16rpx 32rpx;
+  border-radius: 24rpx;
+  background-color: rgba(0,0,0,0.04);
+}
+
+.paper-tab-active {
+  background-color: #07C160;
+}
+
+.paper-tab-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0,0,0,0.5);
+}
+
+.paper-tab-active .paper-tab-text {
+  color: #fff;
+}
+
 /* 考卷类型筛选 */
 .paper-type-filter {
   gap: 12rpx;
@@ -284,7 +328,7 @@
 }
 
 .type-tab-active {
-  background-color: #6366F1;
+  background-color: #07C160;
 }
 
 .type-tab-text {
@@ -305,6 +349,38 @@
   width: 64rpx;
   height: 64rpx;
   flex-shrink: 0;
+}
+
+/* Exam Actions (我的考卷) */
+.exam-actions {
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.action-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  background-color: rgba(7, 193, 96, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn-icon {
+  font-size: 24rpx;
+}
+
+.action-btn-loading {
+  opacity: 0.5;
+}
+
+.action-btn-danger {
+  background-color: rgba(244, 63, 94, 0.1);
+}
+
+.action-btn-icon-danger {
+  color: #F43F5E;
 }
 
 .exam-list {
@@ -331,13 +407,18 @@
 .exam-icon-box {
   width: 72rpx;
   height: 72rpx;
-  background-color: rgba(99,102,241,0.1);
-  color: #6366F1;
+  background-color: rgba(7,193,96,0.1);
+  color: #07C160;
   border-radius: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.05);
+}
+
+.exam-icon-box-green {
+  background-color: rgba(7,193,96,0.1);
+  color: #07C160;
 }
 
 .exam-icon-img {
@@ -359,7 +440,11 @@
 .level-badge {
   padding: 6rpx 14rpx;
   border-radius: 8rpx;
-  background-color: #6366F1;
+  background-color: #07C160;
+}
+
+.level-badge-green {
+  background-color: #07C160;
 }
 
 .level-text {
@@ -437,7 +522,7 @@
 
 .download-icon {
   font-size: 28rpx;
-  color: #6366F1;
+  color: #07C160;
 }
 
 /* Load More */
@@ -648,8 +733,8 @@
 }
 
 .learning-icon-box.blue {
-  background-color: rgba(99,102,241,0.1);
-  color: #6366F1;
+  background-color: rgba(7,193,96,0.1);
+  color: #07C160;
 }
 
 .learning-icon-box.amber {
@@ -773,7 +858,7 @@
 }
 
 .knowledge-indigo {
-  background-color: #6366F1;
+  background-color: #07C160;
 }
 
 /* ============ Exam Paper Detail ============ */
@@ -807,12 +892,12 @@
 
 .paper-level-badge {
   padding: 12rpx 24rpx;
-  background-color: rgba(99,102,241,0.1);
+  background-color: rgba(7,193,96,0.1);
   border-radius: 16rpx;
 }
 
 .paper-level-text {
-  color: #6366F1;
+  color: #07C160;
 }
 
 .paper-title {
@@ -880,13 +965,13 @@
 .preview-num {
   width: 64rpx;
   height: 64rpx;
-  background-color: rgba(99,102,241,0.1);
+  background-color: rgba(7,193,96,0.1);
   border-radius: 16rpx;
   justify-content: center;
 }
 
 .preview-num-text {
-  color: #6366F1;
+  color: #07C160;
 }
 
 .preview-title-text {
