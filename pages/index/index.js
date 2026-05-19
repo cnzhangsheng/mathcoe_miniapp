@@ -28,7 +28,6 @@ Page({
 
     // 我的考卷
     myPapers: [],
-    generatingPdfIds: [],
 
     // 本周/本月学习统计
     weekQuestions: 0,
@@ -126,12 +125,10 @@ Page({
 
       // 处理我的考卷数据
       if (myPapersResult && myPapersResult.items && myPapersResult.items.length > 0) {
-        const generatingIds = this.data.generatingPdfIds
         const formattedPapers = myPapersResult.items.map(paper => {
           return {
             ...paper,
             levelLabel: `Level ${paper.difficulty_level}`,
-            isGenerating: generatingIds.includes(paper.id),
           }
         })
         cache.set('myPapers', formattedPapers, 120000) // 缓存 2 分钟
@@ -507,7 +504,7 @@ Page({
   // 下载PDF
   async downloadPdf(e) {
     const paperId = e.currentTarget.dataset.id
-    wx.showLoading({ title: '正在下载PDF...', mask: true })
+    wx.showLoading({ title: '正在准备PDF...', mask: true })
     try {
       const url = examPaperService.getDownloadPdfUrl(paperId)
       const downloadResult = await new Promise((resolve, reject) => {
@@ -527,47 +524,14 @@ Page({
           fail: (err) => reject(new Error(err.errMsg || '打开失败')),
         })
       })
+      // 下载成功后刷新列表，更新 file_path 状态
+      this.loadData()
     } catch (err) {
       console.error('downloadPdf error:', err)
       wx.showToast({ title: '导出失败', icon: 'none' })
     } finally {
       wx.hideLoading()
     }
-  },
-
-  // 生成 PDF
-  async generatePdf(e) {
-    const paperId = e.currentTarget.dataset.id
-    const generatingIds = this.data.generatingPdfIds
-    if (generatingIds.includes(paperId)) return
-    this.setData({ generatingPdfIds: [...generatingIds, paperId] })
-    // 更新列表中对应考卷的 isGenerating 状态
-    this._updatePaperGenerating(paperId, true)
-    try {
-      const result = await examPaperService.generatePdf(paperId)
-      if (result && result.file_path) {
-        wx.showToast({ title: 'PDF 生成成功', icon: 'success' })
-        this.loadData()
-      } else {
-        wx.showToast({ title: '生成失败', icon: 'none' })
-      }
-    } catch (err) {
-      console.error('generatePdf error:', err)
-      wx.showToast({ title: '生成失败，请重试', icon: 'none' })
-    } finally {
-      this.setData({
-        generatingPdfIds: this.data.generatingPdfIds.filter(id => id !== paperId)
-      })
-      this._updatePaperGenerating(paperId, false)
-    }
-  },
-
-  // 更新考卷列表中指定考卷的 isGenerating 状态
-  _updatePaperGenerating(paperId, isGenerating) {
-    const papers = this.data.myPapers
-    const index = papers.findIndex(p => p.id === paperId)
-    if (index === -1) return
-    this.setData({ [`myPapers[${index}].isGenerating`]: isGenerating })
   },
 
   // 删除考卷

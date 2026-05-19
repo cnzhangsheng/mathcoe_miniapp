@@ -4,7 +4,7 @@ App({
     userInfo: null,
     token: null,
     baseUrl: 'http://127.0.0.1:8000/api/v1',  // 开发环境（本地调试）
-    // baseUrl: 'http://124.222.75.232:8000/api/v1',  // 生产环境（线上部署）
+    // baseUrl: 'https://aicoe.cn/api/v1',  // 生产环境（线上部署）
     isLoggedIn: false
   },
 

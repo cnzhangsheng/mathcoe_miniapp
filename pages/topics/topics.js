@@ -41,7 +41,6 @@ Page({
     myPapersPageSize: 20,
     myPapersHasMore: false,
     loadingMyPapers: false,
-    generatingPdfIds: [],
 
     // AI学习洞察数据
     insightData: null,
@@ -281,14 +280,12 @@ Page({
       const { myPapersPage, myPapersPageSize } = this.data
       const result = await examPaperService.getMyPapers(myPapersPage, myPapersPageSize)
       if (result && result.items) {
-        const generatingIds = this.data.generatingPdfIds
         const papers = result.items.map(paper => ({
           ...paper,
           typeLabel: '我的考卷',
           typeIcon: '/assets/icons/icon-exam-custom.png',
           typeColor: 'green',
           duration: 75,
-          isGenerating: generatingIds.includes(paper.id),
         }))
         this.setData({
           myPapers: reset ? papers : [...this.data.myPapers, ...papers],
@@ -323,79 +320,39 @@ Page({
     })
   },
 
-  // 导出考卷 PDF
+  // 下载考卷 PDF
   async downloadPdf(e) {
     const paperId = e.currentTarget.dataset.id
-    const paper = this.data.examPapers.find(p => p.id === paperId) || this.data.myPapers.find(p => p.id === paperId)
-    const fileName = (paper ? paper.title : `考卷_${paperId}`).replace(/[\\/:*?"<>|]/g, '_') + '.pdf'
-    const filePath = wx.env.USER_DATA_PATH + '/' + fileName
-
-    wx.showLoading({ title: '正在下载PDF...', mask: true })
-
+    wx.showLoading({ title: '正在准备PDF...', mask: true })
     try {
       const url = examPaperService.getDownloadPdfUrl(paperId)
       const downloadResult = await new Promise((resolve, reject) => {
         wx.downloadFile({
           url,
-          filePath,
           timeout: 120000,
           success: resolve,
           fail: (err) => reject(new Error(err.errMsg || '下载失败')),
         })
       })
-
-      if (downloadResult.statusCode !== 200) {
-        throw new Error('下载失败')
-      }
-
+      if (downloadResult.statusCode !== 200) throw new Error('下载失败')
       await new Promise((resolve, reject) => {
         wx.openDocument({
-          filePath: downloadResult.filePath,
+          filePath: downloadResult.tempFilePath,
           showMenu: true,
           success: resolve,
           fail: (err) => reject(new Error(err.errMsg || '打开失败')),
         })
       })
+      // 下载成功后刷新列表
+      if (this.data.paperTab === 'my') {
+        this.loadMyPapers(true)
+      }
     } catch (err) {
       console.error('downloadPdf error:', err)
       wx.showToast({ title: '导出失败', icon: 'none' })
     } finally {
       wx.hideLoading()
     }
-  },
-
-  // 生成 PDF
-  async generatePdf(e) {
-    const paperId = e.currentTarget.dataset.id
-    const generatingIds = this.data.generatingPdfIds
-    if (generatingIds.includes(paperId)) return
-    this.setData({ generatingPdfIds: [...generatingIds, paperId] })
-    this._updatePaperGenerating(paperId, true)
-    try {
-      const result = await examPaperService.generatePdf(paperId)
-      if (result && result.file_path) {
-        wx.showToast({ title: 'PDF 生成成功', icon: 'success' })
-        this.loadMyPapers(true)
-      } else {
-        wx.showToast({ title: '生成失败', icon: 'none' })
-      }
-    } catch (err) {
-      console.error('generatePdf error:', err)
-      wx.showToast({ title: '生成失败，请重试', icon: 'none' })
-    } finally {
-      this.setData({
-        generatingPdfIds: this.data.generatingPdfIds.filter(id => id !== paperId)
-      })
-      this._updatePaperGenerating(paperId, false)
-    }
-  },
-
-  // 更新考卷列表中指定考卷的 isGenerating 状态
-  _updatePaperGenerating(paperId, isGenerating) {
-    const papers = this.data.myPapers
-    const index = papers.findIndex(p => p.id === paperId)
-    if (index === -1) return
-    this.setData({ [`myPapers[${index}].isGenerating`]: isGenerating })
   },
 
   // 删除考卷

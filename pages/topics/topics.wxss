@@ -495,20 +495,13 @@
   justify-content: center;
 }
 
-.action-btn-icon {
-  font-size: 24rpx;
-}
-
-.action-btn-loading {
-  opacity: 0.5;
+.action-btn-icon-img {
+  width: 32rpx;
+  height: 32rpx;
 }
 
 .action-btn-danger {
   background-color: rgba(244, 63, 94, 0.1);
-}
-
-.action-btn-icon-danger {
-  color: #F43F5E;
 }
 
 .download-btn {

@@ -108,17 +108,11 @@
               </view>
             </view>
             <view class="exam-right exam-actions">
-              <view class="action-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
-                <text class="action-btn-icon">⬇</text>
-              </view>
-              <view class="action-btn" wx:elif="{{!item.file_path && !item.isGenerating}}" catchtap="generatePdf" data-id="{{item.id}}">
-                <text class="action-btn-icon">🖨</text>
-              </view>
-              <view class="action-btn action-btn-loading" wx:elif="{{!item.file_path && item.isGenerating}}">
-                <text class="action-btn-icon">⏳</text>
+              <view class="action-btn" catchtap="downloadPdf" data-id="{{item.id}}">
+                <image class="action-btn-icon-img" src="/assets/icons/icon-pdf.png" mode="aspectFit"></image>
               </view>
               <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
-                <text class="action-btn-icon action-btn-icon-danger">🗑</text>
+                <image class="action-btn-icon-img" src="/assets/icons/icon-delete.png" mode="aspectFit"></image>
               </view>
             </view>
           </view>
