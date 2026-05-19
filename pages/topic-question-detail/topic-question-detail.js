@@ -10,6 +10,7 @@ Page({
     topicId: null,
     topicTitle: '',
     sessionId: null,
+    topicClass: '',
 
     // 排序
     sortBy: 'default',
@@ -23,40 +24,18 @@ Page({
     ],
     showSortPicker: false,
 
-    // 题目数据
-    currentIndex: 1,
+    // Swiper 数据
+    swiperList: [],
+    swiperCurrent: 0,
     totalQuestions: 0,
-    question: null,
-    questionContentHtml: '',
-    questionTypeText: '单选题',
-    questionLevel: '',
-    options: [],
-    selectedOption: null,
-    isSubmitted: false,
-    isLiked: false,
-    isBookmarked: false,
-    likeCount: 0,
 
-    // 完成状态
+    // 完成 / 无题 状态
     isCompleted: false,
     noQuestions: false,
 
-    // 题目列表（用于下一题）
-    questions: [],
-
-    // 答案解析
-    correctAnswer: '',
-    analysis: {
-      logic: '',
-      tip: '',
-      point: ''
-    },
-
     // 预加载图片
-    preloadedImageUrls: []
+    preloadedImageUrls: [],
   },
-
-  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   onLoad(options) {
     const topicId = parseInt(options.topic_id)
@@ -69,11 +48,13 @@ Page({
       return
     }
 
-    this.setData({ topicId, topicTitle: decodeURIComponent(title), topicClass: this.getTopicClass(topicId), sortBy })
-    this.loadQuestion(topicId)
+    const decodedTitle = decodeURIComponent(title)
+    wx.setNavigationBarTitle({ title: decodedTitle + '题目' })
+    this.setData({ topicId, topicTitle: decodedTitle, sortBy, topicClass: getTopicClass(topicId) })
+    this.loadQuestions(topicId)
   },
 
-  async loadQuestion(topicId) {
+  async loadQuestions(topicId) {
     try {
       const token = wx.getStorageSync('token')
       if (!token) {
@@ -88,76 +69,111 @@ Page({
         return
       }
 
-      // 保存所有题目
-      this.questionsList = result.questions
-      const firstQuestion = result.questions[0]
+      const questions = result.questions
+      this.questionsList = questions
 
-      // 获取点赞状态和收藏状态
-      const likeStatus = await discoverService.getLikeStatus(firstQuestion.id).catch(() => null)
-      const isLiked = likeStatus?.is_liked || false
-      const likeCount = likeStatus?.like_count || 0
+      // 预加载图片
+      const urlSet = new Set()
+      questions.forEach(q => {
+        if (!q) return
+        const htmlSources = []
+        if (q.content) {
+          if (typeof q.content === 'string') htmlSources.push(q.content)
+          else if (q.content.text) htmlSources.push(q.content.text)
+          if (q.content.images && Array.isArray(q.content.images)) {
+            q.content.images.forEach(url => urlSet.add(url))
+          }
+        }
+        if (q.options) {
+          q.options.forEach(opt => {
+            if (opt.content) {
+              if (typeof opt.content === 'string') htmlSources.push(opt.content)
+              else if (opt.content.text) htmlSources.push(opt.content.text)
+              if (opt.content.images && Array.isArray(opt.content.images)) {
+                opt.content.images.forEach(url => urlSet.add(url))
+              }
+            }
+            if (opt.text) htmlSources.push(opt.text)
+          })
+        }
+        htmlSources.forEach(html => {
+          if (!html || typeof html !== 'string') return
+          const regex = /<img[^>]+src=["']([^"']+)["']/gi
+          let match
+          while ((match = regex.exec(html)) !== null) {
+            urlSet.add(match[1])
+          }
+        })
+      })
+      const urls = Array.from(urlSet)
+      if (urls.length > 0) {
+        this.setData({ preloadedImageUrls: urls })
+      }
 
-      // 检查是否已收藏
-      const isBookmarked = await reviewService.isFavorited(firstQuestion.id).catch(() => false)
+      // 构建 swiperList
+      const swiperList = questions.map((q, idx) => ({
+        id: q.id || idx,
+        question: q,
+        questionContentHtml: this.extractContentHtml(q),
+        questionTypeText: this.getQuestionTypeText(q),
+        questionLevel: q.difficulty_level ? `L${q.difficulty_level}` : '',
+        options: this.formatOptions(q.options),
+        selectedOption: null,
+        isSubmitted: false,
+        correctAnswer: '',
+        analysis: { logic: '', tip: '', point: '' },
+        isLiked: false,
+        isBookmarked: false,
+        likeCount: 0,
+      }))
+
+      // 异步获取第一张卡片的点赞/收藏状态
+      this.loadCardStates(0, swiperList)
 
       this.setData({
-        currentIndex: 1,
+        swiperList,
+        totalQuestions: questions.length,
         sessionId: result.session_id,
-        totalQuestions: result.questions.length,
-        question: firstQuestion,
-        questions: result.questions,
-        questionContentHtml: this.extractContentHtml(firstQuestion),
-        questionTypeText: this.getQuestionTypeText(firstQuestion),
-        questionLevel: firstQuestion.difficulty_level ? `L${firstQuestion.difficulty_level}` : '',
-        options: this.formatOptions(firstQuestion.options),
-        isLiked,
-        isBookmarked,
-        likeCount
+        swiperCurrent: 0,
       })
-
-      // 预加载所有题目的图片
-      if (result.questions && result.questions.length > 0) {
-        const urlSet = new Set()
-        result.questions.forEach(q => {
-          if (!q) return
-          const htmlSources = []
-          if (q.content) {
-            if (typeof q.content === 'string') htmlSources.push(q.content)
-            else if (q.content.text) htmlSources.push(q.content.text)
-            if (q.content.images && Array.isArray(q.content.images)) {
-              q.content.images.forEach(url => urlSet.add(url))
-            }
-          }
-          if (q.options) {
-            q.options.forEach(opt => {
-              if (opt.content) {
-                if (typeof opt.content === 'string') htmlSources.push(opt.content)
-                else if (opt.content.text) htmlSources.push(opt.content.text)
-                if (opt.content.images && Array.isArray(opt.content.images)) {
-                  opt.content.images.forEach(url => urlSet.add(url))
-                }
-              }
-              if (opt.text) htmlSources.push(opt.text)
-            })
-          }
-          htmlSources.forEach(html => {
-            if (!html || typeof html !== 'string') return
-            const regex = /<img[^>]+src=["']([^"']+)["']/gi
-            let match
-            while ((match = regex.exec(html)) !== null) {
-              urlSet.add(match[1])
-            }
-          })
-        })
-        const urls = Array.from(urlSet)
-        if (urls.length > 0) {
-          this.setData({ preloadedImageUrls: urls })
-        }
-      }
     } catch (err) {
-      console.error('Load question failed:', err)
+      console.error('Load questions failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
     }
+  },
+
+  // 异步加载某张卡片的点赞/收藏状态
+  async loadCardStates(idx, swiperList) {
+    if (!swiperList || idx >= swiperList.length) return
+    const card = swiperList[idx]
+    if (!card || !card.question) return
+
+    try {
+      const likeStatus = await discoverService.getLikeStatus(card.question.id).catch(() => null)
+      const isBookmarked = await reviewService.isFavorited(card.question.id).catch(() => false)
+
+      const key = `swiperList[${idx}]`
+      const update = {}
+      if (likeStatus) {
+        update[key + '.isLiked'] = likeStatus.is_liked || false
+        update[key + '.likeCount'] = likeStatus.like_count || 0
+      }
+      update[key + '.isBookmarked'] = isBookmarked
+      this.setData(update)
+    } catch (err) {
+      console.error('loadCardStates error:', err)
+    }
+  },
+
+  // Swiper 切换
+  onSwiperChange(e) {
+    const newIdx = e.detail.current
+    const oldIdx = this.data.swiperCurrent
+    if (newIdx === oldIdx) return
+    this.setData({ swiperCurrent: newIdx })
+
+    // 异步加载新卡片的点赞/收藏状态
+    this.loadCardStates(newIdx, this.data.swiperList)
   },
 
   // 获取题目类型文本
@@ -172,7 +188,6 @@ Page({
   // 提取题目内容 HTML
   extractContentHtml(question) {
     if (!question) return '题目内容'
-    // 从 content.text 提取
     if (question.content) {
       if (typeof question.content === 'string') {
         return processRichText(question.content)
@@ -180,14 +195,12 @@ Page({
         return processRichText(question.content.text)
       }
     }
-    // fallback 到 title
     return question.title || '题目内容'
   },
 
   formatOptions(options) {
     if (!options || !Array.isArray(options)) return []
     return options.map(opt => {
-      // 提取 labelHtml（选项 HTML 内容）
       let labelHtml = ''
       let label = ''
       if (opt.content) {
@@ -211,7 +224,7 @@ Page({
     })
   },
 
-  // 去除 HTML 标签（用于纯文本）
+  // 去除 HTML 标签
   stripHtml(html) {
     if (!html || typeof html !== 'string') return ''
     return html.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()
@@ -219,99 +232,34 @@ Page({
 
   // 选择选项
   selectOption(e) {
-    if (this.data.isSubmitted) return
+    const idx = e.currentTarget.dataset.index
     const option = e.currentTarget.dataset.option
-    this.setData({ selectedOption: option })
-  },
+    const card = this.data.swiperList[idx]
+    if (!card || card.isSubmitted) return
 
-  // 提取纯文本（用于解析）
-  extractText(content) {
-    if (!content) return ''
-
-    let text = ''
-    if (typeof content === 'string') {
-      text = content
-    } else if (typeof content === 'object' && content.text) {
-      text = content.text
-    }
-
-    if (typeof text !== 'string') return ''
-
-    // 去掉 HTML 标签
-    if (text.includes('<')) {
-      text = text.replace(/<[^>]+>/g, '').trim()
-    }
-
-    return text.trim()
-  },
-
-  // 点赞切换
-  async toggleLike() {
-    const { question, isLiked, likeCount } = this.data
-    if (!question) return
-
-    try {
-      if (isLiked) {
-        // 取消点赞
-        const result = await discoverService.removeLike(question.id)
-        if (result && result.success) {
-          this.setData({ isLiked: false, likeCount: likeCount - 1 })
-        }
-      } else {
-        // 添加点赞
-        const result = await discoverService.addLike(question.id)
-        if (result) {
-          this.setData({ isLiked: true, likeCount: likeCount + 1 })
-        }
-      }
-    } catch (err) {
-      console.error('Like failed:', err)
-    }
-  },
-
-  // 收藏切换
-  async toggleBookmark() {
-    const { question, isBookmarked } = this.data
-    if (!question) return
-
-    try {
-      if (isBookmarked) {
-        // 取消收藏
-        const result = await reviewService.removeFavorite(question.id)
-        if (result && result.success) {
-          this.setData({ isBookmarked: false })
-        }
-      } else {
-        // 添加收藏
-        const result = await reviewService.addFavorite(question.id)
-        if (result) {
-          this.setData({ isBookmarked: true })
-        }
-      }
-    } catch (err) {
-      console.error('Favorite failed:', err)
-    }
+    this.setData({ [`swiperList[${idx}].selectedOption`]: option })
   },
 
   // 提交答案（查看答案）
-  handleSubmit() {
-    if (!this.data.selectedOption) return
+  handleSubmit(e) {
+    const idx = e.currentTarget.dataset.index
+    const card = this.data.swiperList[idx]
+    if (!card || !card.selectedOption) return
 
-    const { question, selectedOption } = this.data
+    const { question, selectedOption } = card
     const correctAnswer = question.answer || ''
 
-    // 处理 explanation
     const explanation = question.explanation || {}
     const explanationText = this.extractText(explanation)
 
     this.setData({
-      isSubmitted: true,
-      correctAnswer,
-      analysis: {
+      [`swiperList[${idx}].isSubmitted`]: true,
+      [`swiperList[${idx}].correctAnswer`]: correctAnswer,
+      [`swiperList[${idx}].analysis`]: {
         logic: explanationText || '暂无解析',
         tip: '',
-        point: `${question.difficulty_level ? 'L' + question.difficulty_level : '基础'} ${question.question_type || '题型'}`
-      }
+        point: `${question.difficulty_level ? 'L' + question.difficulty_level : '基础'} ${question.question_type || '题型'}`,
+      },
     })
 
     // 提交答案到后端
@@ -321,55 +269,96 @@ Page({
     }).catch(err => console.error('Submit answer failed:', err))
   },
 
-  // 下一题
-  async handleNext() {
-    const { currentIndex, totalQuestions } = this.data
-
-    if (currentIndex >= totalQuestions) {
-      // 完成所有题目，直接返回专题页面
-      wx.navigateBack()
-      return
+  // 提取纯文本（用于解析）
+  extractText(content) {
+    if (!content) return ''
+    let text = ''
+    if (typeof content === 'string') {
+      text = content
+    } else if (typeof content === 'object' && content.text) {
+      text = content.text
     }
+    if (typeof text !== 'string') return ''
+    if (text.includes('<')) {
+      text = text.replace(/<[^>]+>/g, '').trim()
+    }
+    return text.trim()
+  },
 
-    // 从题目列表获取下一题
-    const nextIndex = currentIndex
-    const nextQuestion = this.questionsList[nextIndex]
+  // 点赞切换
+  async toggleLike(e) {
+    const idx = e.currentTarget.dataset.index
+    const card = this.data.swiperList[idx]
+    if (!card || !card.question) return
 
-    // 获取点赞状态和收藏状态
-    const likeStatus = await discoverService.getLikeStatus(nextQuestion.id).catch(() => null)
-    const isLiked = likeStatus?.is_liked || false
-    const likeCount = likeStatus?.like_count || 0
+    try {
+      if (card.isLiked) {
+        const result = await discoverService.removeLike(card.question.id)
+        if (result && result.success) {
+          this.setData({
+            [`swiperList[${idx}].isLiked`]: false,
+            [`swiperList[${idx}].likeCount`]: card.likeCount - 1,
+          })
+        }
+      } else {
+        const result = await discoverService.addLike(card.question.id)
+        if (result) {
+          this.setData({
+            [`swiperList[${idx}].isLiked`]: true,
+            [`swiperList[${idx}].likeCount`]: card.likeCount + 1,
+          })
+        }
+      }
+    } catch (err) {
+      console.error('Like failed:', err)
+    }
+  },
 
-    // 检查是否已收藏
-    const isBookmarked = await reviewService.isFavorited(nextQuestion.id).catch(() => false)
+  // 收藏切换
+  async toggleBookmark(e) {
+    const idx = e.currentTarget.dataset.index
+    const card = this.data.swiperList[idx]
+    if (!card || !card.question) return
 
-    this.setData({
-      currentIndex: currentIndex + 1,
-      question: nextQuestion,
-      questionContentHtml: this.extractContentHtml(nextQuestion),
-      questionTypeText: this.getQuestionTypeText(nextQuestion),
-      questionLevel: nextQuestion.difficulty_level ? `L${nextQuestion.difficulty_level}` : '',
-      options: this.formatOptions(nextQuestion.options),
-      selectedOption: null,
-      isSubmitted: false,
-      correctAnswer: '',
-      analysis: { logic: '', tip: '', point: '' },
-      isLiked,
-      isBookmarked,
-      likeCount
-    })
+    try {
+      if (card.isBookmarked) {
+        const result = await reviewService.removeFavorite(card.question.id)
+        if (result && result.success) {
+          this.setData({ [`swiperList[${idx}].isBookmarked`]: false })
+        }
+      } else {
+        const result = await reviewService.addFavorite(card.question.id)
+        if (result) {
+          this.setData({ [`swiperList[${idx}].isBookmarked`]: true })
+        }
+      }
+    } catch (err) {
+      console.error('Favorite failed:', err)
+    }
   },
 
   // 排序选择
   handleSortChange(e) {
     const sortBy = e.currentTarget.dataset.value
     this.setData({ sortBy, showSortPicker: false })
-    // 重新加载题目
-    this.loadQuestion(this.data.topicId)
+    this.loadQuestions(this.data.topicId)
   },
 
   toggleSortPicker() {
     this.setData({ showSortPicker: !this.data.showSortPicker })
+  },
+
+  // 分享
+  onShareAppMessage(e) {
+    const idx = e.target?.dataset?.index ?? this.data.swiperCurrent
+    const card = this.data.swiperList[idx]
+    if (card?.question) {
+      return {
+        title: `【${this.data.topicTitle}】${card.question.title || '一道有趣的数学题'}`,
+        path: `/pages/topics/topics`
+      }
+    }
+    return { title: '数学专题练习', path: '/pages/topics/topics' }
   },
 
   // 返回

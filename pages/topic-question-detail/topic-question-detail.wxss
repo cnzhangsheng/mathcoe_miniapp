@@ -1,14 +1,21 @@
-/* pages/topic-question-detail/topic-question-detail.wxss - 100%复刻 kangaroo-math-brain TopicDetail.tsx */
+/* pages/topic-question-detail/topic-question-detail.wxss - Swiper 滑动浏览 */
+page {
+  height: 100%;
+  overflow: hidden;
+}
 
 .topic-detail-page {
-  min-height: 100vh;
+  height: 100%;
   background-color: #f8f8f8;
-  padding: 32rpx;
+  padding: 16rpx 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Empty State */
 .empty-state {
-  min-height: calc(100vh - 64rpx);
+  min-height: calc(100vh - 32rpx);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,7 +79,114 @@
   font-size: 28rpx;
 }
 
-/* Question Info Row - 题目信息行 */
+/* Sort Bar */
+.sort-bar {
+  position: relative;
+  margin-bottom: 12rpx;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.sort-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+}
+
+.sort-label {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.sort-value {
+  flex: 1;
+  font-size: 26rpx;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+.sort-arrow {
+  font-size: 20rpx;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.sort-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.sort-option {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 24rpx;
+  border-bottom: 2rpx solid rgba(0, 0, 0, 0.03);
+}
+
+.sort-option:last-child {
+  border-bottom: none;
+}
+
+.sort-option-active {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+.sort-option-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.sort-option-active .sort-option-text {
+  color: #6366F1;
+  font-weight: 600;
+}
+
+.sort-option-check {
+  font-size: 28rpx;
+  color: #6366F1;
+  font-weight: 700;
+}
+
+/* Progress Row */
+.progress-row {
+  text-align: center;
+  margin-bottom: 8rpx;
+  flex-shrink: 0;
+}
+
+.progress-text {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+
+/* Swiper */
+.topic-swiper {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.question-area {
+  height: 100%;
+  padding: 8rpx 4rpx 32rpx;
+  box-sizing: border-box;
+}
+
+/* Question Info Row */
 .question-info-row {
   display: flex;
   align-items: center;
@@ -131,7 +245,6 @@
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.03);
 }
 
-/* Question Content Box - rich-text */
 .question-content-box {
   margin-bottom: 32rpx;
 }
@@ -142,7 +255,6 @@
   line-height: 1.6;
 }
 
-/* rich-text 内部样式 */
 .question-content p {
   margin: 0;
   line-height: 1.6;
@@ -243,7 +355,6 @@
   line-height: 1.5;
 }
 
-/* rich-text 选项样式 */
 .option-text p {
   margin: 0;
   line-height: 1.5;
@@ -265,7 +376,7 @@
   color: #F43F5E;
 }
 
-/* Submit Section - Action Bar */
+/* Action Icons */
 .action-icons-right {
   margin-top: 32rpx;
   display: flex;
@@ -275,7 +386,57 @@
   padding-right: 32rpx;
 }
 
-/* Submit Answer Row - 提交答案按钮单独一行 */
+.action-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 32rpx;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.action-icon-btn.liked {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.action-icon-btn.bookmarked {
+  background-color: rgba(251, 191, 36, 0.1);
+}
+
+.action-icon-img {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.action-count {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.action-icon-btn.bookmarked .action-text {
+  color: #F59E0B;
+}
+
+.share-btn {
+  padding: 16rpx 24rpx;
+  margin: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.03);
+  line-height: normal;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+/* Submit Answer */
 .submit-row {
   margin-top: 32rpx;
   display: flex;
@@ -304,41 +465,6 @@
 
 .submit-answer-text {
   font-size: 28rpx;
-}
-
-.action-icon-btn {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  padding: 16rpx 24rpx;
-  border-radius: 32rpx;
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.action-icon-btn.liked {
-  background-color: rgba(99, 102, 241, 0.1);
-}
-
-.action-icon-btn.bookmarked {
-  background-color: rgba(251, 191, 36, 0.1);
-}
-
-.action-icon {
-  font-size: 28rpx;
-}
-
-.action-count {
-  font-size: 24rpx;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.action-text {
-  font-size: 24rpx;
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.action-icon-btn.bookmarked .action-text {
-  color: #F59E0B;
 }
 
 /* Analysis Section */
@@ -447,44 +573,6 @@
   line-height: 1.6;
 }
 
-/* Tip Row */
-.tip-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 32rpx;
-  padding: 16rpx;
-  margin-bottom: 40rpx;
-}
-
-.tip-icon-box {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 32rpx;
-  background-color: rgba(99, 102, 241, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tip-icon {
-  font-size: 40rpx;
-  color: #6366F1;
-}
-
-.tip-content {
-  flex: 1;
-}
-
-.tip-title {
-  color: rgba(0, 0, 0, 0.8);
-  margin-bottom: 8rpx;
-}
-
-.tip-text {
-  color: rgba(0, 0, 0, 0.5);
-  line-height: 1.5;
-}
-
 /* Key Point Box */
 .key-point-box {
   background-color: rgba(251, 191, 36, 0.1);
@@ -526,14 +614,20 @@
   color: rgba(180, 83, 9, 0.7);
 }
 
-/* Next Section */
-.next-section {
+/* Swipe Next Hint */
+.swipe-next-row {
   margin-top: 32rpx;
   display: flex;
   justify-content: center;
 }
 
-.next-btn {
+.swipe-next-text {
+  font-size: 26rpx;
+  color: rgba(0, 0, 0, 0.35);
+  letter-spacing: 2rpx;
+}
+
+.complete-swipe-btn {
   padding: 24rpx 64rpx;
   background-color: #07C160;
   color: #fff;
@@ -542,90 +636,6 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 8rpx 16rpx rgba(7, 193, 96, 0.2);
-}
-
-.next-text {
-  font-size: 28rpx;
-}
-
-/* Sort Bar */
-.sort-bar {
-  position: relative;
-  margin-bottom: 24rpx;
-  z-index: 10;
-}
-
-.sort-trigger {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  padding: 16rpx 24rpx;
-  background-color: #fff;
-  border-radius: 24rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
-}
-
-.sort-label {
-  font-size: 24rpx;
-  color: rgba(0, 0, 0, 0.4);
-}
-
-.sort-value {
-  flex: 1;
-  font-size: 26rpx;
-  color: rgba(0, 0, 0, 0.8);
-  font-weight: 600;
-}
-
-.sort-arrow {
-  font-size: 20rpx;
-  color: rgba(0, 0, 0, 0.3);
-}
-
-.sort-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 8rpx;
-  background-color: #fff;
-  border-radius: 24rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.sort-option {
-  display: flex;
-  align-items: center;
-  padding: 28rpx 24rpx;
-  border-bottom: 2rpx solid rgba(0, 0, 0, 0.03);
-}
-
-.sort-option:last-child {
-  border-bottom: none;
-}
-
-.sort-option-active {
-  background-color: rgba(99, 102, 241, 0.05);
-}
-
-.sort-option-text {
-  flex: 1;
-  font-size: 28rpx;
-  color: rgba(0, 0, 0, 0.8);
-}
-
-.sort-option-active .sort-option-text {
-  color: #6366F1;
-  font-weight: 600;
-}
-
-.sort-option-check {
-  font-size: 28rpx;
-  color: #6366F1;
-  font-weight: 700;
 }
 
 /* Utility Classes */
