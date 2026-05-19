@@ -127,11 +127,9 @@ Page({
       // 处理我的考卷数据
       if (myPapersResult && myPapersResult.items && myPapersResult.items.length > 0) {
         const formattedPapers = myPapersResult.items.map(paper => {
-          console.log('[index] paper file_path:', paper.id, JSON.stringify(paper.file_path))
           return {
             ...paper,
             levelLabel: `Level ${paper.difficulty_level}`,
-            noFile: !paper.file_path,
           }
         })
         cache.set('myPapers', formattedPapers, 120000) // 缓存 2 分钟

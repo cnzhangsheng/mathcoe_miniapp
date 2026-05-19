@@ -655,8 +655,9 @@
 }
 
 .exam-actions {
-  flex-direction: column;
-  gap: 8rpx;
+  flex-direction: row;
+  gap: 12rpx;
+  align-items: center;
 }
 
 .action-btn {

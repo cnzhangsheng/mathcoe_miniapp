@@ -287,7 +287,6 @@ Page({
           typeIcon: '/assets/icons/icon-exam-custom.png',
           typeColor: 'green',
           duration: 75,
-          noFile: !paper.file_path,
         }))
         this.setData({
           myPapers: reset ? papers : [...this.data.myPapers, ...papers],
