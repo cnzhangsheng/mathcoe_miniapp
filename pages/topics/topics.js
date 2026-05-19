@@ -281,12 +281,14 @@ Page({
       const { myPapersPage, myPapersPageSize } = this.data
       const result = await examPaperService.getMyPapers(myPapersPage, myPapersPageSize)
       if (result && result.items) {
+        const generatingIds = this.data.generatingPdfIds
         const papers = result.items.map(paper => ({
           ...paper,
           typeLabel: '我的考卷',
           typeIcon: '/assets/icons/icon-exam-custom.png',
           typeColor: 'green',
           duration: 75,
+          isGenerating: generatingIds.includes(paper.id),
         }))
         this.setData({
           myPapers: reset ? papers : [...this.data.myPapers, ...papers],
@@ -368,6 +370,7 @@ Page({
     const generatingIds = this.data.generatingPdfIds
     if (generatingIds.includes(paperId)) return
     this.setData({ generatingPdfIds: [...generatingIds, paperId] })
+    this._updatePaperGenerating(paperId, true)
     try {
       const result = await examPaperService.generatePdf(paperId)
       if (result && result.file_path) {
@@ -383,7 +386,16 @@ Page({
       this.setData({
         generatingPdfIds: this.data.generatingPdfIds.filter(id => id !== paperId)
       })
+      this._updatePaperGenerating(paperId, false)
     }
+  },
+
+  // 更新考卷列表中指定考卷的 isGenerating 状态
+  _updatePaperGenerating(paperId, isGenerating) {
+    const papers = this.data.myPapers
+    const index = papers.findIndex(p => p.id === paperId)
+    if (index === -1) return
+    this.setData({ [`myPapers[${index}].isGenerating`]: isGenerating })
   },
 
   // 删除考卷

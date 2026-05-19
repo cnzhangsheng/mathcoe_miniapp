@@ -351,39 +351,6 @@
   flex-shrink: 0;
 }
 
-/* Exam Actions (我的考卷) */
-.exam-actions {
-  flex-direction: row;
-  gap: 12rpx;
-  align-items: center;
-}
-
-.action-btn {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 28rpx;
-  background-color: rgba(7, 193, 96, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-btn-icon {
-  font-size: 24rpx;
-}
-
-.action-btn-loading {
-  opacity: 0.5;
-}
-
-.action-btn-danger {
-  background-color: rgba(244, 63, 94, 0.1);
-}
-
-.action-btn-icon-danger {
-  color: #F43F5E;
-}
-
 .exam-list {
   display: flex;
   flex-direction: column;
@@ -509,6 +476,39 @@
   flex-direction: column;
   align-items: center;
   gap: 12rpx;
+}
+
+/* Exam Actions (我的考卷) - 必须在 exam-right 之后，row 覆盖 column */
+.exam-actions {
+  flex-direction: row;
+  gap: 12rpx;
+  align-items: center;
+}
+
+.action-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  background-color: rgba(7, 193, 96, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn-icon {
+  font-size: 24rpx;
+}
+
+.action-btn-loading {
+  opacity: 0.5;
+}
+
+.action-btn-danger {
+  background-color: rgba(244, 63, 94, 0.1);
+}
+
+.action-btn-icon-danger {
+  color: #F43F5E;
 }
 
 .download-btn {

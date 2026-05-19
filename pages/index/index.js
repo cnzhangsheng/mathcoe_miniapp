@@ -126,10 +126,12 @@ Page({
 
       // 处理我的考卷数据
       if (myPapersResult && myPapersResult.items && myPapersResult.items.length > 0) {
+        const generatingIds = this.data.generatingPdfIds
         const formattedPapers = myPapersResult.items.map(paper => {
           return {
             ...paper,
             levelLabel: `Level ${paper.difficulty_level}`,
+            isGenerating: generatingIds.includes(paper.id),
           }
         })
         cache.set('myPapers', formattedPapers, 120000) // 缓存 2 分钟
@@ -539,6 +541,8 @@ Page({
     const generatingIds = this.data.generatingPdfIds
     if (generatingIds.includes(paperId)) return
     this.setData({ generatingPdfIds: [...generatingIds, paperId] })
+    // 更新列表中对应考卷的 isGenerating 状态
+    this._updatePaperGenerating(paperId, true)
     try {
       const result = await examPaperService.generatePdf(paperId)
       if (result && result.file_path) {
@@ -554,7 +558,16 @@ Page({
       this.setData({
         generatingPdfIds: this.data.generatingPdfIds.filter(id => id !== paperId)
       })
+      this._updatePaperGenerating(paperId, false)
     }
+  },
+
+  // 更新考卷列表中指定考卷的 isGenerating 状态
+  _updatePaperGenerating(paperId, isGenerating) {
+    const papers = this.data.myPapers
+    const index = papers.findIndex(p => p.id === paperId)
+    if (index === -1) return
+    this.setData({ [`myPapers[${index}].isGenerating`]: isGenerating })
   },
 
   // 删除考卷

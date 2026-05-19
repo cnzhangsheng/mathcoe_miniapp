@@ -47,7 +47,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.25.0",
+  "libVersion": "3.15.2",
   "appid": "wxf08bb74c7203ea66",
   "projectname": "kangaroo-math-brain",
   "condition": {},

@@ -236,10 +236,10 @@
               <view class="action-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
                 <text class="action-btn-icon">⬇</text>
               </view>
-              <view class="action-btn" wx:elif="{{!item.file_path && generatingPdfIds.indexOf(item.id) === -1}}" catchtap="generatePdf" data-id="{{item.id}}">
+              <view class="action-btn" wx:elif="{{!item.file_path && !item.isGenerating}}" catchtap="generatePdf" data-id="{{item.id}}">
                 <text class="action-btn-icon">🖨</text>
               </view>
-              <view class="action-btn action-btn-loading" wx:elif="{{!item.file_path && generatingPdfIds.indexOf(item.id) > -1}}">
+              <view class="action-btn action-btn-loading" wx:elif="{{!item.file_path && item.isGenerating}}">
                 <text class="action-btn-icon">⏳</text>
               </view>
               <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
