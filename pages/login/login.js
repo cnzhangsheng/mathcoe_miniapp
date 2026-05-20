@@ -1,10 +1,12 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 
 Page({
   data: {
     loading: false,
     isLoggedIn: false,
+    imageBaseUrl: IMAGE_BASE_URL,
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
     gradeIndex: 0,  // 默认一年级（G1）
     difficultyLevels: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6'],

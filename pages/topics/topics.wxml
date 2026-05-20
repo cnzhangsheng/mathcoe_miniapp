@@ -85,7 +85,7 @@
           <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
             <view class="exam-left">
               <view class="exam-icon-box exam-icon-box-green">
-                <image class="exam-icon-img" src="/assets/icons/icon-exam-custom.png" mode="aspectFit"></image>
+                <image class="exam-icon-img" src="{{imageBaseUrl + 'icons/icon-exam-custom.png'}}" mode="aspectFit"></image>
               </view>
             </view>
             <view class="exam-middle">
@@ -109,10 +109,10 @@
             </view>
             <view class="exam-right exam-actions">
               <view class="action-btn" catchtap="downloadPdf" data-id="{{item.id}}">
-                <image class="action-btn-icon-img" src="/assets/icons/icon-pdf.png" mode="aspectFit"></image>
+                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-pdf.png'}}" mode="aspectFit"></image>
               </view>
               <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
-                <image class="action-btn-icon-img" src="/assets/icons/icon-delete.png" mode="aspectFit"></image>
+                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-delete.png'}}" mode="aspectFit"></image>
               </view>
             </view>
           </view>

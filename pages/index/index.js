@@ -1,5 +1,6 @@
 // pages/index/index.js - 新首页逻辑
 const app = getApp()
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 const userService = require('../../services/user')
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
@@ -12,6 +13,7 @@ Page({
     isLoggedIn: false,
     userInfo: null,
     greetingText: '早安！',
+    imageBaseUrl: IMAGE_BASE_URL,
 
     // 今日目标
     dailyGoal: 12,
@@ -296,12 +298,12 @@ Page({
   // 获取考卷类型图标
   getPaperTypeIcon(type) {
     const icons = {
-      daily: '/assets/icons/icon-exam-daily.png',
-      mock: '/assets/icons/icon-exam-sim.png',
-      topic: '/assets/icons/icon-exam-topic.png',
-      past: '/assets/icons/icon-exam-past.png'
+      daily: IMAGE_BASE_URL + 'icons/icon-exam-daily.png',
+      mock: IMAGE_BASE_URL + 'icons/icon-exam-sim.png',
+      topic: IMAGE_BASE_URL + 'icons/icon-exam-topic.png',
+      past: IMAGE_BASE_URL + 'icons/icon-exam-past.png'
     }
-    return icons[type] || '/assets/icons/icon-exam-daily.png'
+    return icons[type] || IMAGE_BASE_URL + 'icons/icon-exam-daily.png'
   },
 
   // 获取考卷类型标签

@@ -1,5 +1,6 @@
 // pages/profile/profile.js - 我的页面（设置页面）
 const app = getApp()
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 const userService = require('../../services/user')
 
 Page({
@@ -7,6 +8,7 @@ Page({
     loading: true,
     userInfo: null,
     streakDays: 0,
+    imageBaseUrl: IMAGE_BASE_URL,
 
     // 年级
     gradeLabels: [

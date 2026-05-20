@@ -16,7 +16,7 @@
     <view class="user-card card">
       <view class="user-header flex-row">
         <view class="avatar-wrapper">
-          <image class="user-avatar" src="/assets/default-avatar.png" mode="aspectFill"></image>
+          <image class="user-avatar" src="{{imageBaseUrl + 'default-avatar.png'}}" mode="aspectFill"></image>
         </view>
         <view class="user-info">
           <text class="user-name text-bold">{{userInfo.nickname || '数学小达人'}}</text>

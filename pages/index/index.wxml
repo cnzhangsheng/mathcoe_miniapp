@@ -16,7 +16,7 @@
     <view class="user-header">
       <view class="user-info">
         <view class="avatar-wrapper">
-          <image class="avatar" src="/assets/default-avatar.png" mode="aspectFill"></image>
+          <image class="avatar" src="{{imageBaseUrl + 'default-avatar.png'}}" mode="aspectFill"></image>
         </view>
         <view class="user-text">
           <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，{{greetingText}}</text>
@@ -105,7 +105,7 @@
     <view class="quick-actions">
       <view class="action-item primary-action" bindtap="goToDiscover">
         <view class="action-icon-box primary-icon">
-          <image class="action-icon-img" src="/assets/icons/icon_explore.png" mode="aspectFit"></image>
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_explore.png'}}" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">探索</text>
         <text class="action-sub text-small">随机刷题</text>
@@ -113,7 +113,7 @@
 
       <view class="action-item purple-action" bindtap="goToTopics">
         <view class="action-icon-box purple-icon">
-          <image class="action-icon-img" src="/assets/icons/icon_topic.png" mode="aspectFit"></image>
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_topic.png'}}" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">专题</text>
         <text class="action-sub text-small">专项训练</text>
@@ -121,7 +121,7 @@
 
       <view class="action-item amber-action" bindtap="goToExamPaper">
         <view class="action-icon-box amber-icon">
-          <image class="action-icon-img" src="/assets/icons/icon_exam.png" mode="aspectFit"></image>
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_exam.png'}}" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">模考</text>
         <text class="action-sub text-small">真题演练</text>
@@ -129,7 +129,7 @@
 
       <view class="action-item rose-action" bindtap="goToReview">
         <view class="action-icon-box rose-icon">
-          <image class="action-icon-img" src="/assets/icons/icon_error.png" mode="aspectFit"></image>
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_error.png'}}" mode="aspectFit"></image>
         </view>
         <text class="action-title text-bold">错题</text>
         <text class="action-sub text-small">{{wrongCount}}题待练</text>
@@ -208,7 +208,7 @@
           <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
             <view class="exam-left">
               <view class="exam-icon-box exam-icon-box-green">
-                <image class="exam-icon-img" src="/assets/icons/icon-exam-custom.png" mode="aspectFit"></image>
+                <image class="exam-icon-img" src="{{imageBaseUrl + 'icons/icon-exam-custom.png'}}" mode="aspectFit"></image>
               </view>
             </view>
             <view class="exam-middle">
@@ -234,10 +234,10 @@
             </view>
             <view class="exam-right exam-actions">
               <view class="action-btn" catchtap="downloadPdf" data-id="{{item.id}}">
-                <image class="action-btn-icon-img" src="/assets/icons/icon-pdf.png" mode="aspectFit"></image>
+                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-pdf.png'}}" mode="aspectFit"></image>
               </view>
               <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
-                <image class="action-btn-icon-img" src="/assets/icons/icon-delete.png" mode="aspectFit"></image>
+                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-delete.png'}}" mode="aspectFit"></image>
               </view>
             </view>
           </view>

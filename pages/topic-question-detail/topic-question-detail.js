@@ -1,5 +1,7 @@
 // pages/topic-question-detail/topic-question-detail.js - 100%复刻 kangaroo-math-brain TopicDetail.tsx
 const practiceService = require('../../services/practice')
+const { IMAGE_BASE_URL } = require('../../utils/constants')
+
 const discoverService = require('../../services/discover')
 const reviewService = require('../../services/review')
 const { getTopicClass } = require('../../services/topics')
@@ -11,6 +13,7 @@ Page({
     topicTitle: '',
     sessionId: null,
     topicClass: '',
+    imageBaseUrl: IMAGE_BASE_URL,
 
     // 排序
     sortBy: 'default',

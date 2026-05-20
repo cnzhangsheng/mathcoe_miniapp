@@ -1,5 +1,6 @@
 // pages/discover/discover.js - Swiper 滑动浏览
 const { processRichText } = require('../../utils/util')
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 const app = getApp()
 const discoverService = require('../../services/discover')
 const { getTopicTitle, getTopicClass } = require('../../services/topics')
@@ -12,6 +13,7 @@ Page({
     swiperList: [],
     swiperCurrent: 0,
     showSwipeHint: false,
+    imageBaseUrl: IMAGE_BASE_URL,
   },
 
   _loadingNext: false,

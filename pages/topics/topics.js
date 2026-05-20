@@ -3,12 +3,14 @@ const userService = require('../../services/user')
 const questionService = require('../../services/question')
 const examPaperService = require('../../services/examPaper')
 const cache = require('../../services/cache')
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 
 Page({
   data: {
     loading: true,
     activeTab: 'all',
     selectedExamPaper: null,
+    imageBaseUrl: IMAGE_BASE_URL,
 
     // 专题数据（静态数据作为 fallback，实际从 API 获取）
     topics: [],
@@ -46,11 +48,11 @@ Page({
     insightData: null,
 
     paperTypes: {
-      daily: { label: '日常练习', icon: '/assets/icons/icon-exam-daily.png', color: 'emerald' },
-      mock: { label: '模拟卷', icon: '/assets/icons/icon-exam-sim.png', color: 'amber' },
-      topic: { label: '专题训练', icon: '/assets/icons/icon-exam-topic.png', color: 'purple' },
-      past: { label: '真题卷', icon: '/assets/icons/icon-exam-past.png', color: 'blue' },
-      custom: { label: '我的考卷', icon: '/assets/icons/icon-exam-topic.png', color: 'green' }
+      daily: { label: '日常练习', icon: IMAGE_BASE_URL + 'icons/icon-exam-daily.png', color: 'emerald' },
+      mock: { label: '模拟卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-sim.png', color: 'amber' },
+      topic: { label: '专题训练', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'purple' },
+      past: { label: '真题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-past.png', color: 'blue' },
+      custom: { label: '我的考卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'green' }
     }
   },
 
@@ -191,10 +193,10 @@ Page({
   // 获取专题自定义图标
   getTopicIconImage(iconOrTitle) {
     const iconMap = [
-      { keywords: ['几何', 'Columns', '图形', '空间'], image: '/assets/icons/tuxing_icon.png' },
-      { keywords: ['逻辑', 'Brain', '数理'], image: '/assets/icons/shuliluoji_icon.png' },
-      { keywords: ['应用', 'ShoppingBag', '综合'], image: '/assets/icons/yingyong_icon.png' },
-      { keywords: ['算术', 'Calculator', '运算', '计算'], image: '/assets/icons/yunsuan_icon.png' },
+      { keywords: ['几何', 'Columns', '图形', '空间'], image: IMAGE_BASE_URL + 'icons/tuxing_icon.png' },
+      { keywords: ['逻辑', 'Brain', '数理'], image: IMAGE_BASE_URL + 'icons/shuliluoji_icon.png' },
+      { keywords: ['应用', 'ShoppingBag', '综合'], image: IMAGE_BASE_URL + 'icons/yingyong_icon.png' },
+      { keywords: ['算术', 'Calculator', '运算', '计算'], image: IMAGE_BASE_URL + 'icons/yunsuan_icon.png' },
     ]
     for (const entry of iconMap) {
       for (const keyword of entry.keywords) {
@@ -283,7 +285,7 @@ Page({
         const papers = result.items.map(paper => ({
           ...paper,
           typeLabel: '我的考卷',
-          typeIcon: '/assets/icons/icon-exam-custom.png',
+          typeIcon: IMAGE_BASE_URL + 'icons/icon-exam-custom.png',
           typeColor: 'green',
           duration: 75,
         }))

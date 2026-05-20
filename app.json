@@ -75,6 +75,7 @@
     "connectSocket": 10000,
     "downloadFile": 10000
   },
+  "lazyCodeLoading": "requiredComponents",
   "debug": true,
   "permission": {
     "scope.userLocation": {

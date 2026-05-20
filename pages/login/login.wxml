@@ -7,7 +7,7 @@
   <!-- Logo 区域 -->
   <view class="logo-section">
     <view class="logo-box">
-      <image class="logo-icon" src="/assets/logo.png" mode="aspectFit"></image>
+      <image class="logo-icon" src="{{imageBaseUrl + 'logo.png'}}" mode="aspectFit"></image>
     </view>
     <text class="app-name text-bold">袋鼠数学助理</text>
     <text class="app-slogan text-small">Kangaroo Math Assistant</text>
