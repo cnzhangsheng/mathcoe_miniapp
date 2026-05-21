@@ -47,6 +47,8 @@ Page({
     // AI学习洞察数据
     insightData: null,
 
+    pdfProgress: 0,
+
     paperTypes: {
       daily: { label: '日常练习', icon: IMAGE_BASE_URL + 'icons/icon-exam-daily.png', color: 'emerald' },
       mock: { label: '模拟卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-sim.png', color: 'amber' },
@@ -325,21 +327,24 @@ Page({
   // 下载考卷 PDF
   async downloadPdf(e) {
     const paperId = e.currentTarget.dataset.id
-    wx.showLoading({ title: '正在准备PDF...', mask: true })
+    this.setData({ pdfProgress: -1 })
     try {
-      const url = examPaperService.getDownloadPdfUrl(paperId)
-      const downloadResult = await new Promise((resolve, reject) => {
-        wx.downloadFile({
-          url,
-          timeout: 120000,
-          success: resolve,
-          fail: (err) => reject(new Error(err.errMsg || '下载失败')),
-        })
+      // 检查服务端是否已生成 PDF
+      const status = await examPaperService.checkPdfStatus(paperId)
+      if (!status.exists) {
+        // 未生成，先触发服务端生成
+        await examPaperService.generatePdf(paperId)
+      }
+      // 切换到下载阶段，立即显示进度条
+      this.setData({ pdfProgress: 1 })
+      // 下载已生成的文件
+      const filePath = await examPaperService.downloadPdfWithProgress(paperId, (progress) => {
+        this.setData({ pdfProgress: progress })
       })
-      if (downloadResult.statusCode !== 200) throw new Error('下载失败')
+      this.setData({ pdfProgress: 100 })
       await new Promise((resolve, reject) => {
         wx.openDocument({
-          filePath: downloadResult.tempFilePath,
+          filePath,
           showMenu: true,
           success: resolve,
           fail: (err) => reject(new Error(err.errMsg || '打开失败')),
@@ -353,7 +358,7 @@ Page({
       console.error('downloadPdf error:', err)
       wx.showToast({ title: '导出失败', icon: 'none' })
     } finally {
-      wx.hideLoading()
+      this.setData({ pdfProgress: 0 })
     }
   },
 

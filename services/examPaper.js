@@ -123,6 +123,15 @@ const getMyPapers = (page = 1, page_size = 20) => {
 }
 
 /**
+ * 检查考卷 PDF 是否已生成
+ * @param {number} examPaperId
+ * @returns {Promise<{exists: boolean}>}
+ */
+const checkPdfStatus = (examPaperId) => {
+  return request(`/exam-papers/${examPaperId}/pdf-status`)
+}
+
+/**
  * 生成考卷 PDF
  * @param {number} examPaperId
  */
@@ -138,6 +147,36 @@ const deletePaper = (examPaperId) => {
   return request(`/exam-papers/${examPaperId}`, { method: 'DELETE' })
 }
 
+/**
+ * 下载考卷 PDF（含进度回调）
+ * @param {number} examPaperId
+ * @param {function} onProgress - 进度回调 (progress: 0-100)
+ * @returns {Promise<string>} tempFilePath
+ */
+const downloadPdfWithProgress = (examPaperId, onProgress) => {
+  const url = getDownloadPdfUrl(examPaperId)
+  return new Promise((resolve, reject) => {
+    const task = wx.downloadFile({
+      url,
+      timeout: 120000,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          resolve(res.tempFilePath)
+        } else {
+          reject(new Error('下载失败'))
+        }
+      },
+      fail: (err) => reject(new Error(err.errMsg || '下载失败')),
+    })
+    task.onProgressUpdate((res) => {
+      if (onProgress && res.totalBytesExpectedToWrite > 0) {
+        const pct = Math.round(res.totalBytesWritten / res.totalBytesExpectedToWrite * 100)
+        if (pct > 0) onProgress(pct)
+      }
+    })
+  })
+}
+
 module.exports = {
   getExamPapers,
   getRecommendedPapers,
@@ -150,6 +189,8 @@ module.exports = {
   getTestDetail,
   getTestReport,
   getDownloadPdfUrl,
+  downloadPdfWithProgress,
+  checkPdfStatus,
   generatePaper,
   getMyPapers,
   generatePdf,

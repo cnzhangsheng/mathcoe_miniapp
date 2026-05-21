@@ -281,4 +281,17 @@
     </view>
   </view>
 
+  <!-- PDF下载进度 -->
+  <view wx:if="{{pdfProgress !== 0}}" class="pdf-progress-mask">
+    <view class="pdf-progress-box">
+      <text class="pdf-progress-title" wx:if="{{pdfProgress === -1}}">正在生成PDF...</text>
+      <text class="pdf-progress-title" wx:else>正在下载PDF...</text>
+      <view class="pdf-progress-track" wx:if="{{pdfProgress > 0}}">
+        <view class="pdf-progress-bar" style="width: {{pdfProgress}}%"></view>
+      </view>
+      <text class="pdf-progress-text" wx:if="{{pdfProgress > 0}}">{{pdfProgress}}%</text>
+      <text class="pdf-progress-text" wx:elif="{{pdfProgress === -1}}">即将开始下载</text>
+    </view>
+  </view>
+
 </view>

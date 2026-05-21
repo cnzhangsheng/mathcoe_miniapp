@@ -66,6 +66,7 @@
           </view>
         </view>
         <view class="generate-topic-btn" bindtap="goToGeneratePaper">
+          <text class="generate-topic-btn-icon">+</text>
           <text class="generate-topic-btn-text text-small text-bold">智能组卷</text>
         </view>
       </view>
@@ -149,7 +150,7 @@
             </view>
             <view class="exam-right">
               <view class="download-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
-                <text class="download-icon">⬇</text>
+                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-pdf.png'}}" mode="aspectFit"></image>
               </view>
               <view class="download-placeholder" wx:else></view>
             </view>
@@ -168,4 +169,17 @@
       </view>
     </view>
   </block>
+
+  <!-- PDF下载进度 -->
+  <view wx:if="{{pdfProgress !== 0}}" class="pdf-progress-mask">
+    <view class="pdf-progress-box">
+      <text class="pdf-progress-title" wx:if="{{pdfProgress === -1}}">正在生成PDF...</text>
+      <text class="pdf-progress-title" wx:else>正在下载PDF...</text>
+      <view class="pdf-progress-track" wx:if="{{pdfProgress > 0}}">
+        <view class="pdf-progress-bar" style="width: {{pdfProgress}}%"></view>
+      </view>
+      <text class="pdf-progress-text" wx:if="{{pdfProgress > 0}}">{{pdfProgress}}%</text>
+      <text class="pdf-progress-text" wx:elif="{{pdfProgress === -1}}">即将开始下载</text>
+    </view>
+  </view>
 </view>

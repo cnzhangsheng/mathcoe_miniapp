@@ -100,9 +100,19 @@
 }
 
 .generate-topic-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
   padding: 12rpx 24rpx;
-  background-color: #07C160;
+  background-color: #047857;
   border-radius: 24rpx;
+}
+
+.generate-topic-btn-icon {
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .generate-topic-btn-text {
@@ -110,7 +120,7 @@
 }
 
 .section-more {
-  color: #07C160;
+  color: #059669;
   letter-spacing: 1rpx;
 }
 
@@ -263,7 +273,7 @@
 }
 
 .progress-emerald {
-  background-color: #07C160;
+  background-color: #059669;
 }
 
 .progress-amber {
@@ -300,7 +310,7 @@
 }
 
 .paper-tab-active {
-  background-color: #07C160;
+  background-color: #059669;
 }
 
 .paper-tab-text {
@@ -328,7 +338,7 @@
 }
 
 .type-tab-active {
-  background-color: #07C160;
+  background-color: #059669;
 }
 
 .type-tab-text {
@@ -375,8 +385,8 @@
 .exam-icon-box {
   width: 72rpx;
   height: 72rpx;
-  background-color: rgba(7,193,96,0.1);
-  color: #07C160;
+  background-color: rgba(5,150,105,0.08);
+  color: #059669;
   border-radius: 24rpx;
   display: flex;
   align-items: center;
@@ -385,8 +395,8 @@
 }
 
 .exam-icon-box-green {
-  background-color: rgba(7,193,96,0.1);
-  color: #07C160;
+  background-color: rgba(5,150,105,0.08);
+  color: #059669;
 }
 
 .exam-icon-img {
@@ -433,7 +443,7 @@
 
 .done-badge {
   padding: 8rpx 12rpx;
-  background-color: #10B981;
+  background-color: #059669;
   border-radius: 8rpx;
   margin-top: 12rpx;
   align-self: flex-start;
@@ -505,18 +515,13 @@
 }
 
 .download-btn {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 32rpx;
-  background-color: rgba(99, 102, 241, 0.1);
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  background-color: rgba(7, 193, 96, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.download-icon {
-  font-size: 28rpx;
-  color: #07C160;
 }
 
 /* Load More */
@@ -682,7 +687,7 @@
 }
 
 .rate-high {
-  color: #07C160;
+  color: #059669;
 }
 
 .rate-low {
@@ -1020,4 +1025,53 @@
 
 .text-muted {
   color: rgba(0,0,0,0.4);
+}
+/* PDF 下载进度 */
+.pdf-progress-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-progress-box {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 64rpx;
+  width: 500rpx;
+  text-align: center;
+}
+
+.pdf-progress-title {
+  font-size: 32rpx;
+  color: rgba(0,0,0,0.85);
+  margin-bottom: 32rpx;
+  display: block;
+}
+
+.pdf-progress-track {
+  height: 16rpx;
+  background: #f0f0f0;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.pdf-progress-bar {
+  height: 100%;
+  background: #07C160;
+  border-radius: 8rpx;
+  transition: width 0.2s;
+}
+
+.pdf-progress-text {
+  font-size: 28rpx;
+  color: rgba(0,0,0,0.5);
+  display: block;
 }

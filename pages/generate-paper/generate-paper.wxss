@@ -142,6 +142,37 @@
   color: #fff;
 }
 
+.include-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.include-chip {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 24rpx;
+  border: 2rpx solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.include-chip-selected {
+  background-color: #07C160;
+  border-color: #07C160;
+}
+
+.include-chip-text {
+  font-size: 28rpx;
+  color: rgba(0,0,0,0.6);
+  font-weight: 600;
+}
+
+.include-chip-text-selected {
+  color: #fff;
+  font-weight: 700;
+}
+
 .bottom-bar {
   position: fixed;
   bottom: 0;

@@ -1,6 +1,9 @@
 const examPaperService = require('../../services/examPaper')
 const questionService = require('../../services/question')
 
+// 模块级锁，防止快速重复点击生成多条考卷
+let _generating = false
+
 Page({
   data: {
     title: '',
@@ -9,10 +12,12 @@ Page({
     selectedTopicSet: {},
     difficultyLevel: 1,
     questionCount: 12,
-    generating: false,
+    wrongSelected: false,
+    favoriteSelected: false,
   },
 
   onLoad() {
+    _generating = false
     this.loadTopics()
   },
 
@@ -45,6 +50,14 @@ Page({
     this.setData({ questionCount: e.currentTarget.dataset.count })
   },
 
+  toggleWrong() {
+    this.setData({ wrongSelected: !this.data.wrongSelected })
+  },
+
+  toggleFavorite() {
+    this.setData({ favoriteSelected: !this.data.favoriteSelected })
+  },
+
   onTitleInput(e) {
     let val = e.detail.value || ''
     if (val.length > 50) val = val.slice(0, 50)
@@ -52,26 +65,36 @@ Page({
   },
 
   async generatePaper() {
+    if (_generating) return
+    _generating = true
+    this.setData({ generating: true })
+
     const { title, selectedTopicIds, difficultyLevel, questionCount } = this.data
 
     if (!title.trim()) {
       wx.showToast({ title: '请输入考卷标题', icon: 'none' })
+      _generating = false
+      this.setData({ generating: false })
       return
     }
 
     if (selectedTopicIds.length === 0) {
       wx.showToast({ title: '请至少选择一个专题', icon: 'none' })
+      _generating = false
+      this.setData({ generating: false })
       return
     }
 
-    this.setData({ generating: true })
     try {
+      const { wrongSelected, favoriteSelected } = this.data
       const result = await examPaperService.generatePaper({
         title: title.trim(),
         mode: 'manual',
         topic_ids: selectedTopicIds,
         difficulty_level: difficultyLevel,
         question_count: questionCount,
+        include_wrong: wrongSelected,
+        include_favorite: favoriteSelected,
       })
 
       wx.showToast({ title: '生成成功！', icon: 'success' })
@@ -79,7 +102,7 @@ Page({
     } catch (err) {
       console.error('Generate paper failed:', err)
       wx.showToast({ title: err.errMsg || '生成失败', icon: 'none' })
-    } finally {
+      _generating = false
       this.setData({ generating: false })
     }
   },

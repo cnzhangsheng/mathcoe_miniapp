@@ -923,3 +923,52 @@
 .primary-color {
   color: #07C160;
 }
+/* PDF 下载进度 */
+.pdf-progress-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-progress-box {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 64rpx;
+  width: 500rpx;
+  text-align: center;
+}
+
+.pdf-progress-title {
+  font-size: 32rpx;
+  color: rgba(0,0,0,0.85);
+  margin-bottom: 32rpx;
+  display: block;
+}
+
+.pdf-progress-track {
+  height: 16rpx;
+  background: #f0f0f0;
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.pdf-progress-bar {
+  height: 100%;
+  background: #07C160;
+  border-radius: 8rpx;
+  transition: width 0.2s;
+}
+
+.pdf-progress-text {
+  font-size: 28rpx;
+  color: rgba(0,0,0,0.5);
+  display: block;
+}

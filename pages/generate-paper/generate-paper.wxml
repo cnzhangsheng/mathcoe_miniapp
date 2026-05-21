@@ -65,6 +65,28 @@
       </view>
     </view>
 
+    <!-- Include Wrong & Favorite -->
+    <view class="form-section">
+      <view class="section-label">
+        <text class="label-text text-bold">题目包含</text>
+        <text class="label-hint">（可多选）</text>
+      </view>
+      <view class="include-row">
+        <view
+          class="include-chip {{wrongSelected ? 'include-chip-selected include-chip-wrong' : ''}}"
+          catchtap="toggleWrong"
+        >
+          <text class="include-chip-text {{wrongSelected ? 'include-chip-text-selected' : ''}}">错题</text>
+        </view>
+        <view
+          class="include-chip {{favoriteSelected ? 'include-chip-selected include-chip-favorite' : ''}}"
+          catchtap="toggleFavorite"
+        >
+          <text class="include-chip-text {{favoriteSelected ? 'include-chip-text-selected' : ''}}">收藏</text>
+        </view>
+      </view>
+    </view>
+
     <view style="height: 160rpx;"></view>
   </scroll-view>
 
