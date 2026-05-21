@@ -331,6 +331,12 @@ Page({
     try {
       // 检查服务端是否已生成 PDF
       const status = await examPaperService.checkPdfStatus(paperId)
+      if (!status) {
+        // 考卷不存在（已被删除），从列表中移除
+        const myPapers = this.data.myPapers.filter(p => p.id !== paperId)
+        this.setData({ myPapers })
+        throw new Error('考卷已删除')
+      }
       if (!status.exists) {
         // 未生成，先触发服务端生成
         await examPaperService.generatePdf(paperId)
@@ -356,7 +362,11 @@ Page({
       }
     } catch (err) {
       console.error('downloadPdf error:', err)
-      wx.showToast({ title: '导出失败', icon: 'none' })
+      if (err.message === '考卷已删除') {
+        wx.showToast({ title: '考卷已删除', icon: 'none' })
+      } else {
+        wx.showToast({ title: '导出失败', icon: 'none' })
+      }
     } finally {
       this.setData({ pdfProgress: 0 })
     }

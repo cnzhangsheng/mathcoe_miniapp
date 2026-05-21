@@ -104,6 +104,7 @@ const getDownloadPdfUrl = (examPaperId) => {
   const token = wx.getStorageSync('token') || app.globalData.token
   return `${app.globalData.baseUrl}/exam-papers/${examPaperId}/download-pdf?token=${token}`
 }
+// @deprecated getDownloadPdfUrl adds token to URL, use downloadPdfWithProgress which passes token via header
 
 /**
  * 用户生成考卷
@@ -154,10 +155,13 @@ const deletePaper = (examPaperId) => {
  * @returns {Promise<string>} tempFilePath
  */
 const downloadPdfWithProgress = (examPaperId, onProgress) => {
-  const url = getDownloadPdfUrl(examPaperId)
+  const app = getApp()
+  const token = wx.getStorageSync('token') || app.globalData.token
+  const url = `${app.globalData.baseUrl}/exam-papers/${examPaperId}/download-pdf`
   return new Promise((resolve, reject) => {
     const task = wx.downloadFile({
       url,
+      header: { Authorization: `Bearer ${token}` },
       timeout: 120000,
       success: (res) => {
         if (res.statusCode === 200) {
@@ -188,7 +192,6 @@ module.exports = {
   getExamPaperTests,
   getTestDetail,
   getTestReport,
-  getDownloadPdfUrl,
   downloadPdfWithProgress,
   checkPdfStatus,
   generatePaper,
