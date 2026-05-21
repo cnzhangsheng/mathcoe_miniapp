@@ -1,14 +1,16 @@
 // app.js
-const { IMAGE_BASE_URL } = require('./utils/constants')
+const { BASE_URL, API_BASE_URL, IMAGE_BASE_URL, CONTENT_BASE_URL } = require('./utils/constants')
 
 App({
   globalData: {
     userInfo: null,
     token: null,
-    // baseUrl: 'http://127.0.0.1:8000/api/v1',  // 开发环境（本地调试）
-    baseUrl: 'https://aicoe.cn/api/v1',  // 生产环境（线上部署）
+    BASE_URL,
+    API_BASE_URL,
+    baseUrl: API_BASE_URL,           // 兼容旧代码，指向 API_BASE_URL
     isLoggedIn: false,
     imageBaseUrl: IMAGE_BASE_URL,
+    contentBaseUrl: CONTENT_BASE_URL,
   },
 
   onLaunch() {
@@ -59,7 +61,7 @@ App({
         if (res.code) {
           // 发送 code 到后端换取 token
           wx.request({
-            url: this.globalData.baseUrl + '/auth/wx-login',
+            url: this.globalData.API_BASE_URL + '/auth/wx-login',
             method: 'POST',
             data: { code: res.code },
             success: (loginRes) => {

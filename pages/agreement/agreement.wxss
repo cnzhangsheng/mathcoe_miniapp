@@ -1,0 +1,45 @@
+/* pages/agreement/agreement.wxss - 协议查看页面样式 */
+
+.agreement-container {
+  min-height: 100vh;
+  background-color: #FFFFFF;
+  padding: 32rpx;
+}
+
+.agreement-content {
+  max-width: 700rpx;
+  margin: 0 auto;
+}
+
+.content-title {
+  margin-bottom: 32rpx;
+}
+
+.agreement-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 1.5;
+}
+
+.content-subtitle {
+  margin-top: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.agreement-subtitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 1.5;
+}
+
+.content-paragraph {
+  margin-bottom: 12rpx;
+}
+
+.agreement-paragraph {
+  font-size: 14px;
+  color: #4A4A4A;
+  line-height: 1.8;
+}

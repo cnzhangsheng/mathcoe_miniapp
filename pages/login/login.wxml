@@ -65,10 +65,10 @@
 
     <!-- 微信授权按钮 -->
     <button
-      class="login-btn {{loading ? 'loading' : ''}}"
+      class="login-btn {{loading ? 'loading' : ''}} {{!agreed ? 'disabled' : ''}}"
       open-type="getUserInfo"
       bindgetuserinfo="handleLogin"
-      disabled="{{loading}}"
+      disabled="{{loading || !agreed}}"
     >
       <view class="btn-content flex-row">
         <text class="btn-icon" wx:if="{{!loading}}">📱</text>
@@ -83,10 +83,13 @@
   </view>
 
   <!-- 隐私协议 -->
-  <view class="privacy-section flex-row">
-    <text class="privacy-text text-xs">登录即表示同意</text>
-    <text class="privacy-link text-xs text-bold">《用户协议》</text>
-    <text class="privacy-text text-xs">和</text>
-    <text class="privacy-link text-xs text-bold">《隐私政策》</text>
+  <view class="privacy-section">
+    <view class="privacy-row flex-row">
+      <checkbox class="privacy-checkbox" checked="{{agreed}}" bindchange="onAgreementChange" />
+      <text class="privacy-text text-xs">已阅读并同意</text>
+      <text class="privacy-link text-xs text-bold" bindtap="onTapUserService">《用户服务协议》</text>
+      <text class="privacy-text text-xs">和</text>
+      <text class="privacy-link text-xs text-bold" bindtap="onTapPrivacy">《隐私政策》</text>
+    </view>
   </view>
 </view>

@@ -241,8 +241,20 @@
   bottom: 48rpx;
   left: 0;
   right: 0;
+  display: flex;
   justify-content: center;
-  gap: 8rpx;
+  z-index: 2;
+}
+
+.privacy-row {
+  gap: 4rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8rpx 24rpx;
+  border-radius: 40rpx;
+}
+
+.privacy-checkbox {
+  transform: scale(0.7);
 }
 
 .privacy-text {
@@ -251,6 +263,12 @@
 
 .privacy-link {
   color: #07C160;
+}
+
+/* 登录按钮禁用状态 */
+.login-btn.disabled {
+  background-color: rgba(7, 193, 96, 0.4);
+  box-shadow: none;
 }
 
 /* Utility classes */

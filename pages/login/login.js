@@ -1,6 +1,6 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
-const { IMAGE_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL, CONTENT_BASE_URL } = require('../../utils/constants')
 
 Page({
   data: {
@@ -11,6 +11,7 @@ Page({
     gradeIndex: 0,  // 默认一年级（G1）
     difficultyLevels: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6'],
     difficultyIndex: 0,  // 默认Level 1（根据年级自动计算）
+    agreed: false,  // 隐私协议是否同意
   },
 
   onLoad() {
@@ -138,5 +139,24 @@ Page({
   // 难度等级选择变化
   onDifficultyChange(e) {
     this.setData({ difficultyIndex: parseInt(e.detail.value) })
+  },
+
+  // 隐私协议勾选状态变化
+  onAgreementChange(e) {
+    this.setData({ agreed: !!e.detail.value.length })
+  },
+
+  // 查看用户服务协议
+  onTapUserService() {
+    wx.navigateTo({
+      url: '/pages/webview/webview?url=' + encodeURIComponent(CONTENT_BASE_URL + '/content/user-agreement')
+    })
+  },
+
+  // 查看隐私政策
+  onTapPrivacy() {
+    wx.navigateTo({
+      url: '/pages/webview/webview?url=' + encodeURIComponent(CONTENT_BASE_URL + '/content/privacy-policy')
+    })
   }
 })
