@@ -27,28 +27,28 @@ Page({
   },
 
   // 微信授权登录
-  handleLogin(e) {
+  handleLogin() {
     if (this.data.loading) return
 
-    const userInfo = e.detail.userInfo
-    if (!userInfo) {
+    if (!this.data.agreed) {
       wx.showToast({
-        title: '授权失败',
-        icon: 'error'
+        title: '请先阅读并勾选同意协议和隐私政策',
+        icon: 'none',
+        duration: 2500
       })
       return
     }
 
     this.setData({ loading: true })
-    this.wxLogin(userInfo)
+    this.wxLogin()
   },
 
   // 微信登录
-  wxLogin(userInfo) {
+  wxLogin() {
     wx.login({
       success: (res) => {
         if (res.code) {
-          this.loginWithCode(res.code, userInfo)
+          this.loginWithCode(res.code)
         } else {
           console.error('wx.login failed:', res.errMsg)
           this.setData({ loading: false })
@@ -64,16 +64,12 @@ Page({
   },
 
   // 发送 code 到后端登录
-  loginWithCode(code, userInfo) {
-    // 微信默认昵称"微信用户"不使用，让后端设置默认昵称"数学小达人"
-    const nickname = userInfo.nickName === '微信用户' ? null : userInfo.nickName
+  loginWithCode(code) {
     wx.request({
       url: app.globalData.baseUrl + '/auth/wx-login',
       method: 'POST',
       data: {
         code,
-        nickname,
-        avatar_url: userInfo.avatarUrl,
         grade: "G" + (this.data.gradeIndex + 1),
         difficulty_level: this.data.difficultyIndex + 1
       },
@@ -142,8 +138,8 @@ Page({
   },
 
   // 隐私协议勾选状态变化
-  onAgreementChange(e) {
-    this.setData({ agreed: !!e.detail.value.length })
+  onAgreementChange() {
+    this.setData({ agreed: !this.data.agreed })
   },
 
   // 查看用户服务协议

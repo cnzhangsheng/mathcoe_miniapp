@@ -2,7 +2,6 @@
 const practiceService = require('../../services/practice')
 const { IMAGE_BASE_URL } = require('../../utils/constants')
 
-const discoverService = require('../../services/discover')
 const reviewService = require('../../services/review')
 const { getTopicClass } = require('../../services/topics')
 const { processRichText } = require('../../utils/util')
@@ -21,8 +20,7 @@ Page({
       { value: 'default', label: '默认排序' },
       { value: 'time', label: '最新时间' },
       { value: 'random', label: '随机排序' },
-      { value: 'likes', label: '点赞最多' },
-      { value: 'favorites', label: '收藏最多' },
+            { value: 'favorites', label: '收藏最多' },
       { value: 'wrong_count', label: '易错优先' },
     ],
     showSortPicker: false,
@@ -125,12 +123,10 @@ Page({
         isSubmitted: false,
         correctAnswer: '',
         analysis: { logic: '', tip: '', point: '' },
-        isLiked: false,
         isBookmarked: false,
-        likeCount: 0,
       }))
 
-      // 异步获取第一张卡片的点赞/收藏状态
+      // 异步获取第一张卡片的收藏状态
       this.loadCardStates(0, swiperList)
 
       this.setData({
@@ -145,24 +141,15 @@ Page({
     }
   },
 
-  // 异步加载某张卡片的点赞/收藏状态
+  // 异步加载某张卡片的收藏状态
   async loadCardStates(idx, swiperList) {
     if (!swiperList || idx >= swiperList.length) return
     const card = swiperList[idx]
     if (!card || !card.question) return
 
     try {
-      const likeStatus = await discoverService.getLikeStatus(card.question.id).catch(() => null)
       const isBookmarked = await reviewService.isFavorited(card.question.id).catch(() => false)
-
-      const key = `swiperList[${idx}]`
-      const update = {}
-      if (likeStatus) {
-        update[key + '.isLiked'] = likeStatus.is_liked || false
-        update[key + '.likeCount'] = likeStatus.like_count || 0
-      }
-      update[key + '.isBookmarked'] = isBookmarked
-      this.setData(update)
+      this.setData({ [`swiperList[${idx}].isBookmarked`]: isBookmarked })
     } catch (err) {
       console.error('loadCardStates error:', err)
     }
@@ -286,35 +273,6 @@ Page({
       text = text.replace(/<[^>]+>/g, '').trim()
     }
     return text.trim()
-  },
-
-  // 点赞切换
-  async toggleLike(e) {
-    const idx = e.currentTarget.dataset.index
-    const card = this.data.swiperList[idx]
-    if (!card || !card.question) return
-
-    try {
-      if (card.isLiked) {
-        const result = await discoverService.removeLike(card.question.id)
-        if (result && result.success) {
-          this.setData({
-            [`swiperList[${idx}].isLiked`]: false,
-            [`swiperList[${idx}].likeCount`]: card.likeCount - 1,
-          })
-        }
-      } else {
-        const result = await discoverService.addLike(card.question.id)
-        if (result) {
-          this.setData({
-            [`swiperList[${idx}].isLiked`]: true,
-            [`swiperList[${idx}].likeCount`]: card.likeCount + 1,
-          })
-        }
-      }
-    } catch (err) {
-      console.error('Like failed:', err)
-    }
   },
 
   // 收藏切换

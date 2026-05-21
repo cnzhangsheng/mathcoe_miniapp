@@ -129,7 +129,6 @@ Page({
       explanation: processRichText((question.explanation && question.explanation.text) || question.explanation || '暂无解析'),
     }
 
-    const likeStatus = await discoverService.getLikeStatus(question.id).catch(() => null)
     const isFavorited = await reviewService.isFavorited(question.id).catch(() => false)
 
     return {
@@ -141,9 +140,7 @@ Page({
       questionLevel: question.difficulty_level ? `L${question.difficulty_level}` : '',
       selectedOption: null,
       showAnswer: false,
-      isLiked: likeStatus?.is_liked || false,
       isFavorited,
-      likeCount: likeStatus?.like_count || 0,
     }
   },
 
@@ -198,29 +195,6 @@ Page({
     // 答错加到错题本
     if (!isCorrect) {
       reviewService.addWrongQuestion(item.question.id).catch(() => {})
-    }
-  },
-
-  // 点赞
-  async toggleLike(e) {
-    const index = e.currentTarget.dataset.index
-    const item = this.data.swiperList[index]
-    if (!item) return
-
-    try {
-      if (item.isLiked) {
-        const result = await discoverService.removeLike(item.question.id)
-        if (result && result.success) {
-          this.setData({ ['swiperList[' + index + '].isLiked']: false, ['swiperList[' + index + '].likeCount']: item.likeCount - 1 })
-        }
-      } else {
-        const result = await discoverService.addLike(item.question.id)
-        if (result) {
-          this.setData({ ['swiperList[' + index + '].isLiked']: true, ['swiperList[' + index + '].likeCount']: item.likeCount + 1 })
-        }
-      }
-    } catch (err) {
-      console.error('Like failed:', err)
     }
   },
 

@@ -63,33 +63,24 @@
       </picker>
     </view>
 
-    <!-- 微信授权按钮 -->
+    <!-- 登录按钮 -->
     <button
-      class="login-btn {{loading ? 'loading' : ''}} {{!agreed ? 'disabled' : ''}}"
-      open-type="getUserInfo"
-      bindgetuserinfo="handleLogin"
-      disabled="{{loading || !agreed}}"
+      class="login-btn {{loading ? 'loading' : ''}}"
+      bindtap="handleLogin"
+      disabled="{{loading}}"
     >
       <view class="btn-content flex-row">
-        <text class="btn-icon" wx:if="{{!loading}}">📱</text>
-        <text class="btn-text text-bold">{{loading ? '登录中...' : '微信授权登录'}}</text>
+        <text class="btn-text text-bold">{{loading ? '登录中...' : '登录'}}</text>
       </view>
     </button>
 
-    <!-- 提示 -->
-    <view class="tips-section">
-      <text class="tip-text text-xs">首次登录将自动创建账号</text>
-    </view>
-  </view>
-
-  <!-- 隐私协议 -->
-  <view class="privacy-section">
-    <view class="privacy-row flex-row">
-      <checkbox class="privacy-checkbox" checked="{{agreed}}" bindchange="onAgreementChange" />
-      <text class="privacy-text text-xs">已阅读并同意</text>
-      <text class="privacy-link text-xs text-bold" bindtap="onTapUserService">《用户服务协议》</text>
-      <text class="privacy-text text-xs">和</text>
-      <text class="privacy-link text-xs text-bold" bindtap="onTapPrivacy">《隐私政策》</text>
+    <!-- 隐私协议 -->
+    <view class="privacy-section">
+      <checkbox class="privacy-checkbox" checked="{{agreed}}" bindtap="onAgreementChange" />
+      <text class="privacy-text">已阅读并同意</text>
+      <text class="privacy-link" bindtap="onTapUserService">《用户服务协议》</text>
+      <text class="privacy-text">和</text>
+      <text class="privacy-link" bindtap="onTapPrivacy">《隐私政策》</text>
     </view>
   </view>
 </view>

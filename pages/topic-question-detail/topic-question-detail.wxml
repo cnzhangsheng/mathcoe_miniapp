@@ -102,12 +102,8 @@
             </view>
           </view>
 
-          <!-- Action Bar: Like + Bookmark + Share -->
+          <!-- Action Bar: Bookmark + Share -->
           <view class="action-icons-right">
-            <view class="action-icon-btn {{card.isLiked ? 'liked' : ''}}" bindtap="toggleLike" data-index="{{idx}}">
-              <image class="action-icon-img" src="{{card.isLiked ? (imageBaseUrl + 'icons/icon_like_fill.png') : (imageBaseUrl + 'icons/icon_like.png')}}" mode="aspectFit"></image>
-              <text class="action-count">{{card.likeCount || 0}}</text>
-            </view>
             <view class="action-icon-btn {{card.isBookmarked ? 'bookmarked' : ''}}" bindtap="toggleBookmark" data-index="{{idx}}">
               <image class="action-icon-img" src="{{card.isBookmarked ? (imageBaseUrl + 'icons/icon_bookmark_fill.png') : (imageBaseUrl + 'icons/icon_bookmark.png')}}" mode="aspectFit"></image>
               <text class="action-text">{{card.isBookmarked ? '已收藏' : '收藏'}}</text>

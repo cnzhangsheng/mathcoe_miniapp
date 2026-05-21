@@ -319,10 +319,6 @@ page {
   background-color: rgba(0, 0, 0, 0.03);
 }
 
-.action-icon-btn.liked {
-  background-color: rgba(99, 102, 241, 0.1);
-}
-
 .action-icon-btn.bookmarked {
   background-color: rgba(251, 191, 36, 0.1);
 }

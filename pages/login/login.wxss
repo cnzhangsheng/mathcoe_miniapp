@@ -237,24 +237,16 @@
 
 /* 隐私协议 */
 .privacy-section {
-  position: fixed;
-  bottom: 48rpx;
-  left: 0;
-  right: 0;
   display: flex;
+  align-items: center;
   justify-content: center;
-  z-index: 2;
-}
-
-.privacy-row {
-  gap: 4rpx;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 8rpx 24rpx;
-  border-radius: 40rpx;
+  gap: 6rpx;
+  margin-top: 32rpx;
+  font-size: 13px;
 }
 
 .privacy-checkbox {
-  transform: scale(0.7);
+  transform: scale(0.8);
 }
 
 .privacy-text {
