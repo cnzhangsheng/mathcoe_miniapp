@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/login/login",
-    "pages/agreement/agreement",
     "pages/index/index",
     "pages/discover/discover",
     "pages/practice/practice",
