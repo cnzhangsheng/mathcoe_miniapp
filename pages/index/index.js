@@ -133,6 +133,7 @@ Page({
             return {
               ...paper,
               levelLabel: `Level ${paper.difficulty_level}`,
+              typeLabel: '自编卷',
             }
           })
           cache.set('myPapers', formattedPapers, 120000) // 缓存 2 分钟
@@ -315,9 +316,9 @@ Page({
   // 获取考卷类型标签
   getPaperTypeLabel(type) {
     const labels = {
-      daily: '日常练习',
+      daily: '练习卷',
       mock: '模拟卷',
-      topic: '专题训练',
+      topic: '专题卷',
       past: '真题卷'
     }
     return labels[type] || '练习'

@@ -380,6 +380,17 @@
 
 .exam-left {
   margin-right: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.exam-left-label {
+  font-size: 22rpx;
+  color: rgba(0,0,0,0.5);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .exam-icon-box {
@@ -428,6 +439,17 @@
 .level-text {
   color: #fff;
   font-size: 20rpx;
+}
+
+.type-badge {
+  padding: 6rpx 14rpx;
+  border-radius: 8rpx;
+  background-color: rgba(0,0,0,0.06);
+}
+
+.type-badge-text {
+  color: rgba(0,0,0,0.5);
+  font-weight: 500;
 }
 
 .new-badge {

@@ -210,6 +210,7 @@
               <view class="exam-icon-box exam-icon-box-green">
                 <image class="exam-icon-img" src="{{imageBaseUrl + 'icons/icon-exam-custom.png'}}" mode="aspectFit"></image>
               </view>
+              <text class="exam-left-label">{{item.typeLabel}}</text>
             </view>
             <view class="exam-middle">
               <view class="exam-top flex-row">

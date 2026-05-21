@@ -30,9 +30,9 @@ Page({
     selectedPaperType: '',
     paperTypeTabs: [
       { value: '', label: '全部' },
-      { value: 'daily', label: '日常练习' },
+      { value: 'daily', label: '练习卷' },
       { value: 'mock', label: '模拟卷' },
-      { value: 'topic', label: '专题训练' },
+      { value: 'topic', label: '专题卷' },
       { value: 'past', label: '真题卷' },
     ],
 
@@ -50,11 +50,11 @@ Page({
     pdfProgress: 0,
 
     paperTypes: {
-      daily: { label: '日常练习', icon: IMAGE_BASE_URL + 'icons/icon-exam-daily.png', color: 'emerald' },
+      daily: { label: '练习卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-daily.png', color: 'emerald' },
       mock: { label: '模拟卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-sim.png', color: 'amber' },
-      topic: { label: '专题训练', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'purple' },
+      topic: { label: '专题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'purple' },
       past: { label: '真题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-past.png', color: 'blue' },
-      custom: { label: '我的考卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'green' }
+      custom: { label: '自编卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'green' }
     }
   },
 
@@ -286,7 +286,7 @@ Page({
       if (result && result.items) {
         const papers = result.items.map(paper => ({
           ...paper,
-          typeLabel: '我的考卷',
+          typeLabel: (this.data.paperTypes[paper.paper_type] || {}).label || '自编卷',
           typeIcon: IMAGE_BASE_URL + 'icons/icon-exam-custom.png',
           typeColor: 'green',
           duration: 75,
