@@ -39,7 +39,11 @@ Page({
     dailyGoal: 12,
     showGoalPicker: false,
     showGradePicker: false,
-    showDifficultyPicker: false
+    showDifficultyPicker: false,
+
+    // 昵称编辑
+    showNicknameEdit: false,
+    nicknameInput: ''
   },
 
   onLoad() {
@@ -177,6 +181,45 @@ Page({
         app.globalData.userInfo.difficulty_level = level
       }
       wx.showToast({ title: '已更新', icon: 'success' })
+    } catch (err) {
+      wx.showToast({ title: '更新失败', icon: 'none' })
+    }
+  },
+
+  // ========== 昵称编辑 ==========
+
+  openNicknameEdit() {
+    this.setData({
+      showNicknameEdit: true,
+      nicknameInput: this.data.userInfo?.nickname || ''
+    })
+  },
+
+  closeNicknameEdit() {
+    this.setData({ showNicknameEdit: false })
+  },
+
+  onNicknameInput(e) {
+    this.setData({ nicknameInput: e.detail.value })
+  },
+
+  async saveNickname() {
+    const nickname = this.data.nicknameInput.trim()
+    if (!nickname) {
+      wx.showToast({ title: '昵称不能为空', icon: 'none' })
+      return
+    }
+
+    try {
+      await userService.updateUserInfo({ nickname })
+      this.setData({
+        'userInfo.nickname': nickname,
+        showNicknameEdit: false
+      })
+      if (app.globalData.userInfo) {
+        app.globalData.userInfo.nickname = nickname
+      }
+      wx.showToast({ title: '昵称已更新', icon: 'success' })
     } catch (err) {
       wx.showToast({ title: '更新失败', icon: 'none' })
     }

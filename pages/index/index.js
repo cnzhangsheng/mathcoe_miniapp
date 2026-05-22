@@ -63,6 +63,8 @@ Page({
     this.loadBanners()
 
     if (this.data.isLoggedIn) {
+      // 先同步全局数据（个人页修改昵称后立即生效）
+      this.syncGlobalUserInfo()
       this.loadData()
     }
   },
@@ -99,6 +101,15 @@ Page({
     // onShow 中会调用 loadData() 加载完整数据
   },
 
+  // 同步全局用户数据到页面（确保个人页的修改即时生效）
+  syncGlobalUserInfo() {
+    const globalUser = app.globalData.userInfo
+    if (globalUser && globalUser.nickname) {
+      const current = this.data.userInfo || {}
+      this.setData({ userInfo: { ...current, ...globalUser } })
+    }
+  },
+
   // 加载所有数据
   async loadData() {
     // 优先显示缓存数据
@@ -125,6 +136,10 @@ Page({
           userInfo,
           dailyGoal: userInfo.daily_goal || 12
         })
+        // 同步到全局数据，保持各页一致
+        if (app.globalData.userInfo) {
+          app.globalData.userInfo = { ...app.globalData.userInfo, ...userInfo }
+        }
         // 同步保存到本地
         wx.setStorageSync('dailyGoal', userInfo.daily_goal || 12)
       }

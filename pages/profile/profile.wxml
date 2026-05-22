@@ -18,8 +18,11 @@
         <view class="avatar-wrapper">
           <image class="user-avatar" src="{{imageBaseUrl + 'default-avatar.png'}}" mode="aspectFill"></image>
         </view>
-        <view class="user-info">
-          <text class="user-name text-bold">{{userInfo.nickname || '数学小达人'}}</text>
+        <view class="user-info" bindtap="openNicknameEdit">
+          <view class="user-name-row flex-row">
+            <text class="user-name text-bold">{{userInfo.nickname || '数学小达人'}}</text>
+            <text class="user-name-arrow">›</text>
+          </view>
         </view>
       </view>
     </view>
@@ -190,6 +193,31 @@
             <text class="option-text text-bold">{{item.label}}</text>
           </view>
         </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 修改昵称弹窗 -->
+  <view wx:if="{{showNicknameEdit}}" class="picker-modal">
+    <view class="picker-mask" bindtap="closeNicknameEdit"></view>
+    <view class="picker-content">
+      <view class="picker-header flex-between">
+        <text class="picker-title text-bold">修改昵称</text>
+        <view class="picker-close" bindtap="closeNicknameEdit">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="nickname-edit-body">
+        <input class="nickname-input" type="text" placeholder="输入你的昵称" value="{{nicknameInput}}" maxlength="20" bindinput="onNicknameInput" />
+        <view class="nickname-count text-small text-muted">{{nicknameInput.length}}/20</view>
+      </view>
+      <view class="nickname-edit-actions">
+        <view class="nickname-btn nickname-btn-cancel" bindtap="closeNicknameEdit">
+          <text class="nickname-btn-text">取消</text>
+        </view>
+        <view class="nickname-btn nickname-btn-save" bindtap="saveNickname">
+          <text class="nickname-btn-text text-bold">保存</text>
+        </view>
       </view>
     </view>
   </view>

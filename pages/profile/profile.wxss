@@ -75,6 +75,16 @@
   color: rgba(0, 0, 0, 0.9);
 }
 
+.user-name-row {
+  gap: 12rpx;
+}
+
+.user-name-arrow {
+  font-size: 36rpx;
+  color: rgba(0, 0, 0, 0.2);
+  line-height: 1;
+}
+
 .streak-row {
   display: flex;
   align-items: center;
@@ -334,6 +344,63 @@
 .picker-option.active .option-text {
   color: #07C160;
 }
+
+/* Nickname Edit Modal */
+.nickname-edit-body {
+  padding: 16rpx 0;
+}
+
+.nickname-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 16rpx;
+  background-color: #F5F5F5;
+  font-size: 30rpx;
+  color: rgba(0, 0, 0, 0.85);
+  box-sizing: border-box;
+}
+
+.nickname-count {
+  text-align: right;
+  padding: 8rpx 8rpx 0 0;
+}
+
+.nickname-edit-actions {
+  display: flex;
+  gap: 20rpx;
+  padding-top: 24rpx;
+}
+
+.nickname-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nickname-btn-cancel {
+  background-color: #F5F5F5;
+}
+
+.nickname-btn-save {
+  background-color: #07C160;
+}
+
+.nickname-btn-text {
+  font-size: 30rpx;
+}
+
+.nickname-btn-cancel .nickname-btn-text {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.nickname-btn-save .nickname-btn-text {
+  color: #fff;
+}
+
 
 /* Utility Classes */
 .card {
