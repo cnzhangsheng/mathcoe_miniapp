@@ -1,6 +1,6 @@
 // pages/topic-question-detail/topic-question-detail.js - 100%复刻 kangaroo-math-brain TopicDetail.tsx
 const practiceService = require('../../services/practice')
-const { IMAGE_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
 
 const reviewService = require('../../services/review')
 const { getTopicClass } = require('../../services/topics')
@@ -117,7 +117,7 @@ Page({
         question: q,
         questionContentHtml: this.extractContentHtml(q),
         questionTypeText: this.getQuestionTypeText(q),
-        questionLevel: q.difficulty_level ? `L${q.difficulty_level}` : '',
+        questionLevel: q.difficulty_level ? formatDifficulty(q.difficulty_level) : '',
         options: this.formatOptions(q.options),
         selectedOption: null,
         isSubmitted: false,
@@ -248,7 +248,7 @@ Page({
       [`swiperList[${idx}].analysis`]: {
         logic: explanationText || '暂无解析',
         tip: '',
-        point: `${question.difficulty_level ? 'L' + question.difficulty_level : '基础'} ${question.question_type || '题型'}`,
+        point: `${question.difficulty_level ? formatDifficulty(question.difficulty_level) : '基础'} ${question.question_type || '题型'}`,
       },
     })
 

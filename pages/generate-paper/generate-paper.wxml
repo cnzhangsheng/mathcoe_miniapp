@@ -36,13 +36,13 @@
       </view>
       <view class="difficulty-row">
         <view
-          wx:for="{{[1,2,3,4,5,6]}}"
-          wx:key="*this"
-          class="difficulty-item {{difficultyLevel === item ? 'difficulty-item-active' : ''}}"
-          data-level="{{item}}"
+          wx:for="{{difficultyOptions}}"
+          wx:key="value"
+          class="difficulty-item {{difficultyLevel === item.value ? 'difficulty-item-active' : ''}}"
+          data-level="{{item.value}}"
           bindtap="selectDifficulty"
         >
-          <text class="difficulty-text {{difficultyLevel === item ? 'difficulty-text-active' : ''}}">L{{item}}</text>
+          <text class="difficulty-text {{difficultyLevel === item.value ? 'difficulty-text-active' : ''}}">{{item.label}}</text>
         </view>
       </view>
     </view>

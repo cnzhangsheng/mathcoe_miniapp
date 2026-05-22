@@ -1,6 +1,6 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
-const { IMAGE_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL, DIFFICULTY_LABELS, DIFFICULTY_VALUES } = require('../../utils/constants')
 
 Page({
   data: {
@@ -9,7 +9,7 @@ Page({
     imageBaseUrl: IMAGE_BASE_URL,
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
     gradeIndex: 0,  // 默认一年级（G1）
-    difficultyLevels: ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6'],
+    difficultyLevels: DIFFICULTY_LABELS,
     difficultyIndex: 0,  // 默认Level 1（根据年级自动计算）
     agreed: false,  // 隐私协议是否同意
   },
@@ -71,7 +71,7 @@ Page({
       data: {
         code,
         grade: "G" + (this.data.gradeIndex + 1),
-        difficulty_level: this.data.difficultyIndex + 1
+        difficulty_level: DIFFICULTY_VALUES[this.data.difficultyIndex]
       },
       success: (res) => {
         if (res.statusCode === 200 && res.data && res.data.token) {

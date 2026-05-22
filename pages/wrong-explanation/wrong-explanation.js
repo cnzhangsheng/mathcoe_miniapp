@@ -1,5 +1,6 @@
 // pages/wrong-explanation/wrong-explanation.js - 错题解析页面
 const { processRichText } = require('../../utils/util')
+const { formatDifficulty } = require('../../utils/constants')
 const { getTopicClass } = require('../../services/topics')
 const reviewService = require('../../services/review')
 
@@ -40,7 +41,7 @@ Page({
       userAnswer: question.user_answer || '',
       isCorrect: question.user_answer === question.answer,
       explanation: processRichText(question.explanation || ''),
-      questionLevel: question.level ? `L${question.level}` : ''
+      questionLevel: question.level ? formatDifficulty(question.level) : ''
     })
   },
 

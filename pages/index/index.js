@@ -1,6 +1,6 @@
 // pages/index/index.js - 新首页逻辑
 const app = getApp()
-const { IMAGE_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
 const userService = require('../../services/user')
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
@@ -135,7 +135,7 @@ Page({
           const formattedPapers = myPapersResult.items.map(paper => {
             return {
               ...paper,
-              levelLabel: `Level ${paper.difficulty_level}`,
+              levelLabel: formatDifficulty(paper.difficulty_level),
               typeLabel: '自编卷',
             }
           })

@@ -53,7 +53,7 @@
                     <view class="topic-badge {{item.topicClass}}">
                       <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
                     </view>
-                    <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">L{{item.level}}</text>
+                    <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">{{item.level}}</text>
                     <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
                   </view>
                   <view class="remove-btn" catchtap="removeWrong" data-id="{{item.question_id}}">
@@ -113,7 +113,7 @@
                     <view class="topic-badge {{item.topicClass}}">
                       <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
                     </view>
-                    <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">L{{item.level}}</text>
+                    <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">{{item.level}}</text>
                     <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
                   </view>
                   <view class="remove-btn" catchtap="removeFavorite" data-id="{{item.question_id}}">

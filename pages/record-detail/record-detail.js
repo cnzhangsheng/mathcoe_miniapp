@@ -1,5 +1,6 @@
 // pages/record-detail/record-detail.js - 答题记录题目详情
 const { processRichText } = require('../../utils/util')
+const { formatDifficulty } = require('../../utils/constants')
 const app = getApp()
 const discoverService = require('../../services/discover')
 
@@ -79,7 +80,7 @@ Page({
           question: formattedQuestion,
           correctAnswer: question.answer,
           questionType,
-          questionLevel: question.difficulty_level ? `L${question.difficulty_level}` : '',
+          questionLevel: question.difficulty_level ? formatDifficulty(question.difficulty_level) : '',
         })
       } else {
         this.setData({ loading: false })

@@ -1,5 +1,6 @@
 const examPaperService = require('../../services/examPaper')
 const questionService = require('../../services/question')
+const { DIFFICULTY_VALUES, DIFFICULTY_LEVELS } = require('../../utils/constants')
 
 // 模块级锁，防止快速重复点击生成多条考卷
 let _generating = false
@@ -11,6 +12,8 @@ Page({
     selectedTopicIds: [],
     selectedTopicSet: {},
     difficultyLevel: 1,
+    difficultyValues: DIFFICULTY_VALUES,
+    difficultyOptions: DIFFICULTY_LEVELS,
     questionCount: 12,
     wrongSelected: false,
     favoriteSelected: false,

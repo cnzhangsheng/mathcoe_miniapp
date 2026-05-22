@@ -1,4 +1,5 @@
 const examPaperService = require('../../services/examPaper')
+const { formatDifficulty } = require('../../utils/constants')
 
 Page({
   data: {
@@ -19,7 +20,8 @@ Page({
     this.setData({ loading: true })
     try {
       const res = await examPaperService.getMyPapers(this.data.page, this.data.pageSize)
-      const papers = res.items || []
+      let papers = res.items || []
+      papers = papers.map(p => ({ ...p, difficultyLabel: p.difficulty_level ? formatDifficulty(p.difficulty_level) : '' }))
       this.setData({
         papers: this.data.page === 1 ? papers : [...this.data.papers, ...papers],
         total: res.total || 0,

@@ -1,5 +1,6 @@
 // pages/favorite-practice/favorite-practice.js - 收藏练习逻辑
 const app = getApp()
+const { formatDifficulty } = require('../../utils/constants')
 const reviewService = require('../../services/review')
 const { getTopicClass } = require('../../services/topics')
 
@@ -102,7 +103,7 @@ Page({
       questionType,
       topicTitle: question.topicTitle || '',
       topicClass: question.topicClass || '',
-      questionLevel: question.difficultyLevel ? `L${question.difficultyLevel}` : ''
+      questionLevel: question.difficultyLevel ? formatDifficulty(question.difficultyLevel) : ''
     })
   },
 

@@ -1,6 +1,6 @@
 // pages/profile/profile.js - 我的页面（设置页面）
 const app = getApp()
-const { IMAGE_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL, DIFFICULTY_LEVELS } = require('../../utils/constants')
 const userService = require('../../services/user')
 
 function formatNum(n) {
@@ -28,14 +28,7 @@ Page({
     gradeIndex: 2,
 
     // 难度等级
-    difficultyLabels: [
-      { value: 1, label: 'Level 1' },
-      { value: 2, label: 'Level 2' },
-      { value: 3, label: 'Level 3' },
-      { value: 4, label: 'Level 4' },
-      { value: 5, label: 'Level 5' },
-      { value: 6, label: 'Level 6' }
-    ],
+    difficultyLabels: DIFFICULTY_LEVELS,
     difficultyLevel: 1,
 
     // 学习统计

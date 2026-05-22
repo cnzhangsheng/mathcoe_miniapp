@@ -94,7 +94,7 @@
             <view class="exam-middle">
               <view class="exam-top flex-row">
                 <view class="level-badge level-badge-green">
-                  <text class="level-text text-bold">Level {{item.difficulty_level}}</text>
+                  <text class="level-text text-bold">{{item.difficultyLabel}}</text>
                 </view>
                 <view class="new-badge" wx:if="{{item.is_new}}">
                   <text class="new-text text-bold">New</text>
@@ -135,7 +135,7 @@
             <view class="exam-middle">
               <view class="exam-top flex-row">
                 <view class="level-badge">
-                  <text class="level-text text-bold">Level {{item.difficulty_level}}</text>
+                  <text class="level-text text-bold">{{item.difficultyLabel}}</text>
                 </view>
                 <view class="new-badge" wx:if="{{item.is_new}}">
                   <text class="new-text text-bold">New</text>

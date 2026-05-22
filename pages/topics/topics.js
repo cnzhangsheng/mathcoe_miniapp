@@ -3,7 +3,7 @@ const userService = require('../../services/user')
 const questionService = require('../../services/question')
 const examPaperService = require('../../services/examPaper')
 const cache = require('../../services/cache')
-const { IMAGE_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
 
 Page({
   data: {
@@ -239,6 +239,7 @@ Page({
             typeLabel: typeInfo.label,
             typeIcon: typeInfo.icon,
             typeColor: typeInfo.color,
+            difficultyLabel: paper.difficulty_level ? formatDifficulty(paper.difficulty_level) : '',
             duration: 75
           }
         })

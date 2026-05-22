@@ -26,7 +26,7 @@
       <view class="paper-middle">
         <text class="paper-title text-bold">{{item.title}}</text>
         <view class="paper-meta-row">
-          <text class="paper-meta">Level {{item.difficulty_level}}</text>
+          <text class="paper-meta">{{item.difficultyLabel}}</text>
           <text class="paper-meta">{{item.total_questions}}题</text>
         </view>
         <view class="paper-status" wx:if="{{item.user_completed}}">
