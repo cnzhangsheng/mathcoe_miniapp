@@ -45,7 +45,7 @@ Page({
     loadingMyPapers: false,
 
     // AI学习洞察数据
-    insightData: null,
+    insightData: { weakest_topic_title: '', progress_gain: 0, analysis_base: 0 },
 
     pdfProgress: 0,
 
@@ -136,7 +136,7 @@ Page({
         userService.getUserInsight().catch(() => null),
       ])
 
-      if (insight && insight.analysis_base > 0) {
+      if (insight) {
         this.setData({ insightData: insight })
       }
 

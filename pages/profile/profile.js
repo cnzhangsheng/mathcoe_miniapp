@@ -3,6 +3,12 @@ const app = getApp()
 const { IMAGE_BASE_URL } = require('../../utils/constants')
 const userService = require('../../services/user')
 
+function formatNum(n) {
+  if (!n) return '0'
+  if (n >= 10000) return (n / 10000).toFixed(1) + '万'
+  return String(n)
+}
+
 Page({
   data: {
     loading: true,
@@ -31,6 +37,10 @@ Page({
       { value: 6, label: 'Level 6' }
     ],
     difficultyLevel: 1,
+
+    // 学习统计
+    stats: null,
+    statsDisplay: { total: '-', rate: '-', month_total: '-', correct_wrong: '-/-', total_wrong: '-', fav: '-' },
 
     // 设置
     dailyGoal: 12,
@@ -65,6 +75,21 @@ Page({
           streakDays: userInfo.streak_days || 0,
           dailyGoal: userInfo.daily_goal || 12,
           difficultyLevel: userInfo.difficulty_level || 1
+        })
+      }
+
+      // 加载学习统计
+      const stats = await userService.getUserStats().catch(() => null)
+      if (stats) {
+        const s = userInfo?.streak_days || 0
+        this.setData({
+          stats,
+          'statsDisplay.total': formatNum(stats.total_questions),
+          'statsDisplay.rate': stats.correct_rate + '%',
+          'statsDisplay.month_total': formatNum(stats.month_total_questions),
+          'statsDisplay.correct_wrong': formatNum(stats.correct_count) + '/' + formatNum(stats.wrong_count),
+          'statsDisplay.total_wrong': formatNum(stats.total_wrong_count),
+          'statsDisplay.fav': formatNum(stats.favorite_count),
         })
       }
 
@@ -167,6 +192,11 @@ Page({
   // 关于页面
   goToAbout() {
     wx.navigateTo({ url: '/pages/about/about' })
+  },
+
+  // 意见反馈
+  goToFeedback() {
+    wx.navigateTo({ url: '/pages/feedback/feedback' })
   },
 
   // 答题记录

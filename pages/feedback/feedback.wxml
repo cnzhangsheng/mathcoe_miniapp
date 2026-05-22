@@ -1,0 +1,44 @@
+<!--pages/feedback/feedback.wxml-->
+<view class="feedback-page">
+  <view class="form-card card">
+    <view class="form-header">
+      <view class="form-icon-box">
+        <text>💬</text>
+      </view>
+      <text class="form-title text-bold">告诉我们你的想法</text>
+      <text class="form-sub text-small text-muted">你的建议是我们进步的动力</text>
+    </view>
+
+    <view class="form-body">
+      <view class="form-group">
+        <text class="form-label text-bold">反馈内容 <text class="required">*</text></text>
+        <textarea
+          class="form-textarea"
+          placeholder="请详细描述你的问题或建议..."
+          value="{{content}}"
+          bindinput="onContentInput"
+          maxlength="{{500}}"
+          auto-height
+        />
+        <text class="form-count text-small text-muted">{{content.length}}/500</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label text-bold">联系方式</text>
+        <input
+          class="form-input"
+          placeholder="微信号 / 手机号（选填）"
+          value="{{contact}}"
+          bindinput="onContactInput"
+          maxlength="{{100}}"
+        />
+      </view>
+    </view>
+
+    <view class="form-actions">
+      <button class="submit-btn" bindtap="handleSubmit" loading="{{submitting}}" disabled="{{submitting}}">
+        {{submitting ? '提交中...' : '提交反馈'}}
+      </button>
+    </view>
+  </view>
+</view>

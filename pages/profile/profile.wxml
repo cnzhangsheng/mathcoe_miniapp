@@ -24,6 +24,32 @@
       </view>
     </view>
 
+    <!-- 学习数据 -->
+    <view class="stats-card card">
+      <view class="stats-header">
+        <text class="stats-title text-bold">📊 学习数据</text>
+      </view>
+      <view class="stats-grid">
+        <view class="stats-item">
+          <text class="stats-value text-bold">{{statsDisplay.total}}</text>
+          <text class="stats-label text-small">本周答题</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-value text-bold">{{statsDisplay.rate}}</text>
+          <text class="stats-label text-small">正确率</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-value text-bold">{{statsDisplay.month_total}}</text>
+          <text class="stats-label text-small">本月答题</text>
+        </view>
+      </view>
+      <view class="stats-sub-row">
+        <text class="stats-sub-item">正确/错题 <text class="stats-sub-val">{{statsDisplay.correct_wrong}}</text></text>
+        <text class="stats-sub-item">收藏 <text class="stats-sub-val">{{statsDisplay.fav}}</text></text>
+        <text class="stats-sub-item">累计错题 <text class="stats-sub-val">{{statsDisplay.total_wrong}}</text></text>
+      </view>
+    </view>
+
     <!-- 学习设置 -->
     <view class="section-card card">
       <view class="section-header">
@@ -78,20 +104,13 @@
           <text class="menu-arrow">›</text>
         </view>
       </view>
-    </view>
 
-    <!-- 系统设置 -->
-    <view class="section-card card">
-      <view class="section-header">
-        <text class="section-title text-bold">系统设置</text>
-      </view>
-
-      <view class="menu-item" bindtap="clearCache">
+      <view class="menu-item" bindtap="goToFeedback">
         <view class="menu-left flex-row">
-          <view class="menu-icon-box blue-bg">
-            <text class="menu-icon">🗑️</text>
+          <view class="menu-icon-box gray-bg">
+            <text class="menu-icon">💬</text>
           </view>
-          <text class="menu-text">清除缓存</text>
+          <text class="menu-text">意见反馈</text>
         </view>
         <text class="menu-arrow">›</text>
       </view>
@@ -102,11 +121,7 @@
       <text class="logout-text text-bold">退出登录</text>
     </view>
 
-    <!-- 版本信息 -->
-    <view class="version-info">
-      <text class="version-text text-small text-muted">版本 1.0.0</text>
-    </view>
-  </block>
+    </block>
 
   <!-- 每日目标选择弹窗 -->
   <view wx:if="{{showGoalPicker}}" class="picker-modal">

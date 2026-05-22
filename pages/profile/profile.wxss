@@ -89,6 +89,74 @@
   color: #DC2626;
 }
 
+/* Stats Card */
+.stats-card {
+  border-radius: 32rpx;
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  padding: 28rpx 32rpx;
+}
+
+.stats-header {
+  margin-bottom: 24rpx;
+}
+
+.stats-title {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.stats-grid {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.stats-item {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.stats-item + .stats-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rpx;
+  height: 48rpx;
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.stats-value {
+  font-size: 40rpx;
+  color: rgba(0, 0, 0, 0.9);
+  margin-bottom: 6rpx;
+}
+
+.stats-label {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.stats-sub-row {
+  display: flex;
+  justify-content: center;
+  gap: 32rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.stats-sub-item {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.stats-sub-val {
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 600;
+}
+
 /* Section Card */
 .section-card {
   border-radius: 32rpx;

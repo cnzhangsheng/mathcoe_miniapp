@@ -59,6 +59,9 @@ Page({
   },
 
   onShow() {
+    // Banner 无需登录，无条件加载
+    this.loadBanners()
+
     if (this.data.isLoggedIn) {
       this.loadData()
     }
@@ -166,9 +169,6 @@ Page({
 
       // 加载统计数据
       this.loadStats()
-
-      // 加载 Banner
-      this.loadBanners()
 
       this.setData({ loading: false })
     } catch (err) {

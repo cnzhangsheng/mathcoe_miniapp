@@ -7,7 +7,7 @@
 
   <block wx:if="{{!loading}}">
     <!-- AI Mastery Insight -->
-    <view class="insight-card" wx:if="{{insightData}}">
+    <view class="insight-card">
       <view class="insight-decorator"></view>
       <view class="insight-content">
         <view class="insight-header flex-row">
@@ -17,14 +17,15 @@
           <text class="insight-title text-small text-bold">AI 学习洞察</text>
         </view>
         <view class="insight-message">
-          <text class="text-bold">你在 <text class="highlight">{{insightData.weakest_topic_title}}</text> 模块表现略显吃力，建议本周重点突破。</text>
+          <text wx:if="{{insightData.analysis_base > 0}}" class="text-bold">你在 <text class="highlight">{{insightData.weakest_topic_title}}</text> 模块表现略显吃力，建议本周重点突破。</text>
+          <text wx:else class="text-bold">继续练习更多题目，AI 将为你分析薄弱环节。</text>
         </view>
         <view class="insight-footer flex-row">
-          <view class="insight-badge">
+          <view class="insight-badge" wx:if="{{insightData.analysis_base > 0}}">
             <text class="badge-icon">📈</text>
             <text class="badge-text text-small text-bold">进度提升 {{insightData.progress_gain}}%</text>
           </view>
-          <text class="insight-sub text-small">基于最近 {{insightData.analysis_base}} 道练习分析</text>
+          <text class="insight-sub text-small">基于最近 {{insightData.analysis_base > 0 ? insightData.analysis_base : '0'}} 道练习分析</text>
         </view>
       </view>
     </view>

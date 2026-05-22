@@ -1,6 +1,6 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
-const { IMAGE_BASE_URL, CONTENT_BASE_URL } = require('../../utils/constants')
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 
 Page({
   data: {
@@ -145,14 +145,14 @@ Page({
   // 查看用户服务协议
   onTapUserService() {
     wx.navigateTo({
-      url: '/pages/webview/webview?url=' + encodeURIComponent(CONTENT_BASE_URL + '/content/user-agreement')
+      url: '/pages/content/content?slug=user-agreement'
     })
   },
 
   // 查看隐私政策
   onTapPrivacy() {
     wx.navigateTo({
-      url: '/pages/webview/webview?url=' + encodeURIComponent(CONTENT_BASE_URL + '/content/privacy-policy')
+      url: '/pages/content/content?slug=privacy-policy'
     })
   }
 })

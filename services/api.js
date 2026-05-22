@@ -11,27 +11,25 @@ const request = (url, options = {}) => {
   const token = wx.getStorageSync('token') || app.globalData.token
 
   return new Promise((resolve, reject) => {
-    // 未登录时，返回 null（需要登录的接口）
-    if (!token) {
-      resolve(null)
-      return
-    }
-
     const startTime = Date.now()
     const fullUrl = app.globalData.baseUrl + url
 
     console.log(`[API Request] ${options.method || 'GET'} ${url}`, options.data || {})
 
+    const header = {
+      'Content-Type': 'application/json',
+      ...options.header
+    }
+    if (token) {
+      header['Authorization'] = `Bearer ${token}`
+    }
+
     wx.request({
       url: fullUrl,
       method: options.method || 'GET',
       data: options.data || {},
-      timeout: 30000,  // 30秒超时
-      header: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        ...options.header
-      },
+      timeout: 30000,
+      header,
       success: (res) => {
         console.log(`[API Response] ${url}: ${Date.now() - startTime}ms, status=${res.statusCode}`)
         if (res.statusCode === 200) {

@@ -12,7 +12,7 @@
   </view>
 
   <block wx:if="{{!loading && isLoggedIn}}">
-    <!-- 用户区域 -->
+    <!-- 用户区域（含今日目标） -->
     <view class="user-header">
       <view class="user-info">
         <view class="avatar-wrapper">
@@ -20,29 +20,19 @@
         </view>
         <view class="user-text">
           <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，{{greetingText}}</text>
-          <text class="user-sub text-small">今日目标完成 {{todayDone}}/{{dailyGoal}} 题</text>
+          <!-- 今日目标进度 -->
+          <view class="goal-progress-section">
+            <view class="goal-header-row">
+              <text class="goal-label">今日目标</text>
+              <text class="goal-hint-text text-small text-muted" wx:if="{{goalProgress < 100}}">还差 {{dailyGoal - todayDone}} 题，加油！</text>
+              <text class="goal-complete-text text-small text-bold" wx:if="{{goalProgress >= 100}}">✅ 今日目标已达成！</text>
+              <text class="goal-count-text">{{todayDone}}/{{dailyGoal}} 题</text>
+            </view>
+            <view class="goal-progress-bar">
+              <view class="goal-progress-fill primary-bg" style="width: {{goalProgress}}%;"></view>
+            </view>
+          </view>
         </view>
-      </view>
-    </view>
-
-    <!-- 今日目标进度 -->
-    <view class="goal-section">
-      <view class="goal-header flex-row">
-        <view class="goal-icon-box">
-          <text>🎯</text>
-        </view>
-        <text class="goal-title text-bold">今日目标</text>
-        <text class="goal-count text-small">{{todayDone}}/{{dailyGoal}} 题</text>
-      </view>
-      <view class="goal-progress-bar">
-        <view class="goal-progress-fill primary-bg" style="width: {{goalProgress}}%;"></view>
-      </view>
-      <view class="goal-hint" wx:if="{{goalProgress < 100}}">
-        <text class="goal-hint-text text-small text-muted">还差 {{dailyGoal - todayDone}} 题，加油！</text>
-      </view>
-      <view class="goal-complete" wx:if="{{goalProgress >= 100}}">
-        <text class="goal-complete-icon">✅</text>
-        <text class="goal-complete-text text-small text-bold">今日目标已达成！</text>
       </view>
     </view>
 
@@ -101,6 +91,29 @@
       </view>
     </view>
 
+    <!-- 动态 Banner -->
+    <view wx:if="{{banners.length > 0}}" class="banner-section">
+      <swiper
+        class="banner-swiper"
+        indicator-dots="{{banners.length > 1}}"
+        indicator-color="rgba(255,255,255,0.4)"
+        indicator-active-color="#fff"
+        autoplay="{{banners.length > 1}}"
+        interval="4000"
+        circular="{{banners.length > 1}}"
+        current="{{bannerCurrent}}"
+        bindchange="onBannerChange"
+      >
+        <block wx:for="{{banners}}" wx:key="index">
+          <swiper-item class="banner-swiper-item">
+            <view class="banner-card" data-index="{{index}}" bindtap="onBannerTap">
+              <image class="banner-image" src="{{item.image_url}}" mode="aspectFill"></image>
+            </view>
+          </swiper-item>
+        </block>
+      </swiper>
+    </view>
+
     <!-- 快捷入口 (4个大按钮) -->
     <view class="quick-actions">
       <view class="action-item primary-action" bindtap="goToDiscover">
@@ -134,29 +147,6 @@
         <text class="action-title text-bold">错题</text>
         <text class="action-sub text-small">{{wrongCount}}题待练</text>
       </view>
-    </view>
-
-    <!-- 动态 Banner -->
-    <view wx:if="{{banners.length > 0}}" class="banner-section">
-      <swiper
-        class="banner-swiper"
-        indicator-dots="{{banners.length > 1}}"
-        indicator-color="rgba(255,255,255,0.4)"
-        indicator-active-color="#fff"
-        autoplay="{{banners.length > 1}}"
-        interval="4000"
-        circular="{{banners.length > 1}}"
-        current="{{bannerCurrent}}"
-        bindchange="onBannerChange"
-      >
-        <block wx:for="{{banners}}" wx:key="index">
-          <swiper-item class="banner-swiper-item">
-            <view class="banner-card" data-index="{{index}}" bindtap="onBannerTap">
-              <image class="banner-image" src="{{item.image_url}}" mode="aspectFill"></image>
-            </view>
-          </swiper-item>
-        </block>
-      </swiper>
     </view>
 
     <!-- 能力雷达（多边形） -->
@@ -268,7 +258,6 @@
     </view>
   </block>
 
-  <!-- 未登录状态 -->
   <view wx:if="{{!loading && !isLoggedIn}}" class="login-prompt">
     <view class="prompt-card">
       <view class="prompt-icon-box">
