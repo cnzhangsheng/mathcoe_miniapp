@@ -307,11 +307,6 @@ page {
   border-radius: 32rpx;
 }
 
-.submit-answer-btn.disabled {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: rgba(0, 0, 0, 0.3);
-  box-shadow: none;
-}
 
 .answer-sub {
   color: #07C160;

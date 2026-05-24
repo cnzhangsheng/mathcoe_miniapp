@@ -50,30 +50,34 @@
     </view>
   </view>
 
-  <!-- 答案结果 -->
-  <view class="result-card card">
-    <view class="result-header {{isCorrect ? 'success' : 'error'}}">
-      <text class="result-icon">{{isCorrect ? '✅' : '❌'}}</text>
-      <text class="result-text text-bold">{{isCorrect ? '回答正确' : '回答错误'}}</text>
-    </view>
-    <view class="answer-info">
-      <view class="answer-row">
-        <text class="answer-label">正确答案：</text>
-        <text class="answer-value correct text-bold">{{correctAnswer}}</text>
+  <!-- 答案解析 -->
+  <view class="analysis-section">
+    <view class="analysis-card">
+      <!-- 你的答案 -->
+      <view class="answer-row flex-row">
+        <view class="answer-box" style="background-color: #F43F5E;">
+          <text class="answer-letter text-bold">{{userAnswer || '?'}}</text>
+        </view>
+        <view class="answer-info">
+          <text class="answer-title text-bold">你的答案：{{userAnswer || '未作答'}}</text>
+        </view>
       </view>
-      <view class="answer-row" wx:if="{{userAnswer}}">
-        <text class="answer-label">你的答案：</text>
-        <text class="answer-value {{isCorrect ? 'correct' : 'wrong'}} text-bold">{{userAnswer}}</text>
-      </view>
-    </view>
-  </view>
 
-  <!-- 解析 -->
-  <view class="explanation-card card" wx:if="{{explanation}}">
-    <view class="explanation-header">
-      <text class="explanation-icon">💡</text>
-      <text class="explanation-title text-bold">答案解析</text>
+      <!-- Correct Answer -->
+      <view class="answer-row flex-row">
+        <view class="answer-box">
+          <text class="answer-letter text-bold">{{correctAnswer}}</text>
+        </view>
+        <view class="answer-info">
+          <text class="answer-title text-bold">正确答案：{{correctAnswer}}</text>
+        </view>
+      </view>
+
+      <!-- Explanation -->
+      <view class="logic-box">
+        <text class="logic-label text-xs text-bold">题目解析</text>
+        <rich-text class="logic-text" nodes="{{explanation}}"></rich-text>
+      </view>
     </view>
-    <rich-text class="explanation-content" nodes="{{explanation}}"></rich-text>
   </view>
 </view>

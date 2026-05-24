@@ -96,6 +96,13 @@ Page({
       this.syncGlobalUserInfo()
       this.loadData()
     }
+
+    // 检查是否需要切换到我的考卷 tab（从生成考卷页跳转过来）
+    const targetTab = getApp().globalData.indexPaperTab
+    if (targetTab && targetTab !== this.data.paperTab) {
+      getApp().globalData.indexPaperTab = null
+      this.setData({ paperTab: targetTab })
+    }
   },
 
   onReady() {

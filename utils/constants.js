@@ -1,6 +1,6 @@
 // 基础服务地址
-const BASE_URL = 'http://127.0.0.1:8000'
-// const BASE_URL = 'https://aicoe.cn'
+// const BASE_URL = 'http://127.0.0.1:8000'
+const BASE_URL = 'https://aicoe.cn'
 
 // API 基础路径
 const API_BASE_URL = BASE_URL + '/api/v1'
@@ -27,6 +27,9 @@ const DIFFICULTY_VALUES = DIFFICULTY_LEVELS.map(item => item.value)
 
 /** 根据数值获取难度等级标签，如 formatDifficulty(1) => 'Level 1' */
 function formatDifficulty(value) {
+  if (value == null || value === '') return ''
+  // 如果已经是格式化后的字符串（如 "Level 1"），直接返回
+  if (typeof value === 'string' && /^Level\s+\d+$/.test(value)) return value
   const found = DIFFICULTY_LEVELS.find(item => item.value === value)
   return found ? found.label : 'Level ' + value
 }

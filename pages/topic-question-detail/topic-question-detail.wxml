@@ -112,8 +112,8 @@
           </view>
 
           <!-- Submit Button -->
-          <view class="submit-row" wx:if="{{!card.isSubmitted && card.selectedOption}}">
-            <view class="submit-answer-btn active" bindtap="handleSubmit" data-index="{{idx}}">
+          <view class="submit-row" wx:if="{{!card.isSubmitted}}">
+            <view class="submit-answer-btn {{card.selectedOption ? 'active' : ''}}" bindtap="handleSubmit" data-index="{{idx}}">
               <text class="submit-answer-text text-bold">提交答案</text>
             </view>
           </view>
@@ -127,7 +127,7 @@
                   <text class="answer-letter text-bold">{{card.correctAnswer}}</text>
                 </view>
                 <view class="answer-info">
-                  <text class="answer-title text-bold">正确答案：选项 {{card.correctAnswer}}</text>
+                  <text class="answer-title text-bold">正确答案：{{card.correctAnswer}}</text>
                 </view>
               </view>
 

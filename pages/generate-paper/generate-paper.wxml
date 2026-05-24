@@ -96,4 +96,58 @@
       <text class="generate-btn-text text-bold">{{generating ? '生成中...' : '生成考卷'}}</text>
     </view>
   </view>
+
+  <!-- 生成成功弹窗 -->
+  <view class="result-overlay" wx:if="{{showResult}}">
+    <view class="result-dialog">
+      <view class="result-header">
+        <text class="result-icon">🎉</text>
+        <text class="result-title text-bold">考卷生成成功！</text>
+      </view>
+      <view class="result-info">
+        <view class="result-row">
+          <text class="result-label">考卷标题</text>
+          <text class="result-value text-bold">{{resultPaper.title}}</text>
+        </view>
+        <view class="result-divider"></view>
+        <view class="result-row">
+          <text class="result-label">题目总数</text>
+          <text class="result-value text-bold">{{resultPaper.total_questions}}题</text>
+        </view>
+        <block wx:for="{{resultPaper.topic_question_counts}}" wx:key="topic_id">
+          <view class="result-divider"></view>
+          <view class="result-row">
+            <text class="result-label">{{item.topic_title}}</text>
+            <text class="result-value text-bold">{{item.count}}题</text>
+          </view>
+        </block>
+      </view>
+      <view class="result-guide">
+        <text class="result-guide-text text-small">前往首页「我的考卷」即可查看和答题</text>
+      </view>
+      <view class="result-buttons">
+        <view class="result-btn result-btn-primary" bindtap="goToMyPapers">
+          <text class="result-btn-text text-bold">查看我的考卷</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生成失败弹窗 -->
+  <view class="result-overlay" wx:if="{{showError}}">
+    <view class="result-dialog">
+      <view class="result-header">
+        <text class="result-icon">😅</text>
+        <text class="result-title text-bold">生成失败</text>
+      </view>
+      <view class="result-guide" style="margin-bottom: 32rpx;">
+        <text class="result-guide-text text-small">{{errorMsg}}</text>
+      </view>
+      <view class="result-buttons">
+        <view class="result-btn result-btn-primary" bindtap="closeError">
+          <text class="result-btn-text text-bold">知道了</text>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

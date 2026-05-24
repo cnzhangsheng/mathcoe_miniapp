@@ -43,6 +43,19 @@ Page({
 
   onShow() {
     const loggedIn = this.checkLoginStatus()
+
+    // 检查是否有指定的 tab 需要激活（来自收藏练习页的返回）
+    const targetTab = getApp().globalData.reviewActiveTab
+    if (targetTab && targetTab !== this.data.activeTab) {
+      getApp().globalData.reviewActiveTab = null
+      this.setData({ activeTab: targetTab })
+      if (targetTab === 'favorite') {
+        this.setData({ favoriteQuestions: [], favoritePage: 1, favoriteHasMore: true })
+        this.loadFavoriteQuestions(1)
+      }
+      return
+    }
+
     if (!this.data.loading && loggedIn) {
       this.loadInitialData()
     }
@@ -326,40 +339,9 @@ Page({
     this.loadFavoriteQuestions(1)
   },
 
-  // 开始复习
-  async startReview() {
-    wx.showLoading({ title: '加载中...', mask: true })
-    try {
-      // 直接从 API 获取最新错题数据（不受分页限制）
-      const allWrong = await reviewService.getAllWrongQuestions()
-      if (!allWrong || allWrong.length === 0) {
-        wx.hideLoading()
-        wx.showToast({ title: '没有错题', icon: 'none' })
-        return
-      }
-
-      // 按专题筛选
-      let filtered = allWrong
-      if (this.data.selectedTopicId > 0) {
-        filtered = allWrong.filter(q => parseInt(q.question_topic_id) === this.data.selectedTopicId)
-      }
-
-      if (filtered.length === 0) {
-        wx.hideLoading()
-        wx.showToast({ title: '该专题没有错题', icon: 'none' })
-        return
-      }
-
-      const questionIds = filtered.map(q => q.question_id)
-      const topicId = this.data.selectedTopicId || 0
-      wx.hideLoading()
-      wx.navigateTo({
-        url: `/pages/review-practice/review-practice?ids=${questionIds.join(',')}&topicId=${topicId}`
-      })
-    } catch (err) {
-      wx.hideLoading()
-      wx.showToast({ title: '加载失败', icon: 'none' })
-    }
+  // 生成考卷
+  goGeneratePaper() {
+    wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
   },
 
   // 查看全部错题

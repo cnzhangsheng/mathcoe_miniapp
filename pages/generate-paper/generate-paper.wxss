@@ -202,3 +202,113 @@
   color: #fff;
   letter-spacing: 8rpx;
 }
+
+/* 生成成功弹窗 */
+.result-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.result-dialog {
+  width: 600rpx;
+  background-color: #fff;
+  border-radius: 48rpx;
+  padding: 48rpx;
+  box-shadow: 0 32rpx 64rpx rgba(0, 0, 0, 0.15);
+}
+
+.result-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.result-icon {
+  font-size: 64rpx;
+}
+
+.result-title {
+  font-size: 36rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.result-info {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+}
+
+.result-label {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.result-value {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.result-divider {
+  height: 2rpx;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.result-guide {
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.result-guide-text {
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 1.5;
+}
+
+.result-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.result-btn {
+  height: 88rpx;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-btn-primary {
+  background-color: #07C160;
+  box-shadow: 0 8rpx 16rpx rgba(7, 193, 96, 0.2);
+}
+
+.result-btn-secondary {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.result-btn-text {
+  font-size: 30rpx;
+  color: #fff;
+}
+
+.result-btn-secondary .result-btn-text {
+  color: rgba(0, 0, 0, 0.7);
+}

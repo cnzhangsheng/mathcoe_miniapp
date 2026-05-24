@@ -68,7 +68,7 @@
             <text class="correct-letter text-bold">{{question.answer}}</text>
           </view>
           <view class="correct-info">
-            <text class="correct-title text-bold">正确答案：选项 {{question.answer}}</text>
+            <text class="correct-title text-bold">正确答案：{{question.answer}}</text>
           </view>
         </view>
 

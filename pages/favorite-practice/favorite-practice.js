@@ -1,6 +1,6 @@
 // pages/favorite-practice/favorite-practice.js - 收藏练习逻辑
 const app = getApp()
-const { formatDifficulty } = require('../../utils/constants')
+const { formatDifficulty, IMAGE_BASE_URL } = require('../../utils/constants')
 const reviewService = require('../../services/review')
 const { getTopicClass } = require('../../services/topics')
 
@@ -17,17 +17,23 @@ Page({
     showResult: false,
     isCorrect: false,
 
-    completed: false,
-    correctCount: 0,
-
     questionType: '单选题',
     topicTitle: '',
-    questionLevel: ''
+    questionLevel: '',
+    topicClass: '',
+
+    isLoggedIn: false,
+    isFavorited: false,
+    imageBaseUrl: IMAGE_BASE_URL,
+
   },
 
   getTopicClass(topicId) { return getTopicClass(topicId) },
 
   onLoad(options) {
+    const token = wx.getStorageSync('token')
+    this.setData({ isLoggedIn: !!token })
+
     if (options.ids) {
       const ids = options.ids.split(',').map(id => parseInt(id))
       this.setData({ questionIds: ids, totalQuestions: ids.length })
@@ -82,6 +88,7 @@ Page({
           isCorrect: false
         })
         this.updateQuestionMeta(questions[0])
+        this.checkFavoriteStatus(questions[0].question_id)
       } else {
         wx.hideLoading()
         wx.showToast({ title: '未找到题目', icon: 'none' })
@@ -107,6 +114,43 @@ Page({
     })
   },
 
+  // 检查收藏状态
+  async checkFavoriteStatus(questionId) {
+    if (!this.data.isLoggedIn) return
+    try {
+      const result = await reviewService.isFavorited(questionId)
+      this.setData({ isFavorited: !!result })
+    } catch (err) {
+      console.error('checkFavoriteStatus error:', err)
+    }
+  },
+
+  // 收藏/取消收藏
+  async toggleFavorite() {
+    if (!this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/login/login?redirect=topics' })
+      return
+    }
+    try {
+      if (this.data.isFavorited) {
+        const result = await reviewService.removeFavorite(this.data.currentQuestion.question_id)
+        if (result) {
+          this.setData({ isFavorited: false })
+          wx.showToast({ title: '已取消收藏', icon: 'success' })
+        }
+      } else {
+        const result = await reviewService.addFavorite(this.data.currentQuestion.question_id)
+        if (result) {
+          this.setData({ isFavorited: true })
+          wx.showToast({ title: '已收藏', icon: 'success' })
+        }
+      }
+    } catch (err) {
+      console.error('toggleFavorite error:', err)
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
+  },
+
   selectOption(e) {
     if (this.data.showResult) return
 
@@ -115,53 +159,18 @@ Page({
   },
 
   submitAnswer() {
-    if (!this.data.selectedAnswer) {
-      wx.showToast({ title: '请选择答案', icon: 'none' })
-      return
-    }
+    if (!this.data.selectedAnswer) return
 
     const { currentQuestion, selectedAnswer } = this.data
-    const isCorrect = selectedAnswer === currentQuestion.answer
-
     this.setData({
       showResult: true,
-      isCorrect
+      isCorrect: selectedAnswer === currentQuestion.answer
     })
-
-    if (isCorrect) {
-      this.setData({ correctCount: this.data.correctCount + 1 })
-    }
-  },
-
-  nextQuestion() {
-    const { currentIndex, questions } = this.data
-
-    if (currentIndex < questions.length - 1) {
-      const nextIndex = currentIndex + 1
-      const nextQuestion = questions[nextIndex]
-
-      this.setData({
-        currentIndex: nextIndex,
-        currentQuestion: nextQuestion,
-        selectedAnswer: '',
-        showResult: false,
-        isCorrect: false
-      })
-      this.updateQuestionMeta(nextQuestion)
-    } else {
-      // 完成 - 返回上一页
-      wx.navigateBack()
-    }
   },
 
   goHome() {
+    getApp().globalData.reviewActiveTab = 'favorite'
     wx.switchTab({ url: '/pages/review/review' })
-  },
-
-  goReview() {
-    // 重新开始练习
-    this.setData({ loading: true, completed: false })
-    this.loadQuestions(this.data.questionIds)
   },
 
   onShareAppMessage() {

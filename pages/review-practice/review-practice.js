@@ -178,10 +178,7 @@ Page({
   submitAnswer(e) {
     const idx = e.currentTarget.dataset.index
     const q = this.data.questions[idx]
-    if (!q || !q.selectedAnswer) {
-      wx.showToast({ title: '请选择答案', icon: 'none' })
-      return
-    }
+    if (!q || !q.selectedAnswer) return
     const isCorrect = q.selectedAnswer === q.answer
     const updates = {}
     updates['questions[' + idx + '].showResult'] = true

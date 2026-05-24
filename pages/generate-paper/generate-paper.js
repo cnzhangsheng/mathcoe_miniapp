@@ -20,6 +20,10 @@ Page({
     questionCount: 12,
     wrongSelected: false,
     favoriteSelected: false,
+    showResult: false,
+    resultPaper: {},
+    showError: false,
+    errorMsg: '',
   },
 
   onLoad() {
@@ -112,7 +116,7 @@ Page({
 
     try {
       const { wrongSelected, favoriteSelected } = this.data
-      const result = await examPaperService.generatePaper({
+      const res = await examPaperService.generatePaper({
         title: title.trim(),
         mode: 'manual',
         topic_ids: selectedTopicIds,
@@ -122,13 +126,43 @@ Page({
         include_favorite: favoriteSelected,
       })
 
-      wx.showToast({ title: '生成成功！', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1500)
+      if (!res) {
+        wx.hideLoading()
+        this.setData({
+          generating: false,
+          showError: true,
+          errorMsg: '生成失败，请检查专题是否包含足够题目',
+        })
+        _generating = false
+        return
+      }
+
+      // 弹出成功对话框
+      this.setData({
+        generating: false,
+        showResult: true,
+        resultPaper: res.data || res,
+      })
+      _generating = false
     } catch (err) {
       console.error('Generate paper failed:', err)
-      wx.showToast({ title: err.errMsg || '生成失败', icon: 'none' })
+      this.setData({
+        generating: false,
+        showError: true,
+        errorMsg: err.errMsg || '网络异常，生成失败',
+      })
       _generating = false
-      this.setData({ generating: false })
     }
+  },
+
+  // 关闭失败弹窗
+  closeError() {
+    this.setData({ showError: false })
+  },
+
+  // 查看我的考卷（跳转首页并激活我的考卷tab）
+  goToMyPapers() {
+    getApp().globalData.indexPaperTab = 'my'
+    wx.switchTab({ url: '/pages/index/index' })
   },
 })
