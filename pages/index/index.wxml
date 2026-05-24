@@ -11,29 +11,44 @@
     </view>
   </view>
 
-  <block wx:if="{{!loading && isLoggedIn}}">
-    <!-- 用户区域（含今日目标） -->
+  <block wx:if="{{!loading}}">
+    <!-- 用户头部 -->
     <view class="user-header">
-      <view class="user-info">
-        <view class="avatar-wrapper">
-          <image class="avatar" src="{{imageBaseUrl + 'default-avatar.png'}}" mode="aspectFill"></image>
-        </view>
-        <view class="user-text">
-          <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，{{greetingText}}</text>
-          <!-- 今日目标进度 -->
-          <view class="goal-progress-section">
-            <view class="goal-header-row">
-              <text class="goal-label">今日目标</text>
-              <text class="goal-hint-text text-small text-muted" wx:if="{{goalProgress < 100}}">还差 {{dailyGoal - todayDone}} 题，加油！</text>
-              <text class="goal-complete-text text-small text-bold" wx:if="{{goalProgress >= 100}}">✅ 今日目标已达成！</text>
-              <text class="goal-count-text">{{todayDone}}/{{dailyGoal}} 题</text>
-            </view>
-            <view class="goal-progress-bar">
-              <view class="goal-progress-fill primary-bg" style="width: {{goalProgress}}%;"></view>
+      <block wx:if="{{isLoggedIn}}">
+        <view class="user-info">
+          <view class="avatar-wrapper">
+            <image class="avatar" src="{{imageBaseUrl + 'default-avatar.png'}}" mode="aspectFill"></image>
+          </view>
+          <view class="user-text">
+            <text class="user-greeting text-bold">{{userInfo.nickname || '数学小达人'}}，{{greetingText}}</text>
+            <view class="goal-progress-section">
+              <view class="goal-header-row">
+                <text class="goal-label">今日目标</text>
+                <text class="goal-hint-text text-small text-muted" wx:if="{{goalProgress < 100}}">还差 {{dailyGoal - todayDone}} 题，加油！</text>
+                <text class="goal-complete-text text-small text-bold" wx:if="{{goalProgress >= 100}}">✅ 今日目标已达成！</text>
+                <text class="goal-count-text">{{todayDone}}/{{dailyGoal}} 题</text>
+              </view>
+              <view class="goal-progress-bar">
+                <view class="goal-progress-fill primary-bg" style="width: {{goalProgress}}%;"></view>
+              </view>
             </view>
           </view>
         </view>
-      </view>
+      </block>
+      <block wx:else>
+        <view class="login-header-content" bindtap="goToLogin">
+          <view class="avatar-wrapper">
+            <image class="avatar" src="{{imageBaseUrl + 'default-avatar.png'}}" mode="aspectFill"></image>
+          </view>
+          <view class="login-header-text">
+            <text class="login-header-title text-bold">欢迎，新同学</text>
+            <text class="login-header-sub text-small text-muted">登录后可查看学习进度</text>
+          </view>
+          <view class="login-header-btn">
+            <text class="login-header-btn-text text-bold">去登录</text>
+          </view>
+        </view>
+      </block>
     </view>
 
     <!-- 本周/本月学习统计 -->
@@ -171,7 +186,7 @@
       <view class="section-header flex-row">
         <text class="section-title text-bold">智能组卷</text>
       </view>
-      <view class="generate-entry-card" bindtap="goToGeneratePaper">
+      <view class="generate-entry-card" bindtap="handleGenerateTap">
         <view class="generate-entry-left">
           <view class="generate-entry-icon-box">
             <text class="generate-entry-icon">🤖</text>
@@ -187,89 +202,142 @@
       </view>
     </view>
 
-    <!-- 我的考卷 -->
+    <!-- 考卷列表（袋鼠考卷 + 我的考卷） -->
     <view class="recommend-section">
-      <view class="section-header flex-row">
-        <text class="section-title text-bold">我的考卷</text>
+      <!-- Tab Bar -->
+      <view class="paper-tab-bar">
+        <view class="paper-tab-left">
+          <view class="paper-tab {{paperTab === 'kangaroo' ? 'paper-tab-active' : ''}}" data-tab="kangaroo" bindtap="switchPaperTab">
+            <text class="paper-tab-text">袋鼠考卷</text>
+          </view>
+          <view class="paper-tab {{paperTab === 'my' ? 'paper-tab-active' : ''}}" data-tab="my" bindtap="switchPaperTab">
+            <text class="paper-tab-text">我的考卷</text>
+          </view>
+        </view>
       </view>
 
-      <view class="exam-list">
-        <block wx:for="{{myPapers}}" wx:key="id">
-          <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
-            <view class="exam-left">
-              <view class="exam-icon-box exam-icon-box-green">
-                <image class="exam-icon-img" src="{{imageBaseUrl + 'icons/icon-exam-custom.png'}}" mode="aspectFit"></image>
-              </view>
-              <text class="exam-left-label">{{item.typeLabel}}</text>
-            </view>
-            <view class="exam-middle">
-              <view class="exam-top flex-row">
-                <view class="level-badge level-badge-green">
-                  <text class="level-text text-bold">{{item.levelLabel}}</text>
-                </view>
-                <view class="new-badge" wx:if="{{item.is_new}}">
-                  <text class="new-text text-bold">New</text>
-                </view>
-              </view>
-              <text class="exam-title text-bold">{{item.title}}</text>
-              <view class="exam-bottom flex-row">
-                <view class="exam-meta flex-row">
-                  <text class="meta-icon">⏱</text>
-                  <text class="meta-text">{{item.duration || 75}} 分钟</text>
-                </view>
-                <text class="meta-text">{{item.total_questions}} 题</text>
-              </view>
-              <view class="done-badge" wx:if="{{item.user_completed}}">
-                <text class="done-text text-bold">已作答，正确率：{{item.user_score}}%</text>
-              </view>
-            </view>
-            <view class="exam-right exam-actions">
-              <view class="action-btn" catchtap="downloadPdf" data-id="{{item.id}}">
-                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-pdf.png'}}" mode="aspectFit"></image>
-              </view>
-              <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
-                <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-delete.png'}}" mode="aspectFit"></image>
-              </view>
-            </view>
+      <!-- 类型筛选（仅袋鼠考卷） -->
+      <view class="paper-type-filter flex-row" wx:if="{{paperTab === 'kangaroo'}}">
+        <block wx:for="{{paperTypeTabs}}" wx:key="value">
+          <view class="type-tab {{selectedPaperType === item.value ? 'type-tab-active' : ''}}" data-type="{{item.value}}" bindtap="selectPaperType">
+            <text class="type-tab-text">{{item.label}}</text>
           </view>
         </block>
       </view>
 
-      <!-- 无数据提示 -->
-      <view class="no-data" wx:if="{{myPapers.length === 0}}">
-        <text class="no-data-text text-small">暂无我的考卷</text>
-      </view>
-    </view>
+      <!-- 袋鼠考卷列表 -->
+      <block wx:if="{{paperTab === 'kangaroo'}}">
+        <block wx:if="{{examPapers.length > 0}}">
+          <view class="exam-list">
+            <block wx:for="{{examPapers}}" wx:key="id">
+              <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
+                <view class="exam-left">
+                  <view class="exam-icon-box">
+                    <image class="exam-icon-img" src="{{item.typeIcon}}" mode="aspectFit"></image>
+                  </view>
+                  <text class="exam-left-label">{{item.typeLabel}}</text>
+                </view>
+                <view class="exam-middle">
+                  <view class="exam-top flex-row">
+                    <view class="level-badge">
+                      <text class="level-text text-bold">{{item.difficultyLabel}}</text>
+                    </view>
+                    <view class="new-badge" wx:if="{{item.is_new}}">
+                      <text class="new-text text-bold">New</text>
+                    </view>
+                    <view class="exam-done-badge" wx:if="{{item.user_completed}}">
+                      <text class="exam-done-text text-bold">已答题，正确率：{{item.user_score}}%</text>
+                    </view>
+                  </view>
+                  <text class="exam-title text-bold">{{item.title}}</text>
+                  <view class="exam-bottom flex-row">
+                    <view class="exam-meta flex-row">
+                      <text class="meta-icon">⏱</text>
+                      <text class="meta-text">{{item.duration || 75}} 分钟</text>
+                    </view>
+                    <text class="meta-text">{{item.total_questions}} 题</text>
+                  </view>
+                </view>
+                <view class="exam-right">
+                  <view class="download-btn" wx:if="{{item.file_path}}" catchtap="downloadPdf" data-id="{{item.id}}">
+                    <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-pdf.png'}}" mode="aspectFit"></image>
+                  </view>
+                  <view class="download-placeholder" wx:else></view>
+                </view>
+              </view>
+            </block>
+          </view>
+          <!-- 加载更多 -->
+          <view class="load-more" wx:if="{{examLoading}}">
+            <text class="load-more-text text-small text-muted">加载中...</text>
+          </view>
+          <view class="load-more" wx:if="{{examHasMore && !examLoading}}" bindtap="loadMoreExamPapers">
+            <text class="load-more-text text-small text-muted">加载更多...</text>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="no-data">
+            <text class="no-data-text text-small">暂无袋鼠考卷数据</text>
+          </view>
+        </block>
+      </block>
 
-    <!-- 今日建议 -->
-    <view class="suggestion-card" wx:if="{{weakTopic}}">
-      <view class="suggestion-header flex-row">
-        <view class="suggestion-icon-box">
-          <text>💡</text>
-        </view>
-        <text class="suggestion-title text-bold">今日建议</text>
-      </view>
-      <view class="suggestion-content">
-        <text class="suggestion-text">你在「<text class="suggestion-highlight text-bold">{{weakTopic.title}}</text>」模块较弱，建议今天重点练习。</text>
-      </view>
-      <view class="suggestion-btn" data-id="{{weakTopic.id}}" bindtap="goToTopicDetail">
-        <text class="suggestion-btn-text text-bold">去练习 ›</text>
-      </view>
+      <!-- 我的考卷列表 -->
+      <block wx:elif="{{paperTab === 'my'}}">
+        <block wx:if="{{isLoggedIn}}">
+          <view class="exam-list">
+            <block wx:for="{{myPapers}}" wx:key="id">
+              <view class="exam-card" data-id="{{item.id}}" bindtap="selectExamPaper">
+                <view class="exam-left">
+                  <view class="exam-icon-box exam-icon-box-green">
+                    <image class="exam-icon-img" src="{{imageBaseUrl + 'icons/icon-exam-custom.png'}}" mode="aspectFit"></image>
+                  </view>
+                  <text class="exam-left-label">{{item.typeLabel}}</text>
+                </view>
+                <view class="exam-middle">
+                  <view class="exam-top flex-row">
+                    <view class="level-badge level-badge-green">
+                      <text class="level-text text-bold">{{item.levelLabel}}</text>
+                    </view>
+                    <view class="new-badge" wx:if="{{item.is_new}}">
+                      <text class="new-text text-bold">New</text>
+                    </view>
+                    <view class="exam-done-badge" wx:if="{{item.user_completed}}">
+                      <text class="exam-done-text text-bold">已答题，正确率：{{item.user_score}}%</text>
+                    </view>
+                  </view>
+                  <text class="exam-title text-bold">{{item.title}}</text>
+                  <view class="exam-bottom flex-row">
+                    <view class="exam-meta flex-row">
+                      <text class="meta-icon">⏱</text>
+                      <text class="meta-text">{{item.duration || 75}} 分钟</text>
+                    </view>
+                    <text class="meta-text">{{item.total_questions}} 题</text>
+                  </view>
+                </view>
+                <view class="exam-right exam-actions">
+                  <view class="action-btn" catchtap="downloadPdf" data-id="{{item.id}}">
+                    <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-pdf.png'}}" mode="aspectFit"></image>
+                  </view>
+                  <view class="action-btn action-btn-danger" catchtap="deletePaper" data-id="{{item.id}}">
+                    <image class="action-btn-icon-img" src="{{imageBaseUrl + 'icons/icon-delete.png'}}" mode="aspectFit"></image>
+                  </view>
+                </view>
+              </view>
+            </block>
+          </view>
+          <view class="no-data" wx:if="{{myPapers.length === 0}}">
+            <text class="no-data-text text-small">暂无我的考卷</text>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="no-data login-hint" bindtap="goToLogin">
+            <text class="no-data-text text-small">首次使用？登录后可查看我的考卷</text>
+          </view>
+        </block>
+      </block>
     </view>
   </block>
-
-  <view wx:if="{{!loading && !isLoggedIn}}" class="login-prompt">
-    <view class="prompt-card">
-      <view class="prompt-icon-box">
-        <text class="prompt-icon">🧮</text>
-      </view>
-      <text class="prompt-title text-bold">袋鼠数学助理</text>
-      <text class="prompt-sub text-small text-muted">每天10分钟，数学思维突飞猛进</text>
-      <view class="prompt-btn" bindtap="goToLogin">
-        <text class="prompt-btn-text text-bold">开始学习</text>
-      </view>
-    </view>
-  </view>
 
   <!-- PDF下载进度 -->
   <view wx:if="{{pdfProgress !== 0}}" class="pdf-progress-mask">

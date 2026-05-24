@@ -26,129 +26,146 @@
       </view>
     </view>
 
-    <!-- 错题本内容 -->
-    <block wx:if="{{activeTab === 'wrong'}}">
-      <!-- 专题筛选 -->
-      <view class="filter-row">
-        <block wx:for="{{filterTopics}}" wx:key="id">
-          <view class="filter-btn {{selectedTopicId === item.id ? 'active' : ''}}" bindtap="selectTopic" data-id="{{item.id}}">
+    <!-- 登录后内容 -->
+    <block wx:if="{{isLoggedIn}}">
+      <block wx:if="{{activeTab === 'wrong'}}">
+        <!-- 专题筛选 -->
+        <view class="filter-row">
+          <block wx:for="{{filterTopics}}" wx:key="id">
+            <view class="filter-btn {{selectedTopicId === item.id ? 'active' : ''}}" bindtap="selectTopic" data-id="{{item.id}}">
 <text class="filter-btn-text">{{item.title}}</text>
-          </view>
-        </block>
-      </view>
-
-      <!-- 开始复习按钮 -->
-      <view class="start-btn primary-bg" bindtap="startReview">
-        <text class="start-btn-text">重新练习</text>
-      </view>
-
-      <!-- 错题列表 -->
-      <view class="section-card card">
-        <block wx:if="{{wrongQuestions.length > 0}}">
-          <view class="question-list">
-            <block wx:for="{{wrongQuestions}}" wx:key="id">
-              <view class="question-item card" bindtap="viewWrongQuestion" data-question="{{item}}">
-                <view class="question-top flex-between">
-                  <view class="question-meta flex-row">
-                    <view class="topic-badge {{item.topicClass}}">
-                      <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
-                    </view>
-                    <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">{{item.level}}</text>
-                    <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
-                  </view>
-                  <view class="remove-btn" catchtap="removeWrong" data-id="{{item.question_id}}">
-                    <text class="remove-icon">✕</text>
-                  </view>
-                </view>
-
-                <view class="question-content-box">
-                  <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
-                </view>
-              </view>
-            </block>
-          </view>
-
-          <!-- 加载更多提示 -->
-          <view class="load-more" wx:if="{{wrongLoading}}">
-            <text class="load-more-text text-small text-muted">加载中...</text>
-          </view>
-
-          <!-- 底部提示 -->
-          <view class="end-tip" wx:if="{{!wrongHasMore && wrongQuestions.length > 0}}">
-            <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
-          </view>
-        </block>
-
-        <!-- 空状态 -->
-        <block wx:if="{{wrongQuestions.length === 0}}">
-          <view class="empty-state">
-            <view class="empty-icon-box">
-              <text>🎉</text>
             </view>
-            <text class="empty-title text-bold">暂无错题</text>
-            <text class="empty-sub text-small text-muted">继续保持，加油！</text>
-          </view>
-        </block>
-      </view>
+          </block>
+        </view>
+
+        <!-- 开始复习按钮 -->
+        <view class="start-btn primary-bg" bindtap="startReview">
+          <text class="start-btn-text">重新练习</text>
+        </view>
+
+        <!-- 错题列表 -->
+        <view class="section-card card">
+          <block wx:if="{{wrongQuestions.length > 0}}">
+            <view class="question-list">
+              <block wx:for="{{wrongQuestions}}" wx:key="id">
+                <view class="question-item card" bindtap="viewWrongQuestion" data-question="{{item}}">
+                  <view class="question-top flex-between">
+                    <view class="question-meta flex-row">
+                      <text class="question-num text-bold">#{{index + 1}}</text>
+                      <view class="topic-badge {{item.topicClass}}">
+                        <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
+                      </view>
+                      <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">{{item.level}}</text>
+                      <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
+                    </view>
+                    <view class="remove-btn" catchtap="removeWrong" data-id="{{item.question_id}}">
+                      <text class="remove-icon">✕</text>
+                    </view>
+                  </view>
+
+                  <view class="question-content-box">
+                    <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
+                  </view>
+                </view>
+              </block>
+            </view>
+
+            <!-- 加载更多提示 -->
+            <view class="load-more" wx:if="{{wrongLoading}}">
+              <text class="load-more-text text-small text-muted">加载中...</text>
+            </view>
+
+            <!-- 底部提示 -->
+            <view class="end-tip" wx:if="{{!wrongHasMore && wrongQuestions.length > 0}}">
+              <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
+            </view>
+          </block>
+
+          <!-- 空状态 -->
+          <block wx:if="{{wrongQuestions.length === 0}}">
+            <view class="empty-state">
+              <view class="empty-icon-box">
+                <text>🎉</text>
+              </view>
+              <text class="empty-title text-bold">暂无错题</text>
+              <text class="empty-sub text-small text-muted">继续保持，加油！</text>
+            </view>
+          </block>
+        </view>
+      </block>
+
+      <block wx:if="{{activeTab === 'favorite'}}">
+        <!-- 专题筛选 -->
+        <view class="filter-row">
+          <block wx:for="{{filterTopics}}" wx:key="id">
+            <view class="filter-btn {{selectedFavoriteTopicId === item.id ? 'active' : ''}}" bindtap="selectFavoriteTopic" data-id="{{item.id}}">
+              <text class="filter-btn-text">{{item.title}}</text>
+            </view>
+          </block>
+        </view>
+
+        <view class="section-card card">
+          <block wx:if="{{favoriteQuestions.length > 0}}">
+            <view class="question-list">
+              <block wx:for="{{favoriteQuestions}}" wx:key="id">
+                <view class="question-item card" bindtap="practiceFavorite" data-question="{{item}}">
+                  <view class="question-top flex-between">
+                    <view class="question-meta flex-row">
+                      <text class="question-num text-bold">#{{index + 1}}</text>
+                      <view class="topic-badge {{item.topicClass}}">
+                        <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
+                      </view>
+                      <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">{{item.level}}</text>
+                      <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
+                    </view>
+                    <view class="remove-btn" catchtap="removeFavorite" data-id="{{item.question_id}}">
+                      <text class="remove-icon">✕</text>
+                    </view>
+                  </view>
+
+                  <view class="question-content-box">
+                    <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
+                  </view>
+                </view>
+              </block>
+            </view>
+
+            <!-- 加载更多提示 -->
+            <view class="load-more" wx:if="{{favoriteLoading}}">
+              <text class="load-more-text text-small text-muted">加载中...</text>
+            </view>
+
+            <!-- 底部提示 -->
+            <view class="end-tip" wx:if="{{!favoriteHasMore && favoriteQuestions.length > 0}}">
+              <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
+            </view>
+          </block>
+
+          <!-- 空状态 -->
+          <block wx:if="{{favoriteQuestions.length === 0}}">
+            <view class="empty-state">
+              <view class="empty-icon-box">
+                <text>⭐</text>
+              </view>
+              <text class="empty-title text-bold">暂无收藏</text>
+              <text class="empty-sub text-small text-muted">练习时可点击收藏按钮添加</text>
+            </view>
+          </block>
+        </view>
+      </block>
     </block>
 
-    <!-- 收藏夹内容 -->
-    <block wx:if="{{activeTab === 'favorite'}}">
-      <!-- 专题筛选 -->
-      <view class="filter-row">
-        <block wx:for="{{filterTopics}}" wx:key="id">
-          <view class="filter-btn {{selectedFavoriteTopicId === item.id ? 'active' : ''}}" bindtap="selectFavoriteTopic" data-id="{{item.id}}">
-            <text class="filter-btn-text">{{item.title}}</text>
-          </view>
-        </block>
-      </view>
-
-      <view class="section-card card">
-        <block wx:if="{{favoriteQuestions.length > 0}}">
-          <view class="question-list">
-            <block wx:for="{{favoriteQuestions}}" wx:key="id">
-              <view class="question-item card" bindtap="practiceFavorite" data-question="{{item}}">
-                <view class="question-top flex-between">
-                  <view class="question-meta flex-row">
-                    <view class="topic-badge {{item.topicClass}}">
-                      <text class="topic-text text-small text-bold">{{item.topicTitle}}</text>
-                    </view>
-                    <text class="difficulty-badge text-small text-bold" wx:if="{{item.level}}">{{item.level}}</text>
-                    <text class="question-date text-small text-muted">{{item.dateLabel}}</text>
-                  </view>
-                  <view class="remove-btn" catchtap="removeFavorite" data-id="{{item.question_id}}">
-                    <text class="remove-icon">✕</text>
-                  </view>
-                </view>
-
-                <view class="question-content-box">
-                  <rich-text class="question-content" nodes="{{item.content}}"></rich-text>
-                </view>
-              </view>
-            </block>
-          </view>
-
-          <!-- 加载更多提示 -->
-          <view class="load-more" wx:if="{{favoriteLoading}}">
-            <text class="load-more-text text-small text-muted">加载中...</text>
-          </view>
-
-          <!-- 底部提示 -->
-          <view class="end-tip" wx:if="{{!favoriteHasMore && favoriteQuestions.length > 0}}">
-            <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
-          </view>
-        </block>
-
-        <!-- 空状态 -->
-        <block wx:if="{{favoriteQuestions.length === 0}}">
-          <view class="empty-state">
-            <view class="empty-icon-box">
-              <text>⭐</text>
-            </view>
-            <text class="empty-title text-bold">暂无收藏</text>
-            <text class="empty-sub text-small text-muted">练习时可点击收藏按钮添加</text>
-          </view>
-        </block>
+    <!-- 未登录引导 -->
+    <block wx:else>
+      <view class="login-guide">
+        <view class="login-guide-icon-box">
+          <text class="login-guide-icon">🔒</text>
+        </view>
+        <text class="login-guide-title text-bold">登录后查看复习内容</text>
+        <text class="login-guide-sub text-small text-muted">登录后可查看错题本和收藏夹</text>
+        <view class="login-guide-btn" bindtap="goToLogin">
+          <text class="login-guide-btn-text text-bold">去登录</text>
+        </view>
       </view>
     </block>
   </block>

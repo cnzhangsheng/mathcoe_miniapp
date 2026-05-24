@@ -56,24 +56,21 @@
       </view>
     </view>
 
-    <!-- 进度指示 -->
-    <view class="progress-row">
-      <text class="progress-text">{{swiperCurrent + 1}} / {{totalQuestions}}</text>
-    </view>
-
     <swiper current="{{swiperCurrent}}" duration="300" bindchange="onSwiperChange" class="topic-swiper">
       <swiper-item wx:for="{{swiperList}}" wx:for-item="card" wx:for-index="idx" wx:key="id">
         <scroll-view class="question-area" scroll-y>
 
-          <!-- 题目信息 -->
-          <view class="question-info-row">
-            <text class="topic-badge {{topicClass}} text-small text-bold">{{topicTitle}}</text>
-            <text class="difficulty-badge text-small text-bold" wx:if="{{card.questionLevel}}">{{card.questionLevel}}</text>
-            <text class="question-type-badge text-small text-muted">（{{card.questionTypeText}}）</text>
-          </view>
-
           <!-- Question Card -->
           <view class="question-card">
+            <view class="question-header flex-between">
+              <view class="question-header-left">
+                <text class="question-title text-bold">题目{{idx + 1}}</text>
+                <text class="topic-badge {{topicClass}} text-small text-bold">{{topicTitle}}</text>
+                <text class="difficulty-badge text-small text-bold" wx:if="{{card.questionLevel}}">{{card.questionLevel}}</text>
+                <text class="question-type-text text-small text-muted" wx:if="{{card.questionTypeText}}">（{{card.questionTypeText}}）</text>
+              </view>
+              <text class="question-count text-muted">{{idx + 1}}/{{totalQuestions}}</text>
+            </view>
             <!-- 题目内容 -->
             <view class="question-content-box">
               <rich-text class="question-content" nodes="{{card.questionContentHtml || '题目内容'}}"></rich-text>
@@ -123,10 +120,6 @@
 
           <!-- Analysis Section -->
           <view class="analysis-section" wx:if="{{card.isSubmitted}}">
-            <view class="analysis-header flex-row">
-              <text class="analysis-icon">💡</text>
-              <text class="analysis-title text-small text-bold">答案解析</text>
-            </view>
             <view class="analysis-card">
               <!-- Correct Answer -->
               <view class="answer-row flex-row">
@@ -144,21 +137,14 @@
                 <text class="logic-text">{{card.analysis.logic}}</text>
               </view>
 
-              <!-- Key Point -->
-              <view class="key-point-box">
-                <view class="key-icon-box">
-                  <text class="key-icon">⭐</text>
-                </view>
-                <view class="key-content">
-                  <text class="key-label text-xs text-bold">核心考点：</text>
-                  <text class="key-text text-xs">{{card.analysis.point}}</text>
-                </view>
-              </view>
             </view>
 
-            <!-- 左滑提示 -->
+            <!-- 下一题按钮 -->
             <view class="swipe-next-row" wx:if="{{idx < totalQuestions - 1}}">
-              <text class="swipe-next-text">◀ 左滑进入下一题</text>
+              <view class="next-btn" bindtap="goNextQuestion" data-index="{{idx}}">
+                <text class="next-btn-text text-bold">下一题</text>
+                <text class="next-btn-arrow">→</text>
+              </view>
             </view>
             <view class="swipe-next-row" wx:if="{{idx >= totalQuestions - 1}}">
               <view class="complete-swipe-btn" bindtap="goBack">

@@ -6,23 +6,28 @@ Page({
   data: {
     loading: false,
     isLoggedIn: false,
+    redirect: '',
     imageBaseUrl: IMAGE_BASE_URL,
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
     gradeIndex: 0,  // 默认一年级（G1）
     difficultyLevels: DIFFICULTY_LABELS,
     difficultyIndex: 0,  // 默认Level 1（根据年级自动计算）
     agreed: false,  // 隐私协议是否同意
+    showAgreementModal: false,  // 温馨提示弹窗
   },
 
-  onLoad() {
+  onLoad(options) {
+    this.setData({ redirect: options.redirect || '' })
     // 检查是否已经登录
     const token = wx.getStorageSync('token')
     if (token) {
       this.setData({ isLoggedIn: true })
-      // 已登录，跳转到首页
-      wx.switchTab({
-        url: '/pages/index/index'
-      })
+      // 已登录，根据 redirect 参数跳转
+      if (this.data.redirect) {
+        wx.switchTab({ url: '/pages/' + this.data.redirect + '/' + this.data.redirect })
+      } else {
+        wx.switchTab({ url: '/pages/index/index' })
+      }
     }
   },
 
@@ -31,16 +36,24 @@ Page({
     if (this.data.loading) return
 
     if (!this.data.agreed) {
-      wx.showToast({
-        title: '请先阅读并勾选同意协议和隐私政策',
-        icon: 'none',
-        duration: 2500
-      })
+      this.setData({ showAgreementModal: true })
       return
     }
 
     this.setData({ loading: true })
     this.wxLogin()
+  },
+
+  // 温馨提示 - 同意
+  onAgreementConfirm() {
+    this.setData({ agreed: true, showAgreementModal: false })
+    this.setData({ loading: true })
+    this.wxLogin()
+  },
+
+  // 温馨提示 - 不同意
+  onAgreementCancel() {
+    this.setData({ showAgreementModal: false })
   },
 
   // 微信登录
@@ -96,11 +109,15 @@ Page({
             icon: 'success'
           })
 
-          // 跳转到首页
+          // 根据 redirect 参数跳转，无则跳首页
           setTimeout(() => {
-            wx.switchTab({
-              url: '/pages/index/index'
-            })
+            if (this.data.redirect) {
+              wx.switchTab({ url: '/pages/' + this.data.redirect + '/' + this.data.redirect })
+            } else {
+              wx.switchTab({
+                url: '/pages/index/index'
+              })
+            }
           }, 1500)
         } else {
           wx.showToast({

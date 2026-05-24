@@ -279,6 +279,57 @@
   color: #fff;
 }
 
+/* Action Icons - matching discover page */
+.action-icons-right {
+  margin-top: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24rpx;
+  padding-right: 32rpx;
+}
+
+.action-icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 32rpx;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.action-icon-btn.bookmarked {
+  background-color: rgba(251, 191, 36, 0.1);
+}
+
+.action-icon-img {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.share-btn {
+  padding: 16rpx 24rpx;
+  margin: 0;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.03);
+  line-height: normal;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.action-icon-btn.bookmarked .action-text {
+  color: #F59E0B;
+}
+
 /* Utility */
 .text-bold {
   font-weight: 700;

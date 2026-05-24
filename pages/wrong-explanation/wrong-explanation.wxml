@@ -34,6 +34,22 @@
     </view>
   </view>
 
+  <!-- 收藏 + 分享 -->
+  <view class="action-icons-right">
+    <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
+      <image class="action-icon-img" src="{{isFavorited ? (imageBaseUrl + 'icons/icon_bookmark_fill.png') : (imageBaseUrl + 'icons/icon_bookmark.png')}}" mode="aspectFit"></image>
+      <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+    </view>
+    <button wx:if="{{isLoggedIn}}" class="action-icon-btn share-btn" open-type="share">
+      <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+      <text class="action-text">分享</text>
+    </button>
+    <view wx:else class="action-icon-btn share-btn" bindtap="goToLogin">
+      <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+      <text class="action-text">分享</text>
+    </view>
+  </view>
+
   <!-- 答案结果 -->
   <view class="result-card card">
     <view class="result-header {{isCorrect ? 'success' : 'error'}}">

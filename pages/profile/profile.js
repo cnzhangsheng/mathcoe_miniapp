@@ -12,6 +12,7 @@ function formatNum(n) {
 Page({
   data: {
     loading: true,
+    isLoggedIn: false,
     userInfo: null,
     streakDays: 0,
     imageBaseUrl: IMAGE_BASE_URL,
@@ -47,7 +48,20 @@ Page({
   },
 
   onLoad() {
+    this.checkLoginStatus()
     this.loadData()
+  },
+
+  onShow() {
+    this.checkLoginStatus()
+    if (this.data.isLoggedIn) {
+      this.loadData()
+    }
+  },
+
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token')
+    this.setData({ isLoggedIn: !!token })
   },
 
   async loadData() {
@@ -223,6 +237,11 @@ Page({
     } catch (err) {
       wx.showToast({ title: '更新失败', icon: 'none' })
     }
+  },
+
+  // 跳转登录页
+  goToLogin() {
+    wx.navigateTo({ url: '/pages/login/login?redirect=profile' })
   },
 
   // 关于页面

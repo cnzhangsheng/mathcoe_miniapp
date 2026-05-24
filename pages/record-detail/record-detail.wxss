@@ -1,4 +1,5 @@
 /* pages/record-detail/record-detail.wxss - 答题记录题目详情样式 */
+@import "../../styles/practice-common.wxss";
 
 .detail-page {
   min-height: 100vh;
@@ -178,91 +179,9 @@
   color: #F43F5E;
 }
 
-/* Answer Info Section */
-.answer-info-section {
-  margin-top: 32rpx;
-}
-
-.answer-info-card {
-  background-color: #fff;
-  border-radius: 48rpx;
-  padding: 32rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
-}
-
-.answer-row {
-  gap: 24rpx;
-}
-
-.answer-box {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 32rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.answer-box.correct-box {
-  background-color: #10B981;
-  box-shadow: 0 8rpx 16rpx rgba(16, 185, 129, 0.2);
-}
-
-.answer-box.wrong-box {
-  background-color: #F43F5E;
-  box-shadow: 0 8rpx 16rpx rgba(244, 63, 94, 0.2);
-}
-
-.answer-letter {
-  font-size: 36rpx;
-  color: #fff;
-}
-
-.answer-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
-}
-
-.answer-title {
-  font-size: 28rpx;
-  color: rgba(0, 0, 0, 0.9);
-}
-
-.answer-sub {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.correct-text {
-  color: #10B981;
-}
-
-.wrong-text {
-  color: #F43F5E;
-}
-
 /* Analysis Section */
 .analysis-section {
   margin-top: 48rpx;
-}
-
-.analysis-header {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  padding: 0 32rpx;
-  margin-bottom: 32rpx;
-}
-
-.analysis-icon {
-  font-size: 32rpx;
-  color: #F59E0B;
-}
-
-.analysis-title {
-  color: rgba(0, 0, 0, 0.6);
-  letter-spacing: 4rpx;
 }
 
 .analysis-card {

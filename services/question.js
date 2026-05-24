@@ -9,7 +9,8 @@ const getQuestions = (params = {}) => {
   let url = '/questions?'
   if (params.topic_id) url += `topic_id=${params.topic_id}&`
   if (params.year) url += `year=${params.year}&`
-  if (params.limit) url += `limit=${params.limit}`
+  if (params.limit) url += `limit=${params.limit}&`
+  if (params.sort_by) url += `sort_by=${params.sort_by}`
   return request(url)
 }
 

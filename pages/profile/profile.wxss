@@ -85,6 +85,10 @@
   line-height: 1;
 }
 
+.login-text {
+  color: #07C160;
+}
+
 .streak-row {
   display: flex;
   align-items: center;

@@ -7,6 +7,7 @@ const { getTopicTitle, getTopicClass } = require('../../services/topics')
 Page({
   data: {
     loading: true,
+    isLoggedIn: false,
     activeTab: 'wrong',  // wrong | favorite
     selectedTopicId: 0,  // 0表示全部
 
@@ -36,13 +37,30 @@ Page({
   },
 
   onLoad() {
+    this.checkLoginStatus()
     this.loadInitialData()
   },
 
   onShow() {
-    if (!this.data.loading) {
+    const loggedIn = this.checkLoginStatus()
+    if (!this.data.loading && loggedIn) {
       this.loadInitialData()
     }
+  },
+
+  // 检查登录状态，返回是否已登录
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token')
+    const loggedIn = !!token
+    if (this.data.isLoggedIn !== loggedIn) {
+      this.setData({ isLoggedIn: loggedIn })
+    }
+    return loggedIn
+  },
+
+  // 跳转登录页
+  goToLogin() {
+    wx.navigateTo({ url: '/pages/login/login?redirect=review' })
   },
 
   // 下拉加载更多
@@ -56,6 +74,11 @@ Page({
 
   // 下拉刷新
   async onPullDownRefresh() {
+    const token = wx.getStorageSync('token')
+    if (!token) {
+      wx.stopPullDownRefresh()
+      return
+    }
     this.setData({
       wrongPage: 1,
       wrongQuestions: [],
@@ -95,11 +118,17 @@ Page({
 
       this.setData({ filterTopics })
 
-      // 加载当前 tab 的第一页
+      // 加载当前 tab 的第一页，同时预加载另一 tab 的数据
       if (this.data.activeTab === 'wrong') {
-        await this.loadWrongQuestions(1)
+        await Promise.all([
+          this.loadWrongQuestions(1),
+          this.loadFavoriteQuestions(1),
+        ])
       } else {
-        await this.loadFavoriteQuestions(1)
+        await Promise.all([
+          this.loadFavoriteQuestions(1),
+          this.loadWrongQuestions(1),
+        ])
       }
 
       wx.hideLoading()
@@ -259,11 +288,15 @@ Page({
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab
     this.setData({ activeTab: tab, selectedTopicId: 0, selectedFavoriteTopicId: 0 })
-    // 切换后加载对应 tab 数据
+    // 未登录不加载数据
+    if (!wx.getStorageSync('token')) return
+    // 切换后加载对应 tab 数据（始终刷新）
     if (!this.data.loading) {
-      if (tab === 'wrong' && this.data.wrongQuestions.length === 0) {
+      if (tab === 'wrong') {
+        this.setData({ wrongQuestions: [], wrongPage: 1, wrongHasMore: true })
         this.loadWrongQuestions(1)
-      } else if (tab === 'favorite' && this.data.favoriteQuestions.length === 0) {
+      } else if (tab === 'favorite') {
+        this.setData({ favoriteQuestions: [], favoritePage: 1, favoriteHasMore: true })
         this.loadFavoriteQuestions(1)
       }
     }

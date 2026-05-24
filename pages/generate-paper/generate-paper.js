@@ -1,6 +1,9 @@
 const examPaperService = require('../../services/examPaper')
 const questionService = require('../../services/question')
+const userService = require('../../services/user')
 const { DIFFICULTY_VALUES, DIFFICULTY_LEVELS } = require('../../utils/constants')
+
+const app = getApp()
 
 // 模块级锁，防止快速重复点击生成多条考卷
 let _generating = false
@@ -21,7 +24,26 @@ Page({
 
   onLoad() {
     _generating = false
+    this.loadUserGrade()
     this.loadTopics()
+  },
+
+  async loadUserGrade() {
+    try {
+      // 优先从 globalData 获取用户的 difficulty_level
+      let level = app.globalData.userInfo?.difficulty_level
+      // 未加载则从 API 获取
+      if (!level) {
+        const userInfo = await userService.getUserInfo()
+        level = userInfo?.difficulty_level
+        if (userInfo) app.globalData.userInfo = userInfo
+      }
+      if (level) {
+        this.setData({ difficultyLevel: Math.min(level, 6) })
+      }
+    } catch (err) {
+      console.error('Failed to load user difficulty level:', err)
+    }
   },
 
   async loadTopics() {

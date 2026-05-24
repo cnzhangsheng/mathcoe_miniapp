@@ -80,6 +80,13 @@ const getTodayStats = () => {
   return request('/practice/today-stats')
 }
 
+/**
+ * 获取薄弱专题分析
+ */
+const getWeakAnalysis = () => {
+  return request('/practice/weak-analysis', { silent: true })
+}
+
 module.exports = {
   startPractice,
   submitAnswer,
@@ -88,5 +95,6 @@ module.exports = {
   addFavorite,
   removeFavorite,
   getWrongQuestions,
-  getTodayStats
+  getTodayStats,
+  getWeakAnalysis
 }

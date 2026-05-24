@@ -32,10 +32,33 @@ Page({
     // 我的考卷
     myPapers: [],
 
+    // 袋鼠考卷模块（参考专题页面）
+    paperTab: 'kangaroo', // kangaroo | my
+    examPapers: [],
+    totalExamPapers: 0,
+    examPage: 1,
+    examPageSize: 10,
+    examHasMore: false,
+    examLoading: false,
+    selectedPaperType: '',
+    paperTypeTabs: [
+      { value: '', label: '全部' },
+      { value: 'past', label: '真题卷' },
+      { value: 'topic', label: '专题卷' },
+      { value: 'daily', label: '练习卷' },
+    ],
+    paperTypes: {
+      daily: { label: '练习卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-daily.png', color: 'emerald' },
+      topic: { label: '专题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'purple' },
+      past: { label: '真题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-past.png', color: 'blue' },
+      custom: { label: '自编卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'green' }
+    },
+
     // 本周/本月学习统计
     weekQuestions: 0,
     weekCorrectRate: 0,
     weekWrongCount: 0,
+    wrongCount: 0,
     weekRange: '',
     favoriteCount: 0,
     // 本月统计
@@ -44,9 +67,6 @@ Page({
     monthWrongCount: 0,
     monthRange: '',
     statsTab: 'week',  // week | month
-
-    // 薄弱专题
-    weakTopic: null,
 
     // Banner
     banners: [],
@@ -59,8 +79,17 @@ Page({
   },
 
   onShow() {
+    // 每次显示时刷新登录状态
+    this.checkLoginStatus()
+
     // Banner 无需登录，无条件加载
     this.loadBanners()
+
+    // 袋鼠考卷（系统级，无需登录）
+    this.loadExamPapers()
+
+    // 日期范围（无需登录）
+    this.setDefaultDateRanges()
 
     if (this.data.isLoggedIn) {
       // 先同步全局数据（个人页修改昵称后立即生效）
@@ -71,7 +100,7 @@ Page({
 
   onReady() {
     // 页面渲染完成后绘制雷达图
-    if (this.data.isLoggedIn && this.data.abilities) {
+    if (this.data.abilities) {
       setTimeout(() => this.drawRadarChart(), 200)
     }
   },
@@ -476,6 +505,79 @@ Page({
       })
   },
 
+  // ========== 考卷模块 (袋鼠考卷 + 我的考卷) ==========
+
+  // 切换考卷 tab
+  switchPaperTab(e) {
+    const tab = e.currentTarget.dataset.tab
+    if (tab === this.data.paperTab) return
+    this.setData({ paperTab: tab, selectedPaperType: '' })
+    if (tab === 'kangaroo' && this.data.examPapers.length === 0) {
+      this.loadExamPapers(true)
+    }
+  },
+
+  // 加载袋鼠考卷列表
+  async loadExamPapers(reset = true) {
+    const { examPage, examPageSize, selectedPaperType } = this.data
+    if (!reset && this.data.examLoading) return
+
+    this.setData(reset ? { examPage: 1, examLoading: true } : { examLoading: true })
+    try {
+      const page = reset ? 1 : examPage
+      const result = await examPaperService.getExamPapers({
+        page,
+        page_size: examPageSize,
+        paper_type: selectedPaperType || undefined
+      }).catch(() => null)
+
+      if (result && result.items && result.items.length > 0) {
+        const papersWithType = result.items.map(paper => {
+          const typeInfo = this.data.paperTypes[paper.paper_type] || this.data.paperTypes.daily
+          return {
+            ...paper,
+            is_new: paper.is_new === true,
+            typeLabel: typeInfo.label,
+            typeIcon: typeInfo.icon,
+            typeColor: typeInfo.color,
+            difficultyLabel: paper.difficulty_level ? formatDifficulty(paper.difficulty_level) : '',
+            duration: 75
+          }
+        })
+
+        const totalLoaded = reset ? papersWithType.length : this.data.examPapers.length + papersWithType.length
+        this.setData({
+          examPapers: reset ? papersWithType : [...this.data.examPapers, ...papersWithType],
+          totalExamPapers: result.total,
+          examHasMore: result.total > totalLoaded,
+          examPage: page,
+        })
+      } else {
+        if (reset) this.setData({ examPapers: [], totalExamPapers: 0, examHasMore: false })
+      }
+    } catch (err) {
+      console.error('loadExamPapers error:', err)
+    } finally {
+      this.setData({ examLoading: false })
+    }
+  },
+
+  // 加载更多袋鼠考卷
+  loadMoreExamPapers() {
+    if (!this.data.examHasMore || this.data.examLoading) return
+    const nextPage = this.data.examPage + 1
+    this.setData({ examPage: nextPage })
+    this.loadExamPapers(false)
+  },
+
+  // 考卷类型筛选
+  selectPaperType(e) {
+    const type = e.currentTarget.dataset.type
+    if (type === this.data.selectedPaperType) return
+    this.setData({ selectedPaperType: type })
+    this.loadExamPapers(true)
+  },
+
   // ========== 导航方法 ==========
 
   // 跳转到探索页
@@ -519,6 +621,10 @@ Page({
 
   // 选择考卷进入练习
   selectExamPaper(e) {
+    if (!this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/login/login' })
+      return
+    }
     const paperId = e.currentTarget.dataset.id
     wx.navigateTo({
       url: `/pages/practice/practice?exam_paper_id=${paperId}`
@@ -527,6 +633,10 @@ Page({
 
   // 下载PDF
   async downloadPdf(e) {
+    if (!this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/login/login' })
+      return
+    }
     const paperId = e.currentTarget.dataset.id
     this.setData({ pdfProgress: -1 })
     try {
@@ -596,13 +706,13 @@ Page({
     })
   },
 
-  // 跳转到薄弱专题详情
-  goToTopicDetail(e) {
-    const topicId = e.currentTarget.dataset.id
-    const title = encodeURIComponent(this.data.weakTopic?.title || '专题详情')
-    wx.navigateTo({
-      url: `/pages/topic-question-detail/topic-question-detail?topic_id=${topicId}&title=${title}`
-    })
+  // AI 智能组卷点击：未登录跳转登录，登录后正常进入
+  handleGenerateTap() {
+    if (this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
+    } else {
+      wx.navigateTo({ url: '/pages/login/login' })
+    }
   },
 
   // 跳转到登录页
@@ -613,6 +723,21 @@ Page({
   },
 
   // ========== Banner ==========
+
+  // 设置默认日期范围（使用与后端一致的 YYYY-MM-DD 格式）
+  setDefaultDateRanges() {
+    if (this.data.weekRange && this.data.monthRange) return
+    const now = new Date()
+    const day = now.getDay() || 7
+    const weekStart = new Date(now)
+    weekStart.setDate(now.getDate() - day + 1)
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekStart.getDate() + 6)
+    const fmt = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    const weekRange = `${fmt(weekStart)} ~ ${fmt(weekEnd)}`
+    const monthRange = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01 ~ ${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()}`
+    this.setData({ weekRange, monthRange })
+  },
 
   async loadBanners() {
     try {

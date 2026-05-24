@@ -1,7 +1,9 @@
 // pages/review-practice/review-practice.js - 错题复习练习逻辑
 const app = getApp()
 const reviewService = require('../../services/review')
-const { getTopicTitle } = require('../../services/topics')
+const questionService = require('../../services/question')
+const { getTopicTitle, getTopicClass } = require('../../services/topics')
+const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
 
 Page({
   data: {
@@ -9,26 +11,33 @@ Page({
     questionIds: [],
     topicId: 0,  // 当前筛选的专题 ID
     questions: [],
-    currentIndex: 0,
+    swiperCurrent: 0,
     totalQuestions: 0,
     progress: 0,
-
-    currentQuestion: null,
-    selectedAnswer: '',
-    showResult: false,
-    isCorrect: false,
 
     completed: false,
     correctCount: 0,
 
     // 题目属性
     topicTitle: '',
-    questionType: '单选题'
+    questionType: '单选题',
+
+    source: 'review',
+    startIndex: 0,
+
+    imageBaseUrl: IMAGE_BASE_URL,
+    isLoggedIn: false,
   },
 
   onLoad(options) {
+    const token = wx.getStorageSync('token')
     const topicId = parseInt(options.topicId) || 0
-    this.setData({ topicId })
+    const source = options.source || 'review'
+    const startIndex = parseInt(options.startIndex) || 0
+    this.setData({ topicId, source, startIndex, isLoggedIn: !!token })
+
+    const title = options.title ? decodeURIComponent(options.title) : (source === 'topics' ? '推荐题目练习' : '错题本练习')
+    wx.setNavigationBarTitle({ title })
 
     if (options.ids) {
       const ids = options.ids.split(',').map(id => parseInt(id))
@@ -44,46 +53,91 @@ Page({
       // 获取错题列表
       const wrongQuestions = await reviewService.getAllWrongQuestions() || []
 
-      // 根据ID筛选题目
-      const questions = ids.map(id => {
+      // 根据ID筛选题目，不在错题中的从普通题库补充
+      const questions = []
+      for (const id of ids) {
         const wrong = wrongQuestions.find(q => q.question_id === id)
         if (wrong) {
-          // 转换 options 格式: [{label: 'A', text: '内容'}] -> [{key: 'A', value: '内容'}]
           const options = (wrong.question_options || []).map(opt => ({
             key: opt.label || opt.key,
             value: opt.text || opt.value || opt.content?.text || ''
           }))
-
-          return {
+          questions.push({
             id: wrong.id,
             question_id: wrong.question_id,
             topic_id: wrong.question_topic_id,
             topicTitle: this.getTopicTitle(wrong.question_topic_id),
+            topicClass: this.getTopicClass(wrong.question_topic_id),
             content: wrong.question_content?.text || wrong.question_content || '',
             options: options,
             answer: wrong.question_answer,
             explanation: wrong.question_explanation?.text || wrong.question_explanation || '',
-            question_type: wrong.question_type || 'single'
+            question_type: wrong.question_type || 'single',
+            questionTypeText: wrong.question_type === 'multiple' ? '多选题' : '单选题',
+            difficulty_level: wrong.question_difficulty_level || 0,
+            levelLabel: wrong.question_difficulty_level ? formatDifficulty(wrong.question_difficulty_level) : '',
+          })
+        } else {
+          // 从普通题库获取题目详情（含答案）
+          try {
+            const q = await questionService.getQuestion(id)
+            if (q) {
+              const options = (q.options || []).map(opt => ({
+                key: opt.label || '',
+                value: opt.text || opt.content?.text || ''
+              }))
+              questions.push({
+                id: q.id,
+                question_id: q.id,
+                topic_id: q.topic_id,
+                topicTitle: this.getTopicTitle(q.topic_id),
+                topicClass: this.getTopicClass(q.topic_id),
+                content: q.content?.text || '',
+                options: options,
+                answer: q.answer || '',
+                explanation: q.explanation?.text || '',
+                question_type: q.question_type || 'single',
+                questionTypeText: q.question_type === 'multiple' ? '多选题' : '单选题',
+                difficulty_level: q.difficulty_level || 0,
+                levelLabel: q.difficulty_level ? formatDifficulty(q.difficulty_level) : '',
+              })
+            }
+          } catch (e) {
+            console.error('Failed to fetch question ' + id + ':', e)
           }
         }
-        return null
-      }).filter(q => q !== null)
+      }
+
+      // 检查每道题目的收藏状态
+      if (this.data.isLoggedIn) {
+        for (const q of questions) {
+          q.isFavorited = await reviewService.isFavorited(q.question_id).catch(() => false)
+        }
+      } else {
+        for (const q of questions) {
+          q.isFavorited = false
+        }
+      }
+
+      // 初始化每道题目的状态
+      for (const q of questions) {
+        q.selectedAnswer = ''
+        q.showResult = false
+        q.isCorrect = false
+      }
 
       if (questions.length > 0) {
+        const startIdx = Math.min(this.data.startIndex, questions.length - 1)
         this.setData({
           loading: false,
           questions,
           totalQuestions: questions.length,
-          currentIndex: 0,
-          currentQuestion: questions[0],
-          progress: 100 / questions.length,
+          swiperCurrent: startIdx,
+          progress: ((startIdx + 1) / questions.length) * 100,
           correctCount: 0,
-          selectedAnswer: '',
-          showResult: false,
-          isCorrect: false,
           completed: false
         })
-        this.updateQuestionMeta(questions[0])
+        this.updateQuestionMeta(questions[startIdx])
       } else {
         wx.hideLoading()
         wx.showToast({ title: '错题已全部完成', icon: 'success' })
@@ -103,6 +157,7 @@ Page({
   },
 
   getTopicTitle(topicId) { return getTopicTitle(topicId) },
+  getTopicClass(topicId) { return getTopicClass(topicId) },
 
   updateQuestionMeta(question) {
     const questionType = question.question_type === 'multiple' ? '多选题' : '单选题'
@@ -113,59 +168,56 @@ Page({
   },
 
   selectOption(e) {
-    if (this.data.showResult) return
-
+    const idx = e.currentTarget.dataset.index
     const key = e.currentTarget.dataset.key
-    this.setData({ selectedAnswer: key })
+    const q = this.data.questions[idx]
+    if (!q || q.showResult) return
+    this.setData({ ['questions[' + idx + '].selectedAnswer']: key })
   },
 
-  submitAnswer() {
-    if (!this.data.selectedAnswer) {
+  submitAnswer(e) {
+    const idx = e.currentTarget.dataset.index
+    const q = this.data.questions[idx]
+    if (!q || !q.selectedAnswer) {
       wx.showToast({ title: '请选择答案', icon: 'none' })
       return
     }
-
-    const { currentQuestion, selectedAnswer } = this.data
-    const isCorrect = selectedAnswer === currentQuestion.answer
-
-    this.setData({
-      showResult: true,
-      isCorrect
-    })
-
+    const isCorrect = q.selectedAnswer === q.answer
+    const updates = {}
+    updates['questions[' + idx + '].showResult'] = true
+    updates['questions[' + idx + '].isCorrect'] = isCorrect
     if (isCorrect) {
-      this.setData({ correctCount: this.data.correctCount + 1 })
-      // 答对时从错题本移除
-      reviewService.removeWrongQuestion(currentQuestion.question_id).catch(err => {
+      this.setData({ correctCount: this.data.correctCount + 1, ...updates })
+      reviewService.removeWrongQuestion(q.question_id).catch(err => {
         console.error('移除错题失败:', err)
+      })
+    } else {
+      this.setData(updates)
+      reviewService.addWrongQuestion(q.question_id).catch(err => {
+        console.error('加入错题本失败:', err)
       })
     }
   },
 
-  nextQuestion() {
-    const { currentIndex, questions } = this.data
-
-    if (currentIndex < questions.length - 1) {
-      const nextIndex = currentIndex + 1
-      const nextQuestion = questions[nextIndex]
-
-      this.setData({
-        currentIndex: nextIndex,
-        currentQuestion: nextQuestion,
-        selectedAnswer: '',
-        showResult: false,
-        isCorrect: false,
-        progress: ((nextIndex + 1) / questions.length) * 100
-      })
-      this.updateQuestionMeta(nextQuestion)
+  nextQuestion(e) {
+    const idx = parseInt(e.currentTarget.dataset.index)
+    if (idx < this.data.questions.length - 1) {
+      this.setData({ swiperCurrent: idx + 1 })
     } else {
-      // 完成
-      this.setData({ completed: true })
+      const total = this.data.totalQuestions
+      const correct = this.data.correctCount
+      const wrong = total - correct
+      const accuracyRate = total > 0 ? Math.floor((correct / total) * 100) : 0
+      this.setData({ completed: true, wrongCount: wrong, accuracyRate })
     }
   },
 
   goHome() {
-    wx.switchTab({ url: '/pages/review/review' })
+    if (this.data.source === 'topics') {
+      wx.switchTab({ url: '/pages/topics/topics' })
+    } else {
+      wx.switchTab({ url: '/pages/review/review' })
+    }
   },
 
   goReview() {
@@ -212,11 +264,19 @@ Page({
           question_id: wrong.question_id,
           topic_id: wrong.question_topic_id,
           topicTitle: this.getTopicTitle(wrong.question_topic_id),
+          topicClass: this.getTopicClass(wrong.question_topic_id),
           content: wrong.question_content?.text || wrong.question_content || '',
           options: options,
           answer: wrong.question_answer,
           explanation: wrong.question_explanation?.text || wrong.question_explanation || '',
-          question_type: wrong.question_type || 'single'
+          question_type: wrong.question_type || 'single',
+          questionTypeText: wrong.question_type === 'multiple' ? '多选题' : '单选题',
+          difficulty_level: wrong.question_difficulty_level || 0,
+          levelLabel: wrong.question_difficulty_level ? formatDifficulty(wrong.question_difficulty_level) : '',
+          selectedAnswer: '',
+          showResult: false,
+          isCorrect: false,
+          isFavorited: false,
         }
       })
 
@@ -227,13 +287,9 @@ Page({
         questions,
         questionIds,
         totalQuestions: questions.length,
-        currentIndex: 0,
-        currentQuestion: questions[0],
+        swiperCurrent: 0,
         progress: 100 / questions.length,
         correctCount: 0,
-        selectedAnswer: '',
-        showResult: false,
-        isCorrect: false,
         completed: false
       })
       this.updateQuestionMeta(questions[0])
@@ -247,10 +303,54 @@ Page({
     }
   },
 
+  // 收藏/取消收藏
+  async toggleFavorite(e) {
+    if (!this.data.isLoggedIn) {
+      this.goToLogin()
+      return
+    }
+
+    const idx = e.currentTarget.dataset.index
+    const q = this.data.questions[idx]
+    if (!q) return
+
+    try {
+      if (q.isFavorited) {
+        const result = await reviewService.removeFavorite(q.question_id)
+        if (result && result.success) {
+          this.setData({ ['questions[' + idx + '].isFavorited']: false })
+        }
+      } else {
+        const result = await reviewService.addFavorite(q.question_id)
+        if (result) {
+          this.setData({ ['questions[' + idx + '].isFavorited']: true })
+        }
+      }
+    } catch (err) {
+      console.error('Favorite failed:', err)
+    }
+  },
+
+  // 跳转登录
+  goToLogin() {
+    wx.navigateTo({ url: '/pages/login/login?redirect=topics' })
+  },
+
+  onSwiperChange(e) {
+    this.setData({ swiperCurrent: e.detail.current })
+  },
+
   onShareAppMessage() {
+    const q = this.data.questions[this.data.swiperCurrent]
+    if (q) {
+      return {
+        title: `【数学练习】${q.topicTitle || '推荐题目'} - 袋鼠数学助理`,
+        path: `/pages/discover/discover?question_id=${q.question_id}`
+      }
+    }
     return {
-      title: '错题复习 - 袋鼠数学助理',
-      path: '/pages/review/review'
+      title: '数学练习 - 袋鼠数学助理',
+      path: '/pages/topics/topics'
     }
   }
 })

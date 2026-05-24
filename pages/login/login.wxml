@@ -14,30 +14,6 @@
     <text class="app-desc">您的 AI 数字化思维成长伙伴</text>
   </view>
 
-  <!-- 特性展示 -->
-  <view class="features-section">
-    <view class="feature-card">
-      <view class="feature-icon-box primary-bg">
-        <text>🎯</text>
-      </view>
-      <text class="feature-title text-small text-bold">AI深度测评</text>
-      <text class="feature-desc text-xs">雷达图分析思维模型</text>
-    </view>
-    <view class="feature-card">
-      <view class="feature-icon-box blue-bg">
-        <text>📊</text>
-      </view>
-      <text class="feature-title text-small text-bold">全级真题实练</text>
-      <text class="feature-desc text-xs">历年L1至L6真题库</text>
-    </view>
-    <view class="feature-card">
-      <view class="feature-icon-box amber-bg">
-        <text>🏆</text>
-      </view>
-      <text class="feature-title text-small text-bold">成长轨迹追踪</text>
-      <text class="feature-desc text-xs">数字化记录进步点滴</text>
-    </view>
-  </view>
 
   <!-- 登录区域 -->
   <view class="login-section">
@@ -70,7 +46,7 @@
       disabled="{{loading}}"
     >
       <view class="btn-content flex-row">
-        <text class="btn-text text-bold">{{loading ? '登录中...' : '登录'}}</text>
+        <text class="btn-text text-bold">{{loading ? '登录中...' : '一键登录'}}</text>
       </view>
     </button>
 
@@ -81,6 +57,30 @@
       <text class="privacy-link" bindtap="onTapUserService">《用户服务协议》</text>
       <text class="privacy-text">和</text>
       <text class="privacy-link" bindtap="onTapPrivacy">《隐私政策》</text>
+    </view>
+  </view>
+
+  <!-- 温馨提示弹窗 -->
+  <view wx:if="{{showAgreementModal}}" class="agreement-modal">
+    <view class="agreement-mask" bindtap="onAgreementCancel"></view>
+    <view class="agreement-content">
+      <view class="agreement-header">
+        <text class="agreement-title text-bold">温馨提示</text>
+      </view>
+      <view class="agreement-body">
+        <text class="agreement-desc">已阅读并同意</text>
+        <text class="agreement-link" bindtap="onTapUserService">《用户服务协议》</text>
+        <text class="agreement-desc">和</text>
+        <text class="agreement-link" bindtap="onTapPrivacy">《隐私政策》</text>
+      </view>
+      <view class="agreement-actions">
+        <view class="agreement-btn agreement-btn-cancel" bindtap="onAgreementCancel">
+          <text class="agreement-btn-text">不同意</text>
+        </view>
+        <view class="agreement-btn agreement-btn-confirm" bindtap="onAgreementConfirm">
+          <text class="agreement-btn-text text-bold">同意</text>
+        </view>
+      </view>
     </view>
   </view>
 </view>

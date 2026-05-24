@@ -1,109 +1,143 @@
 // pages/topics/topics.js - 100%复刻 kangaroo-math-brain
 const userService = require('../../services/user')
 const questionService = require('../../services/question')
-const examPaperService = require('../../services/examPaper')
+const practiceService = require('../../services/practice')
 const cache = require('../../services/cache')
-const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
+const { getTopicTitle, getTopicClass } = require('../../services/topics')
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 
 Page({
   data: {
     loading: true,
+    isLoggedIn: false,
     activeTab: 'all',
-    selectedExamPaper: null,
     imageBaseUrl: IMAGE_BASE_URL,
 
     // 专题数据（静态数据作为 fallback，实际从 API 获取）
     topics: [],
     filteredTopics: [],
 
-    // 考卷数据
-    examPapers: [],
-    totalExamPapers: 0,
-    examPage: 1,
-    examPageSize: 20,
-    hasMore: false,
-
-    // 考卷模块 tab
-    paperTab: 'kangaroo', // kangaroo | my
-
-    // 考卷类型筛选
-    selectedPaperType: '',
-    paperTypeTabs: [
-      { value: '', label: '全部' },
-      { value: 'daily', label: '练习卷' },
-      { value: 'mock', label: '模拟卷' },
-      { value: 'topic', label: '专题卷' },
-      { value: 'past', label: '真题卷' },
-    ],
-
-    // 我的考卷数据
-    myPapers: [],
-    totalMyPapers: 0,
-    myPapersPage: 1,
-    myPapersPageSize: 20,
-    myPapersHasMore: false,
-    loadingMyPapers: false,
-
     // AI学习洞察数据
     insightData: { weakest_topic_title: '', progress_gain: 0, analysis_base: 0 },
 
-    pdfProgress: 0,
-
-    paperTypes: {
-      daily: { label: '练习卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-daily.png', color: 'emerald' },
-      mock: { label: '模拟卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-sim.png', color: 'amber' },
-      topic: { label: '专题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'purple' },
-      past: { label: '真题卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-past.png', color: 'blue' },
-      custom: { label: '自编卷', icon: IMAGE_BASE_URL + 'icons/icon-exam-topic.png', color: 'green' }
-    }
+    // 推荐题目列表
+    recommendQuestions: [],
+    recommendLoading: false,
+    recommendTopicTitle: ''
   },
 
   onLoad() {
+    this.checkLoginStatus()
     this.filterTopics()
     this.loadTopics()
-    this.loadExamPapers()
+    if (this.data.isLoggedIn) {
+      this.loadRecommendQuestions()
+    }
   },
 
   onShow() {
-    // 每次切到此tab时刷新考卷列表
-    if (this.data.paperTab === 'my') {
-      this.loadMyPapers(true)
-    } else {
-      this.loadExamPapers()
+    const wasLoggedIn = this.data.isLoggedIn
+    this.checkLoginStatus()
+    // 登录状态从未登录→已登录时，加载推荐题目
+    if (!wasLoggedIn && this.data.isLoggedIn) {
+      this.loadRecommendQuestions()
+    }
+  },
+
+  // 检查登录状态
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token')
+    this.setData({ isLoggedIn: !!token })
+  },
+
+  // 跳转登录页，登录后回到本页
+  goToLogin() {
+    wx.navigateTo({ url: '/pages/login/login?redirect=topics' })
+  },
+
+  // 推荐题目：分析薄弱专题，推荐10道题目
+  async goToRecommend(e) {
+    if (!this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/login/login?redirect=topics' })
+      return
+    }
+
+    // 从点击的卡片获取起始索引，没有则从0开始
+    const startIndex = e?.currentTarget?.dataset?.index ?? -1
+
+    // 已有推荐题目数据，直接跳转练习
+    if (this.data.recommendQuestions.length > 0) {
+      const questionIds = this.data.recommendQuestions.map(q => q.id).join(',')
+      let url = `/pages/review-practice/review-practice?ids=${questionIds}&title=${encodeURIComponent('推荐题目练习')}&source=topics`
+      if (startIndex >= 0) url += `&startIndex=${startIndex}`
+      wx.navigateTo({ url })
+      return
+    }
+
+    // 无推荐数据时重新加载
+    await this.loadRecommendQuestions()
+    if (this.data.recommendQuestions.length > 0) {
+      const questionIds = this.data.recommendQuestions.map(q => q.id).join(',')
+      let url = `/pages/review-practice/review-practice?ids=${questionIds}&title=${encodeURIComponent('推荐题目练习')}&source=topics`
+      if (startIndex >= 0) url += `&startIndex=${startIndex}`
+      wx.navigateTo({ url })
+    }
+  },
+
+  // 加载推荐题目列表
+  async loadRecommendQuestions() {
+    if (this.data.recommendLoading) return
+    this.setData({ recommendLoading: true })
+    try {
+      const weakResult = await practiceService.getWeakAnalysis()
+      let questions = []
+      let sourceTopicTitle = ''
+
+      if (weakResult && weakResult.weak_topics && weakResult.weak_topics.length > 0) {
+        // 有练习记录，取最薄弱专题的题目
+        const weakestTopic = weakResult.weak_topics[0]
+        questions = await questionService.getQuestions({ topic_id: weakestTopic.topic_id, limit: 10 })
+        sourceTopicTitle = weakestTopic.topic_title || ''
+      } else {
+        // 无练习记录，按收藏数倒序推荐
+        questions = await questionService.getQuestions({ limit: 10, sort_by: 'favorites' })
+      }
+
+      if (questions && questions.length > 0) {
+        // 构建专题名称映射
+        const topicMap = {}
+        this.data.topics.forEach(t => { topicMap[t.id] = t.title })
+        this.setData({
+          recommendQuestions: questions.map(q => ({
+            ...q,
+            topicTitle: topicMap[q.topic_id] || sourceTopicTitle,
+            topicClass: getTopicClass(q.topic_id)
+          })),
+          recommendTopicTitle: sourceTopicTitle,
+        })
+      } else {
+        this.setData({ recommendQuestions: [], recommendTopicTitle: '' })
+      }
+    } catch (err) {
+      console.error('loadRecommendQuestions error:', err)
+      this.setData({ recommendQuestions: [] })
+    } finally {
+      this.setData({ recommendLoading: false })
     }
   },
 
   // 下拉刷新
   async onPullDownRefresh() {
     const tasks = [this.loadTopics()]
-    if (this.data.paperTab === 'my') {
-      tasks.push(this.loadMyPapers(true))
-    } else {
-      tasks.push(this.loadExamPapers(true))
+    if (this.data.isLoggedIn) {
+      tasks.push(this.loadRecommendQuestions())
     }
     await Promise.all(tasks)
     wx.stopPullDownRefresh()
   },
 
-  // 切换考卷模块 tab
-  switchPaperTab(e) {
-    const tab = e.currentTarget.dataset.tab
-    if (tab === this.data.paperTab) return
-    this.setData({ paperTab: tab, selectedPaperType: '' })
-    if (tab === 'my') {
-      this.loadMyPapers(true)
-    } else {
-      this.loadExamPapers(true)
-    }
-  },
-
-  // 上拉加载更多考卷
+  // 上拉加载更多（已无数据需要加载）
   onReachBottom() {
-    if (this.data.paperTab === 'my' && this.data.myPapersHasMore) {
-      this.loadMoreMyPapers()
-    } else if (this.data.hasMore) {
-      this.loadMoreExamPapers()
-    }
   },
 
   // 筛选专题
@@ -210,111 +244,6 @@ Page({
     return null
   },
 
-  // 加载考卷列表（分页）
-  async loadExamPapers(reset = true) {
-    // 显示缓存数据
-    const cachedKey = 'examPapers_' + (this.data.selectedPaperType || 'all')
-    const cached = cache.get(cachedKey)
-    if (cached && reset) {
-      this.setData({ examPapers: cached })
-    }
-
-    try {
-      if (reset) {
-        this.setData({ examPage: 1 })
-      }
-      const { examPage, examPageSize, selectedPaperType } = this.data
-      const result = await examPaperService.getExamPapers({
-        page: examPage,
-        page_size: examPageSize,
-        paper_type: selectedPaperType || undefined
-      }).catch(() => null)
-
-      if (result && result.items && result.items.length > 0) {
-        const papersWithType = result.items.map(paper => {
-          const typeInfo = this.data.paperTypes[paper.paper_type] || this.data.paperTypes.daily
-          return {
-            ...paper,
-            is_new: paper.is_new === true,
-            typeLabel: typeInfo.label,
-            typeIcon: typeInfo.icon,
-            typeColor: typeInfo.color,
-            difficultyLabel: paper.difficulty_level ? formatDifficulty(paper.difficulty_level) : '',
-            duration: 75
-          }
-        })
-
-        this.setData({
-          examPapers: reset ? papersWithType : [...this.data.examPapers, ...papersWithType],
-          totalExamPapers: result.total,
-          hasMore: result.total > (reset ? papersWithType.length : this.data.examPapers.length + papersWithType.length)
-        })
-        if (reset) cache.set(cachedKey, papersWithType, 120000) // 缓存 2 分钟
-      } else {
-        if (reset) {
-          this.setData({ examPapers: [], totalExamPapers: 0, hasMore: false })
-        }
-      }
-    } catch (err) {
-      console.error('loadExamPapers error:', err)
-    }
-  },
-
-  // 选择考卷类型筛选
-  selectPaperType(e) {
-    const type = e.currentTarget.dataset.type
-    if (type === this.data.selectedPaperType) return
-    this.setData({ selectedPaperType: type })
-    this.loadExamPapers(true)
-  },
-
-  // 加载更多考卷
-  loadMoreExamPapers() {
-    if (!this.data.hasMore) return
-    const nextPage = this.data.examPage + 1
-    this.setData({ examPage: nextPage })
-    this.loadExamPapers(false)
-  },
-
-  // 加载我的考卷列表
-  async loadMyPapers(reset = true) {
-    if (this.data.loadingMyPapers) return
-    this.setData({ loadingMyPapers: true })
-    try {
-      if (reset) this.setData({ myPapersPage: 1 })
-      const { myPapersPage, myPapersPageSize } = this.data
-      const result = await examPaperService.getMyPapers(myPapersPage, myPapersPageSize)
-      if (result && result.items) {
-        const papers = result.items.map(paper => ({
-          ...paper,
-          typeLabel: (this.data.paperTypes[paper.paper_type] || {}).label || '自编卷',
-          typeIcon: IMAGE_BASE_URL + 'icons/icon-exam-custom.png',
-          typeColor: 'green',
-          duration: 75,
-        }))
-        this.setData({
-          myPapers: reset ? papers : [...this.data.myPapers, ...papers],
-          totalMyPapers: result.total,
-          myPapersHasMore: result.total > (reset ? papers.length : this.data.myPapers.length + papers.length)
-        })
-      } else {
-        if (reset) this.setData({ myPapers: [], totalMyPapers: 0, myPapersHasMore: false })
-      }
-    } catch (err) {
-      console.error('loadMyPapers error:', err)
-    } finally {
-      this.setData({ loadingMyPapers: false })
-    }
-  },
-
-  // 加载更多我的考卷
-  loadMoreMyPapers() {
-    if (!this.data.myPapersHasMore || this.data.loadingMyPapers) return
-    const nextPage = this.data.myPapersPage + 1
-    this.setData({ myPapersPage: nextPage })
-    this.loadMyPapers(false)
-  },
-
   // 选择专题 - 进入题目详情页面
   selectTopic(e) {
     const topicId = e.currentTarget.dataset.id
@@ -322,78 +251,6 @@ Page({
     const title = encodeURIComponent(topic.title || '专题详情')
     wx.navigateTo({
       url: `/pages/topic-question-detail/topic-question-detail?topic_id=${topicId}&title=${title}`
-    })
-  },
-
-  // 下载考卷 PDF
-  async downloadPdf(e) {
-    const paperId = e.currentTarget.dataset.id
-    this.setData({ pdfProgress: -1 })
-    try {
-      // 检查服务端是否已生成 PDF
-      const status = await examPaperService.checkPdfStatus(paperId)
-      if (!status) {
-        // 考卷不存在（已被删除），从列表中移除
-        const myPapers = this.data.myPapers.filter(p => p.id !== paperId)
-        this.setData({ myPapers })
-        throw new Error('考卷已删除')
-      }
-      if (!status.exists) {
-        // 未生成，先触发服务端生成
-        await examPaperService.generatePdf(paperId)
-      }
-      // 切换到下载阶段，立即显示进度条
-      this.setData({ pdfProgress: 1 })
-      // 下载已生成的文件
-      const filePath = await examPaperService.downloadPdfWithProgress(paperId, (progress) => {
-        this.setData({ pdfProgress: progress })
-      })
-      this.setData({ pdfProgress: 100 })
-      await new Promise((resolve, reject) => {
-        wx.openDocument({
-          filePath,
-          showMenu: true,
-          success: resolve,
-          fail: (err) => reject(new Error(err.errMsg || '打开失败')),
-        })
-      })
-      // 下载成功后刷新列表
-      if (this.data.paperTab === 'my') {
-        this.loadMyPapers(true)
-      }
-    } catch (err) {
-      console.error('downloadPdf error:', err)
-      if (err.message === '考卷已删除') {
-        wx.showToast({ title: '考卷已删除', icon: 'none' })
-      } else {
-        wx.showToast({ title: '导出失败', icon: 'none' })
-      }
-    } finally {
-      this.setData({ pdfProgress: 0 })
-    }
-  },
-
-  // 删除考卷
-  deletePaper(e) {
-    const paperId = e.currentTarget.dataset.id
-    wx.showModal({
-      title: '确认删除',
-      content: '删除后无法恢复，确定删除此考卷？',
-      success: async (res) => {
-        if (!res.confirm) return
-        try {
-          const result = await examPaperService.deletePaper(paperId)
-          if (result && result.ok) {
-            wx.showToast({ title: '删除成功', icon: 'success' })
-            this.loadMyPapers(true)
-          } else {
-            wx.showToast({ title: '删除失败', icon: 'none' })
-          }
-        } catch (err) {
-          console.error('deletePaper error:', err)
-          wx.showToast({ title: '删除失败，请重试', icon: 'none' })
-        }
-      }
     })
   },
 
@@ -411,46 +268,4 @@ Page({
   goAchievement() {
     wx.showToast({ title: '成就功能开发中', icon: 'none' })
   },
-
-  // 选择考卷 - 进入考试页面
-  goToGeneratePaper() {
-    wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
-  },
-
-  selectExamPaper(e) {
-    const paperId = e.currentTarget.dataset.id
-    wx.navigateTo({
-      url: `/pages/practice/practice?exam_paper_id=${paperId}`
-    })
-  },
-
-  // 加载考卷详情（保留但不使用）
-  async loadExamPaperDetail(paperId) {
-    try {
-      const detail = await examPaperService.getExamPaper(paperId)
-      if (detail) {
-        this.setData({ selectedExamPaper: detail })
-      }
-    } catch (err) {
-      console.error('loadExamPaperDetail error:', err)
-    }
-  },
-
-  // 关闭考卷详情（保留但不使用）
-  closeExamPaperDetail() {
-    this.setData({ selectedExamPaper: null })
-  },
-
-  // 开始考卷练习（保留但不使用）
-  startExamPaperPractice() {
-    const paperId = this.data.selectedExamPaper.id
-    this.setData({ selectedExamPaper: null })
-    wx.navigateTo({
-      url: `/pages/practice/practice?exam_paper_id=${paperId}`
-    })
-  },
-
-  preventClose() {
-    // 阻止点击内容区域关闭
-  }
 })

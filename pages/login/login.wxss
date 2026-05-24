@@ -319,3 +319,86 @@
   font-size: 16px;
   margin-left: 8rpx;
 }
+
+/* 温馨提示弹窗 */
+.agreement-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agreement-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.agreement-content {
+  position: relative;
+  width: 560rpx;
+  background-color: #fff;
+  border-radius: 32rpx;
+  overflow: hidden;
+}
+
+.agreement-header {
+  padding: 40rpx 32rpx 16rpx;
+  text-align: center;
+}
+
+.agreement-title {
+  font-size: 34rpx;
+  color: #1A1A1A;
+}
+
+.agreement-body {
+  padding: 24rpx 32rpx 32rpx;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.agreement-desc {
+  font-size: 28rpx;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.agreement-link {
+  font-size: 28rpx;
+  color: #07C160;
+}
+
+.agreement-actions {
+  display: flex;
+  border-top: 2rpx solid rgba(0, 0, 0, 0.06);
+}
+
+.agreement-btn {
+  flex: 1;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agreement-btn-cancel {
+  border-right: 2rpx solid rgba(0, 0, 0, 0.06);
+}
+
+.agreement-btn-cancel .agreement-btn-text {
+  font-size: 30rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.agreement-btn-confirm .agreement-btn-text {
+  font-size: 30rpx;
+  color: #07C160;
+}

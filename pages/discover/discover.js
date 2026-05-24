@@ -10,6 +10,7 @@ const practiceService = require('../../services/practice')
 Page({
   data: {
     loading: true,
+    isLoggedIn: false,
     swiperList: [],
     swiperCurrent: 0,
     showSwipeHint: false,
@@ -18,12 +19,29 @@ Page({
 
   _loadingNext: false,
 
-  onLoad() {
-    this.loadRandomQuestion()
+  onLoad(options) {
+    this.checkLoginStatus()
+    this.loadQuestions(options)
     this.checkSwipeHint()
   },
 
+  // 检查登录状态
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token')
+    this.setData({ isLoggedIn: !!token })
+  },
+
+  // 加载题目（根据参数）
+  loadQuestions(options) {
+    if (options?.question_id) {
+      this.loadSpecificQuestion(parseInt(options.question_id))
+    } else {
+      this.loadRandomQuestion()
+    }
+  },
+
   onShow() {
+    this.checkLoginStatus()
     if (!this.data.loading && this.data.swiperList.length === 0) {
       this.loadRandomQuestion()
     }
@@ -47,12 +65,6 @@ Page({
   async loadRandomQuestion() {
     this.setData({ loading: true })
     try {
-      const token = wx.getStorageSync('token')
-      if (!token) {
-        this.setData({ loading: false })
-        return
-      }
-
       const question = await discoverService.getRandomQuestion()
       if (question) {
         const item = await this.buildSwiperItem(question)
@@ -70,6 +82,28 @@ Page({
     } catch (err) {
       console.error('Load question failed:', err)
       this.setData({ loading: false })
+    }
+  },
+
+  // 加载指定题目（通过分享进入）
+  async loadSpecificQuestion(questionId) {
+    this.setData({ loading: true })
+    try {
+      const question = await discoverService.getQuestionById(questionId)
+      if (question) {
+        const item = await this.buildSwiperItem(question)
+        this.setData({
+          loading: false,
+          swiperList: [item],
+          swiperCurrent: 0,
+        })
+        this.preloadNext()
+      } else {
+        this.loadRandomQuestion()
+      }
+    } catch (err) {
+      console.error('Load specific question failed:', err)
+      this.loadRandomQuestion()
     }
   },
 
@@ -117,19 +151,28 @@ Page({
     const topicClass = getTopicClass(question.topic_id)
     const questionType = question.question_type === 'multiple' ? '多选题' : '单选题'
 
+    const extractText = (field) => {
+      if (!field) return ''
+      if (typeof field === 'string') return field
+      return field.text || ''
+    }
+
     const formattedQuestion = {
       id: question.id,
       title: question.title || '题目',
-      content: processRichText((question.content && question.content.text) || question.content || ''),
+      content: processRichText(extractText(question.content)),
       options: (question.options || []).map(opt => ({
         label: opt.label,
-        text: processRichText((opt.content && opt.content.text) || opt.text || '')
+        text: processRichText(opt.content?.text || opt.text || '')
       })),
       answer: question.answer,
-      explanation: processRichText((question.explanation && question.explanation.text) || question.explanation || '暂无解析'),
+      explanation: processRichText(extractText(question.explanation) || '暂无解析'),
     }
 
-    const isFavorited = await reviewService.isFavorited(question.id).catch(() => false)
+    // 未登录用户不需要检查收藏状态
+    const isFavorited = this.data.isLoggedIn
+      ? await reviewService.isFavorited(question.id).catch(() => false)
+      : false
 
     return {
       id: formattedQuestion.id,
@@ -173,6 +216,11 @@ Page({
 
   // 提交答案
   async toggleAnswer(e) {
+    if (!this.data.isLoggedIn) {
+      this.goToLogin()
+      return
+    }
+
     const index = e.currentTarget.dataset.index
     const item = this.data.swiperList[index]
     if (!item || !item.selectedOption) return
@@ -200,6 +248,11 @@ Page({
 
   // 收藏
   async toggleFavorite(e) {
+    if (!this.data.isLoggedIn) {
+      this.goToLogin()
+      return
+    }
+
     const index = e.currentTarget.dataset.index
     const item = this.data.swiperList[index]
     if (!item) return
@@ -232,13 +285,22 @@ Page({
     this.setData({ swiperCurrent: nextIndex })
   },
 
+  // 跳转登录页，带重定向参数
+  goToLogin() {
+    wx.navigateTo({ url: '/pages/login/login?redirect=discover' })
+  },
+
   onShareAppMessage(e) {
+    // 未登录用户不触发分享
+    if (!this.data.isLoggedIn) {
+      return { title: '袋鼠数学助理', path: '/pages/discover/discover' }
+    }
     const idx = e.target?.dataset?.index ?? this.data.swiperCurrent
     const card = this.data.swiperList[idx]
     if (card?.question) {
       return {
         title: `【数学探索】${card.topicTitle} - ${card.question.title || '一道有趣的数学题'}`,
-        path: '/pages/discover/discover'
+        path: `/pages/discover/discover?question_id=${card.question.id}`
       }
     }
     return { title: '数学探索', path: '/pages/discover/discover' }

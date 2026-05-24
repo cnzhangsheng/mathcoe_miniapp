@@ -124,8 +124,8 @@ Page({
     }
   },
 
-  // 返回专题列表
-  backToTopics() {
-    wx.switchTab({ url: '/pages/topics/topics' })
+  // 返回首页
+  backToHome() {
+    wx.switchTab({ url: '/pages/index/index' })
   }
 })

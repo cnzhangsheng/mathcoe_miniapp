@@ -61,8 +61,8 @@
 
   <!-- Bottom Action Bar -->
   <view class="bottom-action-bar">
-    <view class="action-btn back-btn" bindtap="backToTopics">
-      <text class="action-text text-bold">返回专题</text>
+    <view class="action-btn back-btn" bindtap="backToHome">
+      <text class="action-text text-bold">返回首页</text>
     </view>
     <view class="action-btn retry-btn" bindtap="retryPractice">
       <text class="action-text text-bold">重新练习</text>

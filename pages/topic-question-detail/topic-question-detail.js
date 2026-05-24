@@ -42,6 +42,7 @@ Page({
     const topicId = parseInt(options.topic_id)
     const title = options.title || '专题详情'
     const sortBy = options.sort_by || 'default'
+    const targetQuestionId = options.question_id ? parseInt(options.question_id) : null
 
     if (!topicId) {
       wx.showToast({ title: '缺少专题参数', icon: 'none' })
@@ -52,6 +53,7 @@ Page({
     const decodedTitle = decodeURIComponent(title)
     wx.setNavigationBarTitle({ title: decodedTitle + '题目' })
     this.setData({ topicId, topicTitle: decodedTitle, sortBy, topicClass: getTopicClass(topicId) })
+    this._targetQuestionId = targetQuestionId
     this.loadQuestions(topicId)
   },
 
@@ -135,6 +137,16 @@ Page({
         sessionId: result.session_id,
         swiperCurrent: 0,
       })
+
+      // 如果是从分享链接进入且指定了题目，跳转到对应位置
+      if (this._targetQuestionId) {
+        const targetIdx = swiperList.findIndex(s => s.id === this._targetQuestionId)
+        if (targetIdx !== -1) {
+          this.setData({ swiperCurrent: targetIdx })
+          this.loadCardStates(targetIdx, swiperList)
+        }
+        this._targetQuestionId = null
+      }
     } catch (err) {
       console.error('Load questions failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
@@ -309,6 +321,14 @@ Page({
     this.setData({ showSortPicker: !this.data.showSortPicker })
   },
 
+  // 下一题
+  goNextQuestion(e) {
+    const idx = e.currentTarget.dataset.index
+    if (idx < this.data.totalQuestions - 1) {
+      this.setData({ swiperCurrent: idx + 1 })
+    }
+  },
+
   // 分享
   onShareAppMessage(e) {
     const idx = e.target?.dataset?.index ?? this.data.swiperCurrent
@@ -316,10 +336,10 @@ Page({
     if (card?.question) {
       return {
         title: `【${this.data.topicTitle}】${card.question.title || '一道有趣的数学题'}`,
-        path: `/pages/topics/topics`
+        path: `/pages/topic-question-detail/topic-question-detail?topic_id=${this.data.topicId}&title=${encodeURIComponent(this.data.topicTitle)}&sort_by=${this.data.sortBy}&question_id=${card.question.id}`
       }
     }
-    return { title: '数学专题练习', path: '/pages/topics/topics' }
+    return { title: '数学专题练习', path: `/pages/topic-question-detail/topic-question-detail?topic_id=${this.data.topicId}&title=${encodeURIComponent(this.data.topicTitle)}` }
   },
 
   // 返回

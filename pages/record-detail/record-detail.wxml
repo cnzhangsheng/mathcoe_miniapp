@@ -42,27 +42,24 @@
       </view>
     </view>
 
-    <!-- User Answer Info -->
-    <view class="answer-info-section">
-      <view class="answer-info-card">
-        <view class="answer-row flex-row">
-          <view class="answer-box {{isCorrect ? 'correct-box' : 'wrong-box'}}">
-            <text class="answer-letter text-bold">{{userAnswer}}</text>
-          </view>
-          <view class="answer-info">
-            <text class="answer-title text-bold">你的答案：{{userAnswer}}</text>
-            <text class="answer-sub text-small {{isCorrect ? 'correct-text' : 'wrong-text'}}">{{isCorrect ? '回答正确 ✓' : '回答错误 ✗'}}</text>
-          </view>
-        </view>
+    <!-- Action Bar: Bookmark + Share -->
+    <view class="action-icons-right">
+      <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
+        <image class="action-icon-img" src="{{isFavorited ? (imageBaseUrl + 'icons/icon_bookmark_fill.png') : (imageBaseUrl + 'icons/icon_bookmark.png')}}" mode="aspectFit"></image>
+        <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+      </view>
+      <button wx:if="{{isLoggedIn}}" class="action-icon-btn share-btn" open-type="share">
+        <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+        <text class="action-text">分享</text>
+      </button>
+      <view wx:else class="action-icon-btn share-btn" bindtap="goToLogin">
+        <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+        <text class="action-text">分享</text>
       </view>
     </view>
 
     <!-- Analysis Section -->
     <view class="analysis-section">
-      <view class="analysis-header flex-row">
-        <text class="analysis-icon">💡</text>
-        <text class="analysis-title text-small text-bold">答案解析</text>
-      </view>
 
       <view class="analysis-card">
         <!-- Correct Answer -->

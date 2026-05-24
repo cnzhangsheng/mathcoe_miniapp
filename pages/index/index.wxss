@@ -556,21 +556,21 @@
 .exam-card {
   display: flex;
   align-items: center;
-  padding: 40rpx;
+  padding: 32rpx;
   background-color: #fff;
-  border-radius: 56rpx;
-  gap: 24rpx;
+  border-radius: 48rpx;
+  gap: 16rpx;
   border: 2rpx solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
 }
 
 .exam-left {
   flex-shrink: 0;
-  margin-right: 32rpx;
+  margin-right: 16rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
+  gap: 6rpx;
 }
 
 .exam-left-label {
@@ -581,9 +581,9 @@
 }
 
 .exam-icon-box {
-  width: 96rpx;
-  height: 96rpx;
-  border-radius: 32rpx;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,8 +596,8 @@
 }
 
 .exam-icon-img {
-  width: 52rpx;
-  height: 52rpx;
+  width: 40rpx;
+  height: 40rpx;
 }
 
 .exam-middle {
@@ -614,18 +614,20 @@
 }
 
 .level-badge {
-  padding: 6rpx 14rpx;
-  border-radius: 8rpx;
-  background-color: #6366F1;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  background-color: #FEF3C7;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .level-badge-green {
-  background-color: #07C160;
+  background-color: #FEF3C7;
 }
 
 .level-text {
-  font-size: 20rpx;
-  color: #fff;
+  font-size: 24rpx;
+  color: #D97706;
 }
 
 .new-badge {
@@ -639,17 +641,16 @@
   font-size: 18rpx;
 }
 
-.done-badge {
+.exam-done-badge {
   padding: 8rpx 12rpx;
   background-color: #10B981;
   border-radius: 8rpx;
-  margin-top: 12rpx;
-  align-self: flex-start;
+  flex-shrink: 0;
 }
 
-.done-text {
+.exam-done-text {
   color: #fff;
-  font-size: 18rpx;
+  font-size: 22rpx;
 }
 
 .exam-title {
@@ -679,23 +680,98 @@
 }
 
 .exam-right {
-  margin-left: 16rpx;
+  margin-left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12rpx;
 }
 
+/* 考卷模块 Tab 栏 */
+.paper-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.paper-tab-left {
+  display: flex;
+  gap: 12rpx;
+}
+
+.paper-tab {
+  padding: 16rpx 32rpx;
+  border-radius: 24rpx;
+  background-color: rgba(0,0,0,0.04);
+}
+
+.paper-tab-active {
+  background-color: #059669;
+}
+
+.paper-tab-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(0,0,0,0.5);
+}
+
+.paper-tab-active .paper-tab-text {
+  color: #fff;
+}
+
+/* 考卷类型筛选 */
+.paper-type-filter {
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  flex-wrap: wrap;
+}
+
+.type-tab {
+  padding: 10rpx 24rpx;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 24rpx;
+}
+
+.type-tab-active {
+  background-color: #059669;
+}
+
+.type-tab-text {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.type-tab-active .type-tab-text {
+  color: #fff;
+}
+
+.download-btn {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
+  background-color: rgba(7, 193, 96, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-placeholder {
+  width: 64rpx;
+  height: 64rpx;
+  flex-shrink: 0;
+}
+
 .exam-actions {
   flex-direction: row;
-  gap: 12rpx;
+  gap: 8rpx;
   align-items: center;
 }
 
 .action-btn {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 28rpx;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
   background-color: rgba(7, 193, 96, 0.1);
   display: flex;
   align-items: center;
@@ -703,8 +779,8 @@
 }
 
 .action-btn-icon-img {
-  width: 32rpx;
-  height: 32rpx;
+  width: 28rpx;
+  height: 28rpx;
 }
 
 .action-btn-danger {
@@ -1003,4 +1079,64 @@
   font-size: 28rpx;
   color: rgba(0,0,0,0.5);
   display: block;
+}
+
+/* 未登录头部引导条 */
+.login-header-content {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 8rpx 0;
+}
+
+.login-header-icon-box {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background-color: rgba(7, 193, 96, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.login-header-icon {
+  font-size: 48rpx;
+}
+
+.login-header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.login-header-title {
+  font-size: 34rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.login-header-sub {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.login-header-btn {
+  padding: 16rpx 32rpx;
+  background-color: #07C160;
+  border-radius: 32rpx;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 12rpx rgba(7, 193, 96, 0.2);
+}
+
+.login-header-btn-text {
+  font-size: 26rpx;
+  color: #fff;
+}
+
+/* 未登录空状态提示 */
+.login-hint {
+  background-color: #fff;
+  border-radius: 48rpx;
+  border: 2rpx solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.03);
 }

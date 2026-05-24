@@ -66,10 +66,14 @@
                 <image class="action-icon-img" src="{{card.isFavorited ? (imageBaseUrl + 'icons/icon_bookmark_fill.png') : (imageBaseUrl + 'icons/icon_bookmark.png')}}" mode="aspectFit"></image>
                 <text class="action-text">{{card.isFavorited ? '已收藏' : '收藏'}}</text>
               </view>
-              <button class="action-icon-btn share-btn" open-type="share" data-index="{{idx}}">
+              <button wx:if="{{isLoggedIn}}" class="action-icon-btn share-btn" open-type="share" data-index="{{idx}}">
                 <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
                 <text class="action-text">分享</text>
               </button>
+              <view wx:else class="action-icon-btn share-btn" bindtap="goToLogin" data-index="{{idx}}">
+                <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+                <text class="action-text">分享</text>
+              </view>
             </view>
 
             <!-- Submit Answer Button -->
@@ -81,10 +85,6 @@
 
             <!-- Analysis Section -->
             <view class="analysis-section" wx:if="{{card.showAnswer}}">
-              <view class="analysis-header flex-row">
-                <text class="analysis-icon">💡</text>
-                <text class="analysis-title text-small text-bold">答案解析</text>
-              </view>
               <view class="analysis-card">
                 <view class="answer-row flex-row">
                   <view class="answer-box">
