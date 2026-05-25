@@ -4,6 +4,7 @@ const reviewService = require('../../services/review')
 const questionService = require('../../services/question')
 const { getTopicTitle, getTopicClass } = require('../../services/topics')
 const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
+const { downloadQuestionImage, saveImageToAlbum } = require('../../utils/download-image')
 
 Page({
   data: {
@@ -335,6 +336,49 @@ Page({
 
   onSwiperChange(e) {
     this.setData({ swiperCurrent: e.detail.current })
+  },
+
+  async downloadImage(e) {
+    const idx = e.currentTarget.dataset.index
+    const q = this.data.questions[idx]
+    if (!q || !q.content) return
+
+    wx.showLoading({ title: '生成图片中...', mask: true })
+    try {
+      const canvas = await new Promise((resolve, reject) => {
+        wx.createSelectorQuery().select('#questionCanvas').node((res) => {
+          if (res.node) resolve(res.node)
+          else reject(new Error('Canvas not found'))
+        }).exec()
+      })
+
+      await downloadQuestionImage(canvas, {
+        question: {
+          content: q.content || '',
+          options: (q.options || []).map(o => ({ label: o.key, text: o.value })),
+        },
+        topicTitle: q.topicTitle,
+        questionLevel: q.levelLabel || '',
+        questionType: q.questionTypeText || '单选题',
+      })
+      await saveImageToAlbum(canvas)
+      wx.hideLoading()
+      wx.showToast({ title: '已保存到相册', icon: 'success' })
+    } catch (err) {
+      wx.hideLoading()
+      const msg = err.errMsg || err.message || ''
+      if (msg.includes('deny') || msg.includes('denied') || msg.includes('fail auth')) {
+        wx.showModal({
+          title: '提示',
+          content: '需要相册权限才能保存图片，请在设置中开启',
+          confirmText: '去设置',
+          success: (res) => { if (res.confirm) wx.openSetting() },
+        })
+      } else {
+        wx.showToast({ title: '下载失败', icon: 'none' })
+        console.error('Download image error:', err)
+      }
+    }
   },
 
   onShareAppMessage() {

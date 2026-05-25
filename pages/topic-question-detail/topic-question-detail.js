@@ -5,6 +5,7 @@ const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
 const reviewService = require('../../services/review')
 const { getTopicClass } = require('../../services/topics')
 const { processRichText } = require('../../utils/util')
+const { downloadQuestionImage, saveImageToAlbum } = require('../../utils/download-image')
 
 Page({
   data: {
@@ -340,6 +341,56 @@ Page({
       }
     }
     return { title: '数学专题练习', path: `/pages/topic-question-detail/topic-question-detail?topic_id=${this.data.topicId}&title=${encodeURIComponent(this.data.topicTitle)}` }
+  },
+
+  async downloadImage(e) {
+    const idx = e.currentTarget.dataset.index
+    const card = this.data.swiperList[idx]
+    if (!card || !card.question) return
+
+    const q = card.question
+    // 从原始 question 的 options 构建 {label, text}
+    const options = (q.options || []).map(opt => ({
+      label: opt.label || '',
+      text: opt.text || (opt.content ? (typeof opt.content === 'string' ? opt.content : (opt.content.text || '')) : ''),
+    }))
+
+    wx.showLoading({ title: '生成图片中...', mask: true })
+    try {
+      const canvas = await new Promise((resolve, reject) => {
+        wx.createSelectorQuery().select('#questionCanvas').node((res) => {
+          if (res.node) resolve(res.node)
+          else reject(new Error('Canvas not found'))
+        }).exec()
+      })
+
+      await downloadQuestionImage(canvas, {
+        question: {
+          content: card.questionContentHtml || q.content?.text || q.content || '',
+          options,
+        },
+        topicTitle: this.data.topicTitle,
+        questionLevel: card.questionLevel || '',
+        questionType: card.questionTypeText || '单选题',
+      })
+      await saveImageToAlbum(canvas)
+      wx.hideLoading()
+      wx.showToast({ title: '已保存到相册', icon: 'success' })
+    } catch (err) {
+      wx.hideLoading()
+      const msg = err.errMsg || err.message || ''
+      if (msg.includes('deny') || msg.includes('denied') || msg.includes('fail auth')) {
+        wx.showModal({
+          title: '提示',
+          content: '需要相册权限才能保存图片，请在设置中开启',
+          confirmText: '去设置',
+          success: (res) => { if (res.confirm) wx.openSetting() },
+        })
+      } else {
+        wx.showToast({ title: '下载失败', icon: 'none' })
+        console.error('Download image error:', err)
+      }
+    }
   },
 
   // 返回

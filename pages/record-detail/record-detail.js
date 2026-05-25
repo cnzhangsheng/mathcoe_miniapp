@@ -4,6 +4,7 @@ const { formatDifficulty, IMAGE_BASE_URL } = require('../../utils/constants')
 const app = getApp()
 const discoverService = require('../../services/discover')
 const reviewService = require('../../services/review')
+const { downloadQuestionImage, saveImageToAlbum } = require('../../utils/download-image')
 
 Page({
   data: {
@@ -170,5 +171,47 @@ Page({
 
   goBack() {
     wx.navigateBack()
+  },
+
+  async downloadImage() {
+    const q = this.data.question
+    if (!q) return
+
+    wx.showLoading({ title: '生成图片中...', mask: true })
+    try {
+      const canvas = await new Promise((resolve, reject) => {
+        wx.createSelectorQuery().select('#questionCanvas').node((res) => {
+          if (res.node) resolve(res.node)
+          else reject(new Error('Canvas not found'))
+        }).exec()
+      })
+
+      await downloadQuestionImage(canvas, {
+        question: {
+          content: q.content || '',
+          options: q.options || [],
+        },
+        topicTitle: this.data.topicTitle,
+        questionLevel: this.data.questionLevel || '',
+        questionType: this.data.questionType || '单选题',
+      })
+      await saveImageToAlbum(canvas)
+      wx.hideLoading()
+      wx.showToast({ title: '已保存到相册', icon: 'success' })
+    } catch (err) {
+      wx.hideLoading()
+      const msg = err.errMsg || err.message || ''
+      if (msg.includes('deny') || msg.includes('denied') || msg.includes('fail auth')) {
+        wx.showModal({
+          title: '提示',
+          content: '需要相册权限才能保存图片，请在设置中开启',
+          confirmText: '去设置',
+          success: (res) => { if (res.confirm) wx.openSetting() },
+        })
+      } else {
+        wx.showToast({ title: '下载失败', icon: 'none' })
+        console.error('Download image error:', err)
+      }
+    }
   }
 })

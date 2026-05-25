@@ -6,6 +6,7 @@ const discoverService = require('../../services/discover')
 const { getTopicTitle, getTopicClass } = require('../../services/topics')
 const reviewService = require('../../services/review')
 const practiceService = require('../../services/practice')
+const { downloadQuestionImage, saveImageToAlbum } = require('../../utils/download-image')
 
 Page({
   data: {
@@ -304,5 +305,77 @@ Page({
       }
     }
     return { title: '数学探索', path: '/pages/discover/discover' }
-  }
+  },
+
+  // ==================== 下载图片 ====================
+
+  async downloadImage(e) {
+    const index = e.currentTarget.dataset.index
+    const card = this.data.swiperList[index]
+    if (!card || !card.question) return
+
+    wx.showLoading({ title: '生成图片中...', mask: true })
+
+    try {
+      const canvas = await new Promise((resolve, reject) => {
+        wx.createSelectorQuery().select('#questionCanvas').node((res) => {
+          if (res.node) resolve(res.node)
+          else reject(new Error('Canvas not found'))
+        }).exec()
+      })
+
+      await downloadQuestionImage(canvas, card)
+      await saveImageToAlbum(canvas)
+      wx.hideLoading()
+
+      wx.showToast({ title: '已保存到相册', icon: 'success' })
+    } catch (err) {
+      wx.hideLoading()
+      const msg = err.errMsg || err.message || ''
+      if (msg.includes('deny') || msg.includes('denied') || msg.includes('fail auth')) {
+        wx.showModal({
+          title: '提示',
+          content: '需要相册权限才能保存图片，请在设置中开启',
+          confirmText: '去设置',
+          success: (res) => { if (res.confirm) wx.openSetting() },
+        })
+      } else {
+        wx.showToast({ title: '下载失败', icon: 'none' })
+        console.error('Download image error:', err)
+      }
+    }
+  },
+
+  // 异步下载图片，获取尺寸和本地路径
+  async _loadImageInfos(urls) {
+    if (!urls.length) return new Map()
+    const results = await Promise.all(urls.map(url =>
+      new Promise((resolve) => {
+        wx.getImageInfo({
+          src: url,
+          success: (res) => resolve({ url, path: res.path, width: res.width, height: res.height }),
+          fail: () => resolve(null),
+        })
+      })
+    ))
+    const map = new Map()
+    results.forEach(r => { if (r) map.set(r.url, r) })
+    return map
+  },
+
+  // 将下载的图片载入为 canvas Image 对象
+  async _loadCanvasImages(canvas, imageInfos) {
+    if (!imageInfos.size) return
+    const tasks = []
+    for (const [, info] of imageInfos) {
+      tasks.push(new Promise((resolve) => {
+        const img = canvas.createImage()
+        img.onload = () => { info.canvasImg = img; resolve() }
+        img.onerror = () => resolve()
+        img.src = info.path
+      }))
+    }
+    await Promise.all(tasks)
+  },
+
 })

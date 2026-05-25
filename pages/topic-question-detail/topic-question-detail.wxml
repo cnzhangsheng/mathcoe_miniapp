@@ -109,6 +109,10 @@
               <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
               <text class="action-text">分享</text>
             </button>
+            <view class="action-icon-btn" bindtap="downloadImage" data-index="{{idx}}">
+              <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_image.png'}}" mode="aspectFit"></image>
+              <text class="action-text">图片</text>
+            </view>
           </view>
 
           <!-- Submit Button -->
@@ -161,4 +165,7 @@
   <block wx:if="{{preloadedImageUrls.length > 0}}">
     <image wx:for="{{preloadedImageUrls}}" wx:key="*this" src="{{item}}" style="display:none;" />
   </block>
+
+  <!-- Hidden canvas for download image -->
+  <canvas type="2d" id="questionCanvas" style="width:375px;height:600px;position:fixed;left:-9999px;top:0;z-index:-1;"></canvas>
 </view>

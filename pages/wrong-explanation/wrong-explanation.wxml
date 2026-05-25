@@ -48,6 +48,10 @@
       <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
       <text class="action-text">分享</text>
     </view>
+    <view class="action-icon-btn" bindtap="downloadImage">
+      <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_image.png'}}" mode="aspectFit"></image>
+      <text class="action-text">图片</text>
+    </view>
   </view>
 
   <!-- 答案解析 -->
@@ -80,4 +84,7 @@
       </view>
     </view>
   </view>
+
+  <!-- Hidden canvas for download image -->
+  <canvas type="2d" id="questionCanvas" style="width:375px;height:600px;position:fixed;left:-9999px;top:0;z-index:-1;"></canvas>
 </view>

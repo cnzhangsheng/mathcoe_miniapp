@@ -59,7 +59,7 @@
               </view>
             </view>
 
-            <!-- Like + Bookmark -->
+            <!-- Like + Download + Bookmark -->
             <view class="action-icons-right">
               <view class="action-icon-btn {{card.isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite" data-index="{{idx}}">
                 <image class="action-icon-img" src="{{card.isFavorited ? (imageBaseUrl + 'icons/icon_bookmark_fill.png') : (imageBaseUrl + 'icons/icon_bookmark.png')}}" mode="aspectFit"></image>
@@ -72,6 +72,10 @@
               <view wx:else class="action-icon-btn share-btn" bindtap="goToLogin" data-index="{{idx}}">
                 <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
                 <text class="action-text">分享</text>
+              </view>
+              <view class="action-icon-btn" bindtap="downloadImage" data-index="{{idx}}">
+                <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_image.png'}}" mode="aspectFit"></image>
+                <text class="action-text">图片</text>
               </view>
             </view>
 
@@ -116,6 +120,9 @@
       </swiper-item>
     </swiper>
   </block>
+
+  <!-- Hidden canvas for download image -->
+  <canvas type="2d" id="questionCanvas" style="width:375px;height:600px;position:fixed;left:-9999px;top:0;z-index:-1;"></canvas>
 
   <!-- 首次滑动引导 -->
   <view class="swipe-hint" wx:if="{{showSwipeHint}}" bindtap="dismissSwipeHint">
