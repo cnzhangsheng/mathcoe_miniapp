@@ -62,7 +62,7 @@ module.exports = {
 
   // 二维码
   qrcode: {
-    url: 'https://aicoe.cn/static/scan.png',
-    height: 116,
+    url: 'https://aicoe.cn/static/gh_a825adb86ce3_258.jpg',
+    height: 80,
   },
 }

@@ -23,7 +23,7 @@ async function downloadQuestionImage(canvas, card, template) {
   // 解析内容中的图片
   const segments = parseContentSegments(question.content || '')
   const allUrls = collectImageUrls(segments, question.options || [])
-  allUrls.add('https://aicoe.cn/static/scan.png')
+  allUrls.add('https://aicoe.cn/static/gh_a825adb86ce3_258.jpg')
 
   // 下载图片
   const imageInfos = new Map()

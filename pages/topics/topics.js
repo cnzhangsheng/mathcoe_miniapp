@@ -165,10 +165,13 @@ Page({
       this.filterTopics()
     }
     try {
-      const [topics, insight] = await Promise.all([
-        questionService.getTopics().catch(() => null),
-        userService.getUserInsight().catch(() => null),
-      ])
+      const fetchers = [questionService.getTopics().catch(() => null)]
+      if (this.data.isLoggedIn) {
+        fetchers.push(userService.getUserInsight().catch(() => null))
+      }
+      const results = await Promise.all(fetchers)
+      const topics = results[0]
+      const insight = results.length > 1 ? results[1] : null
 
       if (insight) {
         this.setData({ insightData: insight })
