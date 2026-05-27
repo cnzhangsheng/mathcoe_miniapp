@@ -385,12 +385,12 @@ Page({
     const q = this.data.questions[this.data.swiperCurrent]
     if (q) {
       return {
-        title: `【数学练习】${q.topicTitle || '推荐题目'} - 袋鼠数学助理`,
+        title: `【数学练习】${q.topicTitle || '推荐题目'} - 小学数学思维`,
         path: `/pages/discover/discover?question_id=${q.question_id}`
       }
     }
     return {
-      title: '数学练习 - 袋鼠数学助理',
+      title: '数学练习 - 小学数学思维',
       path: '/pages/topics/topics'
     }
   }

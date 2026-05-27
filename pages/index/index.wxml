@@ -202,13 +202,13 @@
       </view>
     </view>
 
-    <!-- 考卷列表（袋鼠考卷 + 我的考卷） -->
+    <!-- 考卷列表（数学考卷 + 我的考卷） -->
     <view class="recommend-section">
       <!-- Tab Bar -->
       <view class="paper-tab-bar">
         <view class="paper-tab-left">
           <view class="paper-tab {{paperTab === 'kangaroo' ? 'paper-tab-active' : ''}}" data-tab="kangaroo" bindtap="switchPaperTab">
-            <text class="paper-tab-text">袋鼠考卷</text>
+            <text class="paper-tab-text">数学考卷</text>
           </view>
           <view class="paper-tab {{paperTab === 'my' ? 'paper-tab-active' : ''}}" data-tab="my" bindtap="switchPaperTab">
             <text class="paper-tab-text">我的考卷</text>
@@ -216,7 +216,7 @@
         </view>
       </view>
 
-      <!-- 类型筛选（仅袋鼠考卷） -->
+      <!-- 类型筛选（仅数学考卷） -->
       <view class="paper-type-filter flex-row" wx:if="{{paperTab === 'kangaroo'}}">
         <block wx:for="{{paperTypeTabs}}" wx:key="value">
           <view class="type-tab {{selectedPaperType === item.value ? 'type-tab-active' : ''}}" data-type="{{item.value}}" bindtap="selectPaperType">
@@ -225,7 +225,7 @@
         </block>
       </view>
 
-      <!-- 袋鼠考卷列表 -->
+      <!-- 数学考卷列表 -->
       <block wx:if="{{paperTab === 'kangaroo'}}">
         <block wx:if="{{examPapers.length > 0}}">
           <view class="exam-list">
@@ -274,10 +274,14 @@
           <view class="load-more" wx:if="{{examHasMore && !examLoading}}" bindtap="loadMoreExamPapers">
             <text class="load-more-text text-small text-muted">加载更多...</text>
           </view>
+          <!-- 底部提示 -->
+          <view class="end-tip" wx:if="{{!examHasMore && examPapers.length > 0}}">
+            <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
+          </view>
         </block>
         <block wx:else>
           <view class="no-data">
-            <text class="no-data-text text-small">暂无袋鼠考卷数据</text>
+            <text class="no-data-text text-small">暂无数学考卷数据</text>
           </view>
         </block>
       </block>
@@ -325,6 +329,10 @@
                 </view>
               </view>
             </block>
+          </view>
+          <!-- 底部提示 -->
+          <view class="end-tip" wx:if="{{myPapers.length > 0}}">
+            <text class="end-tip-text text-small text-muted">——已经到底啦——</text>
           </view>
           <view class="no-data" wx:if="{{myPapers.length === 0}}">
             <text class="no-data-text text-small">暂无我的考卷</text>

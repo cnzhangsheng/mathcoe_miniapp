@@ -169,7 +169,7 @@ Page({
   onShareAppMessage() {
     const q = this.data
     return {
-      title: `【数学练习】${q.topicTitle || '错题'} - 袋鼠数学助理`,
+      title: `【数学练习】${q.topicTitle || '错题'} - 小学数学思维`,
       path: `/pages/discover/discover?question_id=${q.questionId}`
     }
   }

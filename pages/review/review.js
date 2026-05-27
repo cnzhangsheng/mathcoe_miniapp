@@ -437,7 +437,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '复习中心 - 袋鼠数学助理',
+      title: '复习中心 - 小学数学思维',
       path: '/pages/review/review'
     }
   }

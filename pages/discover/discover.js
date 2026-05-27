@@ -26,6 +26,12 @@ Page({
     this.checkSwipeHint()
   },
 
+  async onPullDownRefresh() {
+    this.checkLoginStatus()
+    await this.loadRandomQuestion()
+    wx.stopPullDownRefresh()
+  },
+
   // 检查登录状态
   checkLoginStatus() {
     const token = wx.getStorageSync('token')
@@ -294,7 +300,7 @@ Page({
   onShareAppMessage(e) {
     // 未登录用户不触发分享
     if (!this.data.isLoggedIn) {
-      return { title: '袋鼠数学助理', path: '/pages/discover/discover' }
+      return { title: '小学数学思维', path: '/pages/discover/discover' }
     }
     const idx = e.target?.dataset?.index ?? this.data.swiperCurrent
     const card = this.data.swiperList[idx]

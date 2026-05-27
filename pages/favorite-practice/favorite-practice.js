@@ -218,7 +218,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '收藏练习 - 袋鼠数学助理',
+      title: '收藏练习 - 小学数学思维',
       path: '/pages/review/review'
     }
   }

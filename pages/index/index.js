@@ -32,7 +32,7 @@ Page({
     // 我的考卷
     myPapers: [],
 
-    // 袋鼠考卷模块（参考专题页面）
+    // 数学考卷模块（参考专题页面）
     paperTab: 'kangaroo', // kangaroo | my
     examPapers: [],
     totalExamPapers: 0,
@@ -85,7 +85,7 @@ Page({
     // Banner 无需登录，无条件加载
     this.loadBanners()
 
-    // 袋鼠考卷（系统级，无需登录）
+    // 数学考卷（系统级，无需登录）
     this.loadExamPapers()
 
     // 日期范围（无需登录）
@@ -103,6 +103,17 @@ Page({
       getApp().globalData.indexPaperTab = null
       this.setData({ paperTab: targetTab })
     }
+  },
+
+  async onPullDownRefresh() {
+    this.loadBanners()
+    this.loadExamPapers()
+    this.setDefaultDateRanges()
+    if (this.data.isLoggedIn) {
+      this.syncGlobalUserInfo()
+      await this.loadData()
+    }
+    wx.stopPullDownRefresh()
   },
 
   onReady() {
@@ -512,7 +523,7 @@ Page({
       })
   },
 
-  // ========== 考卷模块 (袋鼠考卷 + 我的考卷) ==========
+  // ========== 考卷模块 (数学考卷 + 我的考卷) ==========
 
   // 切换考卷 tab
   switchPaperTab(e) {
@@ -524,7 +535,7 @@ Page({
     }
   },
 
-  // 加载袋鼠考卷列表
+  // 加载数学考卷列表
   async loadExamPapers(reset = true) {
     const { examPage, examPageSize, selectedPaperType } = this.data
     if (!reset && this.data.examLoading) return
@@ -569,7 +580,7 @@ Page({
     }
   },
 
-  // 加载更多袋鼠考卷
+  // 加载更多数学考卷
   loadMoreExamPapers() {
     if (!this.data.examHasMore || this.data.examLoading) return
     const nextPage = this.data.examPage + 1
@@ -777,7 +788,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '袋鼠数学助理 - 每天10分钟，数学思维突飞猛进',
+      title: '小学数学思维 - 每天10分钟，数学思维突飞猛进',
       path: '/pages/index/index'
     }
   }

@@ -1024,6 +1024,17 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
+.end-tip {
+  padding: 32rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.end-tip-text {
+  color: rgba(0, 0, 0, 0.3);
+}
+
 .primary-bg {
   background-color: #07C160;
 }

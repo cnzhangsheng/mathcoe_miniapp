@@ -2,5 +2,6 @@
   "navigationBarTitleText": "探索",
   "navigationBarBackgroundColor": "#07C160",
   "navigationBarTextStyle": "white",
-  "backgroundColor": "#F8F8F8"
+  "backgroundColor": "#F8F8F8",
+  "enablePullDownRefresh": true
 }

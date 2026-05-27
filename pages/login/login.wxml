@@ -9,7 +9,7 @@
     <view class="logo-box">
       <image class="logo-icon" src="{{imageBaseUrl + 'logo.png'}}" mode="aspectFit"></image>
     </view>
-    <text class="app-name text-bold">袋鼠数学助理</text>
+    <text class="app-name text-bold">小学数学思维</text>
     <text class="app-slogan text-small">Kangaroo Math Assistant</text>
     <text class="app-desc">您的 AI 数字化思维成长伙伴</text>
   </view>

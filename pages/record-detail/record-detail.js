@@ -159,7 +159,7 @@ Page({
   onShareAppMessage() {
     const q = this.data
     return {
-      title: `【${q.topicTitle}】一道有趣的数学题 - 袋鼠数学助理`,
+      title: `【${q.topicTitle}】一道有趣的数学题 - 小学数学思维`,
       path: `/pages/record-detail/record-detail?question_id=${q.questionId}&user_answer=${q.userAnswer}&topic_title=${encodeURIComponent(q.topicTitle)}`
     }
   },

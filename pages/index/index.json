@@ -1,4 +1,6 @@
 {
-  "navigationBarTitleText": "袋鼠数学助理",
-  "usingComponents": {}
+  "navigationBarTitleText": "小学数学思维",
+  "usingComponents": {},
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F8F8"
 }

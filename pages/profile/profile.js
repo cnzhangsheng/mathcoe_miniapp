@@ -59,6 +59,14 @@ Page({
     }
   },
 
+  async onPullDownRefresh() {
+    this.checkLoginStatus()
+    if (this.data.isLoggedIn) {
+      await this.loadData()
+    }
+    wx.stopPullDownRefresh()
+  },
+
   checkLoginStatus() {
     const token = wx.getStorageSync('token')
     this.setData({ isLoggedIn: !!token })
@@ -244,11 +252,6 @@ Page({
     wx.navigateTo({ url: '/pages/login/login?redirect=profile' })
   },
 
-  // 关于页面
-  goToAbout() {
-    wx.navigateTo({ url: '/pages/about/about' })
-  },
-
   // 意见反馈
   goToFeedback() {
     wx.navigateTo({ url: '/pages/feedback/feedback' })
@@ -308,7 +311,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '袋鼠数学助理',
+      title: '小学数学思维',
       path: '/pages/index/index'
     }
   }
