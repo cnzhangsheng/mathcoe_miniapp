@@ -13,6 +13,17 @@ const startPractice = (data) => {
 }
 
 /**
+ * 加载更多题目
+ * @param {object} data - { topic_id, offset, limit, sort_by }
+ */
+const loadMoreQuestions = (data) => {
+  return request('/practice/more', {
+    method: 'POST',
+    data
+  })
+}
+
+/**
  * 提交答案
  * @param {object} data - 答案数据
  */
@@ -89,6 +100,7 @@ const getWeakAnalysis = () => {
 
 module.exports = {
   startPractice,
+  loadMoreQuestions,
   submitAnswer,
   getRecords,
   getFavorites,

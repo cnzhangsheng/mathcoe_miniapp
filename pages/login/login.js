@@ -1,6 +1,6 @@
 // pages/login/login.js - 授权登录页面
 const app = getApp()
-const { IMAGE_BASE_URL, DIFFICULTY_LABELS, DIFFICULTY_VALUES } = require('../../utils/constants')
+const { IMAGE_BASE_URL } = require('../../utils/constants')
 
 Page({
   data: {
@@ -10,8 +10,14 @@ Page({
     imageBaseUrl: IMAGE_BASE_URL,
     grades: ['一年级', '二年级', '三年级', '四年级', '五年级', '六年级'],
     gradeIndex: 0,  // 默认一年级（G1）
-    difficultyLevels: DIFFICULTY_LABELS,
-    difficultyIndex: 0,  // 默认Level 1（根据年级自动计算）
+    difficultyLevel: 1,
+    difficultyLabels: [
+      { value: 1, label: 'Level 1', hint: '建议一、二年级选择' },
+      { value: 2, label: 'Level 2', hint: '建议三、四年级选择' },
+      { value: 3, label: 'Level 3', hint: '建议五、六年级选择' },
+    ],
+    showGradePicker: false,
+    showDifficultyPicker: false,
     agreed: false,  // 隐私协议是否同意
     showAgreementModal: false,  // 温馨提示弹窗
   },
@@ -84,7 +90,7 @@ Page({
       data: {
         code,
         grade: "G" + (this.data.gradeIndex + 1),
-        difficulty_level: DIFFICULTY_VALUES[this.data.difficultyIndex]
+        difficulty_level: this.data.difficultyLevel
       },
       success: (res) => {
         if (res.statusCode === 200 && res.data && res.data.token) {
@@ -138,20 +144,34 @@ Page({
     })
   },
 
-  // 年级选择变化
-  onGradeChange(e) {
-    const gradeIndex = parseInt(e.detail.value)
-    // G1-G2 → Lv.1, G3-G4 → Lv.2, G5-G6 → Lv.3
-    const defaultDifficulty = gradeIndex < 2 ? 0 : gradeIndex < 4 ? 1 : 2
-    this.setData({
-      gradeIndex,
-      difficultyIndex: defaultDifficulty
-    })
+  // 年级弹窗
+  openGradePicker() {
+    this.setData({ showGradePicker: true })
   },
 
-  // 难度等级选择变化
-  onDifficultyChange(e) {
-    this.setData({ difficultyIndex: parseInt(e.detail.value) })
+  closeGradePicker() {
+    this.setData({ showGradePicker: false })
+  },
+
+  selectGrade(e) {
+    const gradeIndex = parseInt(e.currentTarget.dataset.index)
+    // G1-G2 → Level 1, G3-G4 → Level 2, G5-G6 → Level 3
+    const defaultLevel = gradeIndex < 2 ? 1 : gradeIndex < 4 ? 2 : 3
+    this.setData({ gradeIndex, difficultyLevel: defaultLevel, showGradePicker: false })
+  },
+
+  // 难度等级弹窗
+  openDifficultyPicker() {
+    this.setData({ showDifficultyPicker: true })
+  },
+
+  closeDifficultyPicker() {
+    this.setData({ showDifficultyPicker: false })
+  },
+
+  selectDifficulty(e) {
+    const level = e.currentTarget.dataset.level
+    this.setData({ difficultyLevel: level, showDifficultyPicker: false })
   },
 
   // 隐私协议勾选状态变化

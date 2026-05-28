@@ -41,6 +41,9 @@ Page({
     // 登录状态从未登录→已登录时，加载推荐题目
     if (!wasLoggedIn && this.data.isLoggedIn) {
       this.loadRecommendQuestions()
+    } else if (this.data.isLoggedIn) {
+      // 已登录用户回到页面时刷新推荐题目（可能在其他页面修改了等级等设置）
+      this.loadRecommendQuestions()
     }
   },
 
@@ -89,19 +92,7 @@ Page({
     if (this.data.recommendLoading) return
     this.setData({ recommendLoading: true })
     try {
-      const weakResult = await practiceService.getWeakAnalysis()
-      let questions = []
-      let sourceTopicTitle = ''
-
-      if (weakResult && weakResult.weak_topics && weakResult.weak_topics.length > 0) {
-        // 有练习记录，取最薄弱专题的题目
-        const weakestTopic = weakResult.weak_topics[0]
-        questions = await questionService.getQuestions({ topic_id: weakestTopic.topic_id, limit: 10 })
-        sourceTopicTitle = weakestTopic.topic_title || ''
-      } else {
-        // 无练习记录，按收藏数倒序推荐
-        questions = await questionService.getQuestions({ limit: 10, sort_by: 'favorites' })
-      }
+      const questions = await questionService.getRecommendedQuestions(10)
 
       if (questions && questions.length > 0) {
         // 构建专题名称映射
@@ -110,10 +101,10 @@ Page({
         this.setData({
           recommendQuestions: questions.map(q => ({
             ...q,
-            topicTitle: topicMap[q.topic_id] || sourceTopicTitle,
+            topicTitle: topicMap[q.topic_id] || '',
             topicClass: getTopicClass(q.topic_id)
           })),
-          recommendTopicTitle: sourceTopicTitle,
+          recommendTopicTitle: topicMap[questions[0].topic_id] || '',
         })
       } else {
         this.setData({ recommendQuestions: [], recommendTopicTitle: '' })

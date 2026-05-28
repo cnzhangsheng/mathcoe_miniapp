@@ -1,6 +1,6 @@
 // pages/index/index.js - 新首页逻辑
 const app = getApp()
-const { IMAGE_BASE_URL, formatDifficulty } = require('../../utils/constants')
+const { IMAGE_BASE_URL, formatDifficulty, DIFFICULTY_LEVELS } = require('../../utils/constants')
 const userService = require('../../services/user')
 const examPaperService = require('../../services/examPaper')
 const practiceService = require('../../services/practice')
@@ -71,6 +71,15 @@ Page({
     // Banner
     banners: [],
     bannerCurrent: 0,
+
+    // 难度等级切换
+    difficultyLevel: 1,
+    difficultyLabels: [
+      { value: 1, label: 'Level 1', hint: '建议一、二年级选择' },
+      { value: 2, label: 'Level 2', hint: '建议三、四年级选择' },
+      { value: 3, label: 'Level 3', hint: '建议五、六年级选择' },
+    ],
+    showDifficultyPicker: false,
   },
 
   onLoad() {
@@ -181,7 +190,8 @@ Page({
       if (userInfo && userInfo.id) {
         this.setData({
           userInfo,
-          dailyGoal: userInfo.daily_goal || 12
+          dailyGoal: userInfo.daily_goal || 12,
+          difficultyLevel: userInfo.difficulty_level || 1
         })
         // 同步到全局数据，保持各页一致
         if (app.globalData.userInfo) {
@@ -586,6 +596,35 @@ Page({
     const nextPage = this.data.examPage + 1
     this.setData({ examPage: nextPage })
     this.loadExamPapers(false)
+  },
+
+  // 难度等级弹窗
+  openDifficultyPicker() {
+    if (!this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/login/login' })
+      return
+    }
+    this.setData({ showDifficultyPicker: true })
+  },
+
+  closeDifficultyPicker() {
+    this.setData({ showDifficultyPicker: false })
+  },
+
+  async selectDifficulty(e) {
+    const level = e.currentTarget.dataset.level
+    try {
+      await userService.updateUserInfo({ difficulty_level: level })
+      this.setData({ difficultyLevel: level, showDifficultyPicker: false })
+      if (app.globalData.userInfo) {
+        app.globalData.userInfo.difficulty_level = level
+      }
+      this.loadExamPapers(true)
+      wx.showToast({ title: '已更新', icon: 'success' })
+    } catch (err) {
+      console.error('selectDifficulty error:', err)
+      wx.showToast({ title: '更新失败', icon: 'none' })
+    }
   },
 
   // 考卷类型筛选

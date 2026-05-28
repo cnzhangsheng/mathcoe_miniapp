@@ -29,7 +29,11 @@ Page({
     gradeIndex: 2,
 
     // 难度等级
-    difficultyLabels: DIFFICULTY_LEVELS,
+    difficultyLabels: [
+      { value: 1, label: 'Level 1', hint: '建议一、二年级选择' },
+      { value: 2, label: 'Level 2', hint: '建议三、四年级选择' },
+      { value: 3, label: 'Level 3', hint: '建议五、六年级选择' },
+    ],
     difficultyLevel: 1,
 
     // 学习统计

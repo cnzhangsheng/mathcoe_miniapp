@@ -31,6 +31,11 @@ Page({
     swiperCurrent: 0,
     totalQuestions: 0,
 
+    // 分页加载
+    hasMore: true,
+    isLoadingMore: false,
+    loadedOffset: 0,
+
     // 完成 / 无题 状态
     isCompleted: false,
     noQuestions: false,
@@ -137,6 +142,8 @@ Page({
         totalQuestions: questions.length,
         sessionId: result.session_id,
         swiperCurrent: 0,
+        hasMore: result.has_more || false,
+        loadedOffset: questions.length,
       })
 
       // 如果是从分享链接进入且指定了题目，跳转到对应位置
@@ -177,6 +184,60 @@ Page({
 
     // 异步加载新卡片的点赞/收藏状态
     this.loadCardStates(newIdx, this.data.swiperList)
+
+    // 滑动到倒数第3题时自动加载更多
+    if (this.data.hasMore && !this.data.isLoadingMore && newIdx >= this.data.swiperList.length - 3) {
+      this.loadMore()
+    }
+  },
+
+  // 加载更多题目
+  async loadMore() {
+    if (this.data.isLoadingMore || !this.data.hasMore) return
+    this.setData({ isLoadingMore: true })
+    try {
+      const result = await practiceService.loadMoreQuestions({
+        topic_id: this.data.topicId,
+        sort_by: this.data.sortBy,
+        offset: this.data.loadedOffset,
+        limit: 20
+      })
+      if (!result || !result.questions || result.questions.length === 0) {
+        this.setData({ hasMore: false })
+        return
+      }
+
+      const newQuestions = result.questions
+      const swiperList = this.data.swiperList
+      const startIdx = swiperList.length
+
+      newQuestions.forEach((q, idx) => {
+        swiperList.push({
+          id: q.id || (startIdx + idx),
+          question: q,
+          questionContentHtml: this.extractContentHtml(q),
+          questionTypeText: this.getQuestionTypeText(q),
+          questionLevel: q.difficulty_level ? formatDifficulty(q.difficulty_level) : '',
+          options: this.formatOptions(q.options),
+          selectedOption: null,
+          isSubmitted: false,
+          correctAnswer: '',
+          analysis: { logic: '', tip: '', point: '' },
+          isBookmarked: false,
+        })
+      })
+
+      this.setData({
+        swiperList,
+        totalQuestions: swiperList.length,
+        hasMore: result.has_more || false,
+        loadedOffset: result.next_offset || (this.data.loadedOffset + newQuestions.length),
+      })
+    } catch (err) {
+      console.error('Load more failed:', err)
+    } finally {
+      this.setData({ isLoadingMore: false })
+    }
   },
 
   // 获取题目类型文本

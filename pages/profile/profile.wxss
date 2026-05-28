@@ -317,6 +317,17 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.option-hint {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.35);
+}
+
 .picker-options {
   display: flex;
   flex-direction: column;

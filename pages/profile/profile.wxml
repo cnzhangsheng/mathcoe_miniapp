@@ -198,8 +198,9 @@
       </view>
       <view class="picker-options">
         <block wx:for="{{difficultyLabels}}" wx:key="value">
-          <view class="picker-option {{difficultyLevel === item.value ? 'active' : ''}}" bindtap="selectDifficulty" data-level="{{item.value}}">
+          <view class="picker-option option-row {{difficultyLevel === item.value ? 'active' : ''}}" bindtap="selectDifficulty" data-level="{{item.value}}">
             <text class="option-text text-bold">{{item.label}}</text>
+            <text class="option-hint">{{item.hint}}</text>
           </view>
         </block>
       </view>

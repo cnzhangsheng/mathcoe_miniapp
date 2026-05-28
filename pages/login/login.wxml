@@ -18,25 +18,21 @@
   <!-- 登录区域 -->
   <view class="login-section">
     <!-- 年级选择 -->
-    <view class="grade-section">
+    <view class="grade-section" bindtap="openGradePicker">
       <text class="grade-label text-small text-bold">选择年级</text>
-      <picker mode="selector" range="{{grades}}" value="{{gradeIndex}}" bindchange="onGradeChange">
-        <view class="grade-picker">
-          <text class="grade-value">{{grades[gradeIndex]}}</text>
-          <text class="picker-arrow">›</text>
-        </view>
-      </picker>
+      <view class="grade-picker">
+        <text class="grade-value">{{grades[gradeIndex]}}</text>
+        <text class="picker-arrow">›</text>
+      </view>
     </view>
 
     <!-- 难度等级选择 -->
-    <view class="grade-section">
+    <view class="grade-section" bindtap="openDifficultyPicker">
       <text class="grade-label text-small text-bold">难度等级</text>
-      <picker mode="selector" range="{{difficultyLevels}}" value="{{difficultyIndex}}" bindchange="onDifficultyChange">
-        <view class="grade-picker">
-          <text class="grade-value">{{difficultyLevels[difficultyIndex]}}</text>
-          <text class="picker-arrow">›</text>
-        </view>
-      </picker>
+      <view class="grade-picker">
+        <text class="grade-value">{{difficultyLabels[difficultyLevel - 1].label}}</text>
+        <text class="picker-arrow">›</text>
+      </view>
     </view>
 
     <!-- 登录按钮 -->
@@ -57,6 +53,47 @@
       <text class="privacy-link" bindtap="onTapUserService">《用户服务协议》</text>
       <text class="privacy-text">和</text>
       <text class="privacy-link" bindtap="onTapPrivacy">《隐私政策》</text>
+    </view>
+  </view>
+
+  <!-- 年级选择弹窗 -->
+  <view wx:if="{{showGradePicker}}" class="picker-modal">
+    <view class="picker-mask" bindtap="closeGradePicker"></view>
+    <view class="picker-content">
+      <view class="picker-header flex-between">
+        <text class="picker-title text-bold">选择年级</text>
+        <view class="picker-close" bindtap="closeGradePicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="picker-options">
+        <block wx:for="{{grades}}" wx:key="*this">
+          <view class="picker-option {{gradeIndex === index ? 'active' : ''}}" bindtap="selectGrade" data-index="{{index}}">
+            <text class="option-text text-bold">{{item}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 难度等级选择弹窗 -->
+  <view wx:if="{{showDifficultyPicker}}" class="picker-modal">
+    <view class="picker-mask" bindtap="closeDifficultyPicker"></view>
+    <view class="picker-content">
+      <view class="picker-header flex-between">
+        <text class="picker-title text-bold">选择难度等级</text>
+        <view class="picker-close" bindtap="closeDifficultyPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="picker-options">
+        <block wx:for="{{difficultyLabels}}" wx:key="value">
+          <view class="picker-option option-row {{difficultyLevel === item.value ? 'active' : ''}}" bindtap="selectDifficulty" data-level="{{item.value}}">
+            <text class="option-text text-bold">{{item.label}}</text>
+            <text class="option-hint">{{item.hint}}</text>
+          </view>
+        </block>
+      </view>
     </view>
   </view>
 

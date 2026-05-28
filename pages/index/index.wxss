@@ -720,6 +720,28 @@
   color: #fff;
 }
 
+/* 难度等级切换 Chip */
+.difficulty-chip {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 12rpx 24rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  border: 2rpx solid rgba(0, 0, 0, 0.08);
+}
+
+.difficulty-chip-text {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 600;
+}
+
+.difficulty-chip-arrow {
+  font-size: 20rpx;
+  color: rgba(0, 0, 0, 0.3);
+}
+
 /* 考卷类型筛选 */
 .paper-type-filter {
   gap: 12rpx;
@@ -1042,6 +1064,93 @@
 .primary-color {
   color: #07C160;
 }
+/* 难度等级弹窗 */
+.picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.picker-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.picker-content {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 24rpx;
+  padding-bottom: 48rpx;
+}
+
+.picker-header {
+  padding: 16rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.picker-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.picker-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.picker-option {
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 2rpx solid transparent;
+}
+
+.picker-option.active {
+  background-color: #D1FAE5;
+  border-color: #07C160;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.option-text {
+  font-size: 30rpx;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.picker-option.active .option-text {
+  color: #07C160;
+}
+
+.option-hint {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.35);
+}
+
 /* PDF 下载进度 */
 .pdf-progress-mask {
   position: fixed;

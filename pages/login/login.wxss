@@ -320,6 +320,93 @@
   margin-left: 8rpx;
 }
 
+/* 难度等级弹窗 */
+.picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.picker-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.picker-content {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 24rpx;
+  padding-bottom: 48rpx;
+}
+
+.picker-header {
+  padding: 16rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.picker-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.picker-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.picker-option {
+  padding: 20rpx 24rpx;
+  border-radius: 24rpx;
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 2rpx solid transparent;
+}
+
+.picker-option.active {
+  background-color: #D1FAE5;
+  border-color: #07C160;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.option-text {
+  font-size: 30rpx;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.picker-option.active .option-text {
+  color: #07C160;
+}
+
+.option-hint {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.35);
+}
+
 /* 温馨提示弹窗 */
 .agreement-modal {
   position: fixed;

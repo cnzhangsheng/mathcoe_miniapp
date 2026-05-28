@@ -37,8 +37,17 @@ const getTopic = (topicId) => {
   return request(`/topics/${topicId}`)
 }
 
+/**
+ * 获取推荐题目
+ * @param {number} limit - 题目数量
+ */
+const getRecommendedQuestions = (limit = 10) => {
+  return request(`/questions/recommended?limit=${limit}`)
+}
+
 module.exports = {
   getQuestions,
+  getRecommendedQuestions,
   getQuestion,
   getTopics,
   getTopic
