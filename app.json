@@ -76,6 +76,7 @@
     "downloadFile": 10000
   },
   "debug": false,
+  "lazyCodeLoading": "requiredComponents",
   "permission": {
     "scope.userLocation": {
       "desc": "您的位置信息将用于小程序位置接口的效果展示"
