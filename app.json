@@ -75,8 +75,7 @@
     "connectSocket": 10000,
     "downloadFile": 10000
   },
-  "lazyCodeLoading": "requiredComponents",
-  "debug": true,
+  "debug": false,
   "permission": {
     "scope.userLocation": {
       "desc": "您的位置信息将用于小程序位置接口的效果展示"

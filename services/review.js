@@ -1,11 +1,22 @@
 // services/review.js - 错题本和收藏夹API
 const { request } = require('./api')
+const cache = require('./cache')
+
+const TOPICS_CACHE_KEY = 'topics_list'
+const TOPICS_CACHE_TTL = 30 * 60 * 1000 // 30 分钟
 
 /**
- * 获取专题列表
+ * 获取专题列表（缓存 30 分钟）
  */
 const getTopics = async () => {
-  return request('/topics')
+  const cached = cache.get(TOPICS_CACHE_KEY)
+  if (cached) return cached
+
+  const result = await request('/topics')
+  if (result) {
+    cache.set(TOPICS_CACHE_KEY, result, TOPICS_CACHE_TTL)
+  }
+  return result
 }
 
 /**
