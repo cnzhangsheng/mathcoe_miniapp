@@ -3,13 +3,14 @@ const { request } = require('./api')
 
 /**
  * 获取考卷列表
- * @param {object} params - 查询参数 { page, page_size, paper_type }
+ * @param {object} params - 查询参数 { page, page_size, paper_type, difficulty_level }
  */
 const getExamPapers = (params = {}) => {
   let url = '/exam-papers?'
   if (params.page) url += `page=${params.page}&`
   if (params.page_size) url += `page_size=${params.page_size}&`
   if (params.paper_type) url += `paper_type=${params.paper_type}&`
+  if (params.difficulty_level) url += `difficulty_level=${params.difficulty_level}&`
   return request(url)
 }
 

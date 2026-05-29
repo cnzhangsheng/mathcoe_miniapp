@@ -547,7 +547,7 @@ Page({
 
   // 加载数学考卷列表
   async loadExamPapers(reset = true) {
-    const { examPage, examPageSize, selectedPaperType } = this.data
+    const { examPage, examPageSize, selectedPaperType, difficultyLevel } = this.data
     if (!reset && this.data.examLoading) return
 
     this.setData(reset ? { examPage: 1, examLoading: true } : { examLoading: true })
@@ -556,7 +556,8 @@ Page({
       const result = await examPaperService.getExamPapers({
         page,
         page_size: examPageSize,
-        paper_type: selectedPaperType || undefined
+        paper_type: selectedPaperType || undefined,
+        difficulty_level: difficultyLevel
       }).catch(() => null)
 
       if (result && result.items && result.items.length > 0) {
@@ -600,10 +601,6 @@ Page({
 
   // 难度等级弹窗
   openDifficultyPicker() {
-    if (!this.data.isLoggedIn) {
-      wx.navigateTo({ url: '/pages/login/login' })
-      return
-    }
     this.setData({ showDifficultyPicker: true })
   },
 
@@ -613,18 +610,18 @@ Page({
 
   async selectDifficulty(e) {
     const level = e.currentTarget.dataset.level
-    try {
-      await userService.updateUserInfo({ difficulty_level: level })
-      this.setData({ difficultyLevel: level, showDifficultyPicker: false })
-      if (app.globalData.userInfo) {
-        app.globalData.userInfo.difficulty_level = level
+    this.setData({ difficultyLevel: level, showDifficultyPicker: false })
+    if (this.data.isLoggedIn) {
+      try {
+        await userService.updateUserInfo({ difficulty_level: level })
+        if (app.globalData.userInfo) {
+          app.globalData.userInfo.difficulty_level = level
+        }
+      } catch (err) {
+        console.error('selectDifficulty error:', err)
       }
-      this.loadExamPapers(true)
-      wx.showToast({ title: '已更新', icon: 'success' })
-    } catch (err) {
-      console.error('selectDifficulty error:', err)
-      wx.showToast({ title: '更新失败', icon: 'none' })
     }
+    this.loadExamPapers(true)
   },
 
   // 考卷类型筛选

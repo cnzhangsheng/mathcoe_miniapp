@@ -17,7 +17,7 @@ Page({
     difficultyLevel: 1,
     difficultyValues: DIFFICULTY_VALUES,
     difficultyOptions: DIFFICULTY_LEVELS,
-    questionCount: 12,
+    questionCount: 24,
     wrongSelected: false,
     favoriteSelected: false,
     showResult: false,
@@ -75,8 +75,8 @@ Page({
     this.setData({ difficultyLevel: e.currentTarget.dataset.level })
   },
 
-  selectQuestionCount(e) {
-    this.setData({ questionCount: e.currentTarget.dataset.count })
+  onQuestionCountChange(e) {
+    this.setData({ questionCount: e.detail.value })
   },
 
   toggleWrong() {

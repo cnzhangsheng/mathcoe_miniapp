@@ -52,16 +52,22 @@
       <view class="section-label">
         <text class="label-text text-bold">题目数量</text>
       </view>
-      <view class="count-row">
-        <view
-          wx:for="{{[5,12,24,48]}}"
-          wx:key="*this"
-          class="count-item {{questionCount === item ? 'count-item-active' : ''}}"
-          data-count="{{item}}"
-          bindtap="selectQuestionCount"
-        >
-          <text class="count-item-text {{questionCount === item ? 'count-item-text-active' : ''}}">{{item}}题</text>
-        </view>
+      <view class="slider-wrapper">
+        <slider
+          min="5"
+          max="50"
+          step="1"
+          value="{{questionCount}}"
+          bindchange="onQuestionCountChange"
+          bindchanging="onQuestionCountChange"
+          block-size="16"
+          active-color="#07C160"
+        />
+        <text class="slider-value">{{questionCount}}题</text>
+      </view>
+      <view class="slider-labels">
+        <text class="slider-min-label">5</text>
+        <text class="slider-max-label">50</text>
       </view>
     </view>
 
