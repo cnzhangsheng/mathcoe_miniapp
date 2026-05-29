@@ -8,6 +8,50 @@
   position: relative;
 }
 
+/* ============ Loading State ============ */
+.practice-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+  padding: 80rpx 64rpx;
+  background-color: #fff;
+  border-radius: 48rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+}
+
+.loading-icon-box {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.loading-icon {
+  font-size: 56rpx;
+}
+
+.loading-title {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.loading-sub {
+  font-size: 24rpx;
+  color: rgba(0, 0, 0, 0.4);
+}
+
 /* ============ Exam Status Bar ============ */
 .exam-status-bar {
   display: flex;

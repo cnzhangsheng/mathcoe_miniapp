@@ -21,12 +21,25 @@ const getRecommendedPapers = (limit = 2) => {
   return request(`/exam-papers/recommended?limit=${limit}`)
 }
 
+const cache = require('./cache')
+
+const PAPER_CACHE_PREFIX = 'exam_paper_'
+const PAPER_CACHE_TTL = 60 * 60 * 1000 // 1 小时
+
 /**
- * 获取考卷详情（包含题目列表）
+ * 获取考卷详情（包含题目列表，缓存 1 小时）
  * @param {number} examPaperId
  */
-const getExamPaper = (examPaperId) => {
-  return request(`/exam-papers/${examPaperId}`)
+const getExamPaper = async (examPaperId) => {
+  const key = PAPER_CACHE_PREFIX + examPaperId
+  const cached = cache.get(key)
+  if (cached) return cached
+
+  const result = await request(`/exam-papers/${examPaperId}`)
+  if (result) {
+    cache.set(key, result, PAPER_CACHE_TTL)
+  }
+  return result
 }
 
 /**

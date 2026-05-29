@@ -14,8 +14,19 @@
     </view>
   </view>
 
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="practice-loading">
+    <view class="loading-card">
+      <view class="loading-icon-box">
+        <text class="loading-icon">📝</text>
+      </view>
+      <text class="loading-title text-bold">正在准备考卷...</text>
+      <text class="loading-sub">请稍候，马上就好</text>
+    </view>
+  </view>
+
   <!-- Main Practice Card -->
-  <view class="practice-card">
+  <view class="practice-card" wx:if="{{!loading && questions.length > 0}}">
     <!-- Question Header -->
     <view class="question-header flex-row">
       <text class="question-number text-bold">题目{{currentIndex}}/{{totalQuestions}}</text>
@@ -50,7 +61,7 @@
   </view>
 
   <!-- Bottom Control Bar -->
-  <view class="bottom-control-bar">
+  <view class="bottom-control-bar" wx:if="{{!loading && questions.length > 0}}">
     <view class="sheet-btn-bottom" bindtap="showAnswerSheet">
       <text class="sheet-icon">📋</text>
       <text class="sheet-text">答题卡</text>

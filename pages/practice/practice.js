@@ -6,6 +6,9 @@ const reviewService = require('../../services/review')
 
 Page({
   data: {
+    // Loading
+    loading: true,
+
     // Mode
     examPaperMode: false,
 
@@ -104,6 +107,7 @@ Page({
 
         const duration = examPaper.duration || 75 // 默认 75 分钟
         this.setData({
+          loading: false,
           examPaper,
           questions,
           totalQuestions: totalQuestions,
@@ -119,6 +123,7 @@ Page({
         // 预加载所有题目的图片，用户切题时直接从微信缓存加载
         this.preloadQuestionImages(questions)
       } else {
+        this.setData({ loading: false })
         wx.showToast({ title: '考卷无题目', icon: 'none' })
         setTimeout(() => {
           wx.showTabBar()
@@ -127,6 +132,7 @@ Page({
       }
     } catch (err) {
       console.error('Load exam paper failed:', err)
+      this.setData({ loading: false })
       wx.showToast({ title: '加载失败，请登录', icon: 'none' })
       setTimeout(() => {
         wx.showTabBar()
@@ -140,6 +146,7 @@ Page({
     try {
       const result = await practiceService.startPractice({ topic_id: topicId })
       if (!result) {
+        this.setData({ loading: false })
         wx.showToast({ title: '请先登录', icon: 'none' })
         setTimeout(() => {
           wx.showTabBar()
@@ -159,6 +166,7 @@ Page({
       if (questions.length > 0) {
         const firstQuestion = questions[0] || {}
         this.setData({
+          loading: false,
           questions,
           totalQuestions: totalQuestions,
           currentQuestion: this.formatQuestion(firstQuestion),
@@ -172,6 +180,7 @@ Page({
         // 预加载所有题目的图片
         this.preloadQuestionImages(questions)
       } else {
+        this.setData({ loading: false })
         wx.showToast({ title: '专题无题目', icon: 'none' })
         setTimeout(() => {
           wx.showTabBar()
@@ -180,6 +189,7 @@ Page({
       }
     } catch (err) {
       console.error('Load topic practice failed:', err)
+      this.setData({ loading: false })
       wx.showToast({ title: '加载失败，请登录', icon: 'none' })
       setTimeout(() => {
         wx.showTabBar()
