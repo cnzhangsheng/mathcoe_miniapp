@@ -1,6 +1,6 @@
 // 基础服务地址
-const BASE_URL = 'http://127.0.0.1:8000'
-// const BASE_URL = 'https://aicoe.cn'
+// const BASE_URL = 'http://127.0.0.1:8000'
+const BASE_URL = 'https://aicoe.cn'
 
 // API 基础路径
 const API_BASE_URL = BASE_URL + '/api/v1'

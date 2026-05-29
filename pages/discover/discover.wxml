@@ -29,7 +29,7 @@
   <block wx:if="{{swiperList.length > 0}}">
     <swiper current="{{swiperCurrent}}" duration="300" bindchange="onSwiperChange" class="discover-swiper">
       <swiper-item wx:for="{{swiperList}}" wx:for-item="card" wx:for-index="idx" wx:key="id">
-        <scroll-view class="question-area" scroll-y>
+        <scroll-view class="question-area" scroll-y refresher-enabled="{{true}}" refresher-triggered="{{refresherTriggered}}" bindrefresherrefresh="onPullDownRefresh">
 
           <block wx:if="{{card.question}}">
             <!-- Question Card -->

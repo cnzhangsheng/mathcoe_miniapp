@@ -15,6 +15,7 @@ Page({
     swiperList: [],
     swiperCurrent: 0,
     showSwipeHint: false,
+    refresherTriggered: false,
     imageBaseUrl: IMAGE_BASE_URL,
   },
 
@@ -29,7 +30,7 @@ Page({
   async onPullDownRefresh() {
     this.checkLoginStatus()
     await this.loadRandomQuestion()
-    wx.stopPullDownRefresh()
+    this.setData({ refresherTriggered: false })
   },
 
   // 检查登录状态

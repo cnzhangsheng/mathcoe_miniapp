@@ -738,7 +738,7 @@
 }
 
 .difficulty-chip-arrow {
-  font-size: 20rpx;
+  font-size: 28rpx;
   color: rgba(0, 0, 0, 0.3);
 }
 

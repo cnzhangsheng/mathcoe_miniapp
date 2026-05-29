@@ -1,4 +1,5 @@
 /* pages/records/records.wxss - 用户历史答题记录样式 */
+@import "../../styles/practice-common.wxss";
 
 .records-container {
   padding: 20rpx;
@@ -67,20 +68,6 @@
   display: flex;
   flex-direction: column;
   gap: 12rpx;
-}
-
-.record-topic-box {
-  padding: 16rpx 24rpx;
-  border-radius: 24rpx;
-  background-color: rgba(99, 102, 241, 0.1);
-  border: 2rpx solid rgba(99, 102, 241, 0.2);
-}
-
-.record-topic-name {
-  font-size: 24rpx;
-  color: #6366F1;
-  display: block;
-  text-align: center;
 }
 
 .record-meta {

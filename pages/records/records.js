@@ -1,6 +1,7 @@
 // pages/records/records.js - 用户历史答题记录
 const practiceService = require('../../services/practice')
 const reviewService = require('../../services/review')
+const { getTopicClass } = require('../../services/topics')
 const app = getApp()
 
 Page({
@@ -129,6 +130,7 @@ Page({
       return {
         id: r.id,
         topicTitle: r.question_topic_title || '日常练习',
+        topicClass: getTopicClass(r.question_topic_id),
         topicId: r.question_topic_id,
         contentHtml,
         date: dateStr,

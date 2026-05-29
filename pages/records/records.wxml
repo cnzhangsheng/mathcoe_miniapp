@@ -55,9 +55,7 @@
       <block wx:for="{{records}}" wx:key="id">
         <view class="record-item card" data-record="{{item}}" bindtap="goToDetail">
           <view class="record-left">
-            <view class="record-topic-box">
-              <text class="record-topic-name text-bold">{{item.topicTitle}}</text>
-            </view>
+            <text class="topic-badge {{item.topicClass}} text-small text-bold">{{item.topicTitle}}</text>
             <view class="record-meta">
               <text class="meta-item">{{item.date}}</text>
             </view>
