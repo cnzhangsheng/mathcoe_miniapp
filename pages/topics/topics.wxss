@@ -13,7 +13,7 @@
   color: rgba(0,0,0,0.4);
 }
 
-/* ============ AI Mastery Insight ============ */
+/* ============ 学习复盘 ============ */
 .insight-card {
   background: linear-gradient(135deg, #059669 0%, #10B981 100%);
   border-radius: 64rpx;

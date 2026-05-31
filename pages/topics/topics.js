@@ -17,7 +17,7 @@ Page({
     topics: [],
     filteredTopics: [],
 
-    // AI学习洞察数据
+    // 学习复盘数据
     insightData: { weakest_topic_title: '', progress_gain: 0, analysis_base: 0 },
 
     // 推荐题目列表

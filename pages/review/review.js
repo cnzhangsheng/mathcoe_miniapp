@@ -341,7 +341,11 @@ Page({
 
   // 生成考卷
   goGeneratePaper() {
-    wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
+    if (wx.getStorageSync('token')) {
+      wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
+    } else {
+      wx.navigateTo({ url: '/pages/login/login?redirect=review' })
+    }
   },
 
   // 查看全部错题

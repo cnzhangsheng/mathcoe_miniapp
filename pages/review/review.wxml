@@ -13,12 +13,12 @@
 
   <block wx:if="{{!loading}}">
     <!-- 生成考卷入口 -->
-    <view class="gen-paper-card" wx:if="{{isLoggedIn}}" bindtap="goGeneratePaper">
+    <view class="gen-paper-card" bindtap="goGeneratePaper">
       <view class="gen-paper-icon-box">
         <text class="gen-paper-icon">📝</text>
       </view>
       <view class="gen-paper-info">
-        <text class="gen-paper-title text-bold">智能生成考卷</text>
+        <text class="gen-paper-title text-bold">生成考卷</text>
         <text class="gen-paper-desc text-small text-muted">根据错题和收藏，一键生成专属练习卷</text>
       </view>
       <text class="gen-paper-arrow">→</text>

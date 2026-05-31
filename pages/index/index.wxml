@@ -184,7 +184,7 @@
     <!-- 智能组卷 -->
     <view class="recommend-section">
       <view class="section-header flex-row">
-        <text class="section-title text-bold">智能组卷</text>
+        <text class="section-title text-bold">自编考卷</text>
       </view>
       <view class="generate-entry-card" bindtap="handleGenerateTap">
         <view class="generate-entry-left">
@@ -193,7 +193,7 @@
           </view>
         </view>
         <view class="generate-entry-middle">
-          <text class="generate-entry-title text-bold">AI 智能组卷</text>
+          <text class="generate-entry-title text-bold">自编组卷</text>
           <text class="generate-entry-sub text-small">选择专题和难度，生成专属考卷</text>
         </view>
         <view class="generate-entry-right">

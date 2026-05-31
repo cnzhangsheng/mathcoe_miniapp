@@ -760,7 +760,7 @@ Page({
     })
   },
 
-  // AI 智能组卷点击：未登录跳转登录，登录后正常进入
+  // 自编组卷点击：未登录跳转登录，登录后正常进入
   handleGenerateTap() {
     if (this.data.isLoggedIn) {
       wx.navigateTo({ url: '/pages/generate-paper/generate-paper' })
