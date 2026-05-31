@@ -5,7 +5,7 @@
         <text class="empty-icon">📄</text>
       </view>
       <text class="empty-title text-bold">还没有生成过考卷</text>
-      <text class="empty-sub text-small">去首页使用「智能组卷」生成你的第一份考卷</text>
+      <text class="empty-sub text-small">去首页使用「自编组卷」生成你的第一份考卷</text>
     </view>
   </view>
 

@@ -181,7 +181,7 @@
       </view>
     </view>
 
-    <!-- 智能组卷 -->
+    <!-- 自编考卷 -->
     <view class="recommend-section">
       <view class="section-header flex-row">
         <text class="section-title text-bold">自编考卷</text>

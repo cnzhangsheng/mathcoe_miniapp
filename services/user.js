@@ -16,7 +16,7 @@ const getAbilityRadar = () => {
 }
 
 /**
- * 获取 AI 学习洞察
+ * 获取学习洞察
  */
 const getUserInsight = () => {
   return request('/users/insight', { silent: true })
