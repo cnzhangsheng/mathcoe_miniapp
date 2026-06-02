@@ -813,7 +813,7 @@ Page({
     const banner = this.data.banners[index]
     if (!banner) return
 
-    if (banner.link_type === 'content') {
+    if (banner.link_type === 'content' && banner.link_value) {
       wx.navigateTo({ url: `/pages/content/content?slug=${banner.link_value}` })
     } else if (banner.link_type === 'external' && banner.link_value) {
       wx.navigateTo({ url: `/pages/webview/webview?url=${encodeURIComponent(banner.link_value)}` })
