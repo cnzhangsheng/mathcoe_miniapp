@@ -143,16 +143,6 @@
   margin-bottom: 12rpx;
   flex-wrap: wrap;
 }
-.qi-id {
-  font-size: 22rpx;
-  color: #909399;
-  background: #f0f2f5;
-  padding: 0 8rpx;
-  border-radius: 4rpx;
-  line-height: 32rpx;
-}
-
-.qi-topic {
   font-size: 22rpx;
   padding: 4rpx 12rpx;
   border-radius: 8rpx;
@@ -186,6 +176,16 @@
   padding: 20rpx;
   font-size: 26rpx;
   color: #667eea;
+}
+
+.end-tip {
+  text-align: center;
+  padding: 24rpx 0 40rpx;
+}
+
+.end-tip-text {
+  font-size: 24rpx;
+  color: #909399;
 }
 
 .empty-tip {

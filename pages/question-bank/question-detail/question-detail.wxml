@@ -84,6 +84,9 @@
     </scroll-view>
   </block>
 
+  <!-- Hidden canvas for download image -->
+  <canvas type="2d" id="questionCanvas" style="width:375px;height:600px;position:fixed;left:-9999px;top:0;z-index:-1;"></canvas>
+
   <!-- 错误状态 -->
   <view class="empty-state" wx:if="{{!loading && !question}}">
     <view class="empty-card">

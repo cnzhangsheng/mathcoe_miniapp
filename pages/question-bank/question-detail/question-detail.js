@@ -18,17 +18,27 @@ Page({
     selectedOption: null,
     showAnswer: false,
     isFavorited: false,
-    isLoggedIn: !!wx.getStorageSync('token'),
+    isLoggedIn: false,
     imageBaseUrl: IMAGE_BASE_URL,
   },
 
   onLoad(options) {
+    this.checkLoginStatus()
     const questionId = options.question_id
     if (questionId) {
       this.loadQuestion(parseInt(questionId))
     } else {
       this.setData({ loading: false })
     }
+  },
+
+  onShow() {
+    this.checkLoginStatus()
+  },
+
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token')
+    this.setData({ isLoggedIn: !!token })
   },
 
   async loadQuestion(questionId) {
@@ -87,6 +97,11 @@ Page({
 
   async submitAnswer() {
     if (!this.data.selectedOption) return
+    if (!this.data.isLoggedIn) {
+      const redirect = encodeURIComponent(`/pages/question-bank/question-detail/question-detail?question_id=${this.data.question.id}`)
+      wx.redirectTo({ url: `/pages/login/login?redirect=${redirect}` })
+      return
+    }
     const { question, selectedOption } = this.data
     const isCorrect = selectedOption === question.answer
 
@@ -107,6 +122,11 @@ Page({
   },
 
   async toggleFavorite() {
+    if (!this.data.isLoggedIn) {
+      const redirect = encodeURIComponent(`/pages/question-bank/question-detail/question-detail?question_id=${this.data.question.id}`)
+      wx.redirectTo({ url: `/pages/login/login?redirect=${redirect}` })
+      return
+    }
     const { question, isFavorited } = this.data
     try {
       if (isFavorited) {
@@ -131,11 +151,19 @@ Page({
 
   async downloadImage() {
     if (!this.data.question) return
+    const { question, topicTitle, questionLevel, questionType } = this.data
+    wx.showLoading({ title: '生成图片中...', mask: true })
     try {
-      wx.showLoading({ title: '生成中...' })
-      const filePath = await downloadQuestionImage(this.data.question)
+      const canvas = await new Promise((resolve, reject) => {
+        wx.createSelectorQuery().select('#questionCanvas').node((res) => {
+          if (res.node) resolve(res.node)
+          else reject(new Error('Canvas not found'))
+        }).exec()
+      })
+      await downloadQuestionImage(canvas, { question, topicTitle, questionLevel, questionType })
+      await saveImageToAlbum(canvas)
       wx.hideLoading()
-      await saveImageToAlbum(filePath)
+      wx.showToast({ title: '已保存到相册', icon: 'success' })
     } catch (err) {
       wx.hideLoading()
       console.error('downloadImage error:', err)

@@ -45,13 +45,15 @@
     <view class="search-results" wx:if="{{searchResults.length > 0}}">
       <view wx:for="{{searchResults}}" wx:key="id" class="question-item" bindtap="goPractice" data-id="{{item.id}}">
         <view class="qi-header">
-          <text class="qi-id">#{{item.id}}</text>
           <text class="qi-topic {{item.topicClass}}">{{item.topic_title}}</text>
-          <text class="qi-level" wx:if="{{item.difficulty_level}}">L{{item.difficulty_level}}</text>
+          <text class="qi-level" wx:if="{{item.difficulty_level}}">Level {{item.difficulty_level}}</text>
         </view>
         <view class="qi-content"><rich-text nodes="{{item.content}}"></rich-text></view>
       </view>
       <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMoreSearch">加载更多</view>
+      <view class="end-tip" wx:elif="{{searchResults.length > 0}}">
+        <text class="end-tip-text">—— 已经到底啦 ——</text>
+      </view>
     </view>
     <view class="empty-tip" wx:elif="{{isSearching}}">未找到相关题目</view>
     <view class="welcome-tip" wx:else>

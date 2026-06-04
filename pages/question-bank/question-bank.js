@@ -153,6 +153,12 @@ Page({
     }
   },
 
+  onReachBottom() {
+    if (this.data.hasMore) {
+      this.loadMoreSearch()
+    }
+  },
+
   clearSearch() {
     const history = (wx.getStorageSync(HISTORY_KEY) || []).filter(Boolean)
     this.setData({

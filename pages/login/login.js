@@ -118,7 +118,12 @@ Page({
           // 根据 redirect 参数跳转，无则跳首页
           setTimeout(() => {
             if (this.data.redirect) {
-              wx.switchTab({ url: '/pages/' + this.data.redirect + '/' + this.data.redirect })
+              const decoded = decodeURIComponent(this.data.redirect)
+              if (decoded.startsWith('/')) {
+                wx.redirectTo({ url: decoded })
+              } else {
+                wx.switchTab({ url: '/pages/' + decoded + '/' + decoded })
+              }
             } else {
               wx.switchTab({
                 url: '/pages/index/index'
