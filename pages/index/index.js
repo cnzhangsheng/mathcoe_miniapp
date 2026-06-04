@@ -655,6 +655,13 @@ Page({
     })
   },
 
+  // 跳转到题库
+  goToQuestionBank() {
+    wx.navigateTo({
+      url: '/pages/question-bank/question-bank'
+    })
+  },
+
   // 跳转到个人页
   goToProfile() {
     wx.switchTab({

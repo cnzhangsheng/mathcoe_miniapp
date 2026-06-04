@@ -23,7 +23,9 @@
     "pages/content/content",
     "pages/generate-paper/generate-paper",
     "pages/my-papers/my-papers",
-    "pages/webview/webview"
+    "pages/webview/webview",
+    "pages/question-bank/question-bank",
+    "pages/question-bank/question-detail/question-detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#07C160",

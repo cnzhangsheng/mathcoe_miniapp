@@ -1,0 +1,62 @@
+<view class="page">
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索题目内容..." value="{{keyword}}" bindinput="onSearchInput" bindconfirm="onSearch" />
+      <text class="search-clear" wx:if="{{keyword}}" bindtap="clearSearch">✕</text>
+      <view class="search-btn" bindtap="onSearch">
+        <text class="search-btn-text">搜索</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="history-section" wx:if="{{showHistory && searchHistory.length > 0}}">
+    <view class="history-header">
+      <text class="history-title">历史记录</text>
+      <text class="history-clear" bindtap="clearHistory">清空</text>
+    </view>
+    <view class="history-tags">
+      <view wx:for="{{searchHistory}}" wx:key="index" class="history-tag" bindtap="tapHistory" data-keyword="{{item}}">
+        <text class="history-tag-text">{{ item || ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <block wx:if="{{isSearching || !hasSearched}}">
+    <!-- 筛选栏（仅在搜索结果出现后显示） -->
+    <view class="filter-bar" wx:if="{{showFilters}}">
+    <scroll-view class="filter-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="filter-group">
+        <view wx:for="{{topicOptions}}" wx:key="value" class="filter-btn {{selectedTopicId === item.value ? 'active' : ''}}" bindtap="selectTopic" data-value="{{item.value === null ? '' : item.value}}">
+          {{item.label}}
+        </view>
+      </view>
+    </scroll-view>
+    <view class="filter-group level-group">
+      <view wx:for="{{levelOptions}}" wx:key="value" class="filter-btn {{selectedLevel === item.value ? 'active' : ''}}" bindtap="selectLevel" data-value="{{item.value === null ? '' : item.value}}">
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+    <view class="section-title" wx:if="{{isSearching}}">搜索结果 ({{searchTotal}})</view>
+    <view class="search-results" wx:if="{{searchResults.length > 0}}">
+      <view wx:for="{{searchResults}}" wx:key="id" class="question-item" bindtap="goPractice" data-id="{{item.id}}">
+        <view class="qi-header">
+          <text class="qi-id">#{{item.id}}</text>
+          <text class="qi-topic {{item.topicClass}}">{{item.topic_title}}</text>
+          <text class="qi-level" wx:if="{{item.difficulty_level}}">L{{item.difficulty_level}}</text>
+        </view>
+        <view class="qi-content"><rich-text nodes="{{item.content}}"></rich-text></view>
+      </view>
+      <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMoreSearch">加载更多</view>
+    </view>
+    <view class="empty-tip" wx:elif="{{isSearching}}">未找到相关题目</view>
+    <view class="welcome-tip" wx:else>
+      <text class="welcome-icon">🔍</text>
+      <text class="welcome-text">输入关键词搜索题目</text>
+    </view>
+  </block>
+</view>

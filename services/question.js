@@ -45,10 +45,35 @@ const getRecommendedQuestions = (limit = 10) => {
   return request(`/questions/recommended?limit=${limit}`)
 }
 
+/**
+ * 搜索题目
+ * @param {string} keyword 搜索关键词
+ * @param {number} [level] 难度级别
+ * @param {number} [topic_id] 专题ID
+ * @param {number} [page=1] 页码
+ * @param {number} [size=20] 每页数量
+ */
+const searchQuestions = (keyword, level, topic_id, page = 1, size = 20) => {
+  let url = `/questions/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`
+  if (level) url += `&level=${level}`
+  if (topic_id) url += `&topic_id=${topic_id}`
+  return request(url)
+}
+
+/**
+ * 获取题目排行
+ * @param {number} level 难度级别 1/2/3
+ */
+const getRankings = (level) => {
+  return request(`/questions/rankings?level=${level}`)
+}
+
 module.exports = {
   getQuestions,
   getRecommendedQuestions,
   getQuestion,
   getTopics,
-  getTopic
+  getTopic,
+  searchQuestions,
+  getRankings
 }

@@ -130,41 +130,40 @@
     </view>
 
     <!-- 快捷入口 (4个大按钮) -->
-    <view class="quick-actions">
-      <view class="action-item primary-action" bindtap="goToDiscover">
-        <view class="action-icon-box primary-icon">
-          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_explore.png'}}" mode="aspectFit"></image>
-        </view>
-        <text class="action-title text-bold">探索</text>
-        <text class="action-sub text-small">随机刷题</text>
-      </view>
+    	    	    <view class="quick-actions">
+	      <view class="action-item" bindtap="goToDiscover">
+	        <view class="action-icon-box primary-icon">
+	          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_explore.png'}}" mode="aspectFit"></image>
+	        </view>
+	        <text class="action-title text-bold">探索</text>
+	        <text class="action-sub text-small">随机刷题</text>
+	      </view>
 
-      <view class="action-item purple-action" bindtap="goToTopics">
-        <view class="action-icon-box purple-icon">
-          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_topic.png'}}" mode="aspectFit"></image>
-        </view>
-        <text class="action-title text-bold">专题</text>
-        <text class="action-sub text-small">专项训练</text>
-      </view>
+	      <view class="action-item" bindtap="goToQuestionBank">
+	        <view class="action-icon-box cyan-icon">
+	          <image class="action-icon-img" src="../../assets/icons/question-bank.png" mode="aspectFit"></image>
+	        </view>
+	        <text class="action-title text-bold">题库</text>
+	        <text class="action-sub text-small">排行搜索</text>
+	      </view>
 
-      <view class="action-item amber-action" bindtap="goToExamPaper">
-        <view class="action-icon-box amber-icon">
-          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_exam.png'}}" mode="aspectFit"></image>
-        </view>
-        <text class="action-title text-bold">模考</text>
-        <text class="action-sub text-small">真题演练</text>
-      </view>
+	      <view class="action-item" bindtap="goToTopics">
+	        <view class="action-icon-box purple-icon">
+	          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_topic.png'}}" mode="aspectFit"></image>
+	        </view>
+	        <text class="action-title text-bold">专题</text>
+	        <text class="action-sub text-small">专项训练</text>
+	      </view>
 
-      <view class="action-item rose-action" bindtap="goToReview">
-        <view class="action-icon-box rose-icon">
-          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_error.png'}}" mode="aspectFit"></image>
-        </view>
-        <text class="action-title text-bold">错题</text>
-        <text class="action-sub text-small">{{wrongCount}}题待练</text>
-      </view>
-    </view>
-
-    <!-- 能力雷达（多边形） -->
+	      <view class="action-item" bindtap="goToReview">
+	        <view class="action-icon-box rose-icon">
+	          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_error.png'}}" mode="aspectFit"></image>
+	        </view>
+	        <text class="action-title text-bold">错题</text>
+	        <text class="action-sub text-small">{{wrongCount}}题待练</text>
+	      </view>
+	    </view>
+<!-- 能力雷达（多边形） -->
     <view class="radar-card">
       <view class="radar-header">
         <view class="radar-title-row flex-row">

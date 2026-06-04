@@ -1,0 +1,96 @@
+<view class="detail-page">
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-card">
+      <view class="loading-icon-box">
+        <text class="loading-icon">🔄</text>
+      </view>
+      <text class="loading-text">正在加载题目...</text>
+    </view>
+  </view>
+
+  <!-- 题目内容 -->
+  <block wx:if="{{!loading && question}}">
+    <scroll-view class="detail-scroll" scroll-y>
+      <!-- Question Card -->
+      <view class="question-card">
+        <!-- 题目信息 -->
+        <view class="question-info-row">
+          <text class="topic-badge {{topicClass}}">{{topicTitle}}</text>
+          <text class="difficulty-badge text-small text-bold" wx:if="{{questionLevel}}">{{questionLevel}}</text>
+          <text class="question-type-badge text-small">（{{questionType}}）</text>
+        </view>
+        <view class="question-content-box">
+          <rich-text class="question-content" nodes="{{question.content}}"></rich-text>
+        </view>
+
+        <!-- 选项 -->
+        <view class="options-list">
+          <view wx:for="{{question.options}}" wx:key="label" class="option-item {{selectedOption === item.label ? 'selected' : ''}} {{showAnswer && question.answer === item.label ? 'correct' : ''}} {{showAnswer && selectedOption === item.label && question.answer !== item.label ? 'wrong' : ''}}" bindtap="selectOption" data-option="{{item.label}}">
+            <view class="option-label-box {{selectedOption === item.label ? 'active' : ''}} {{showAnswer && question.answer === item.label ? 'correct-label' : ''}} {{showAnswer && selectedOption === item.label && question.answer !== item.label ? 'wrong-label' : ''}}">
+              <text class="option-label text-bold">{{item.label}}</text>
+            </view>
+            <rich-text class="option-text {{selectedOption === item.label ? 'active-text' : ''}}" nodes="{{item.text}}"></rich-text>
+            <text class="option-status" wx:if="{{showAnswer && question.answer === item.label}}">✓</text>
+            <text class="option-status wrong-status" wx:if="{{showAnswer && selectedOption === item.label && question.answer !== item.label}}">✗</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Action Buttons -->
+      <view class="action-icons-right">
+        <view class="action-icon-btn {{isFavorited ? 'bookmarked' : ''}}" bindtap="toggleFavorite">
+          <image class="action-icon-img" src="{{isFavorited ? (imageBaseUrl + 'icons/icon_bookmark_fill.png') : (imageBaseUrl + 'icons/icon_bookmark.png')}}" mode="aspectFit"></image>
+          <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+        </view>
+        <button wx:if="{{isLoggedIn}}" class="action-icon-btn share-btn" open-type="share">
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+          <text class="action-text">分享</text>
+        </button>
+        <view wx:else class="action-icon-btn share-btn" bindtap="goToLogin">
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_share.png'}}" mode="aspectFit"></image>
+          <text class="action-text">分享</text>
+        </view>
+        <view class="action-icon-btn" bindtap="downloadImage">
+          <image class="action-icon-img" src="{{imageBaseUrl + 'icons/icon_image.png'}}" mode="aspectFit"></image>
+          <text class="action-text">图片</text>
+        </view>
+      </view>
+
+      <!-- Submit Button -->
+      <view class="submit-row" wx:if="{{!showAnswer}}">
+        <view class="submit-answer-btn {{selectedOption ? 'active' : ''}}" bindtap="submitAnswer">
+          <text class="submit-answer-text text-bold">提交答案</text>
+        </view>
+      </view>
+
+      <!-- Analysis Section -->
+      <view class="analysis-section" wx:if="{{showAnswer}}">
+        <view class="analysis-card">
+          <view class="answer-row flex-row">
+            <view class="answer-box">
+              <text class="answer-letter text-bold">{{question.answer}}</text>
+            </view>
+            <view class="answer-info">
+              <text class="answer-title text-bold">正确答案：{{question.answer}}</text>
+            </view>
+          </view>
+          <view class="logic-box">
+            <text class="logic-label text-xs text-bold">题目解析</text>
+            <rich-text class="logic-text" nodes="{{question.explanation || '暂无解析'}}"></rich-text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </block>
+
+  <!-- 错误状态 -->
+  <view class="empty-state" wx:if="{{!loading && !question}}">
+    <view class="empty-card">
+      <text class="empty-text">题目加载失败</text>
+      <view class="back-btn" bindtap="goBack">
+        <text class="back-btn-text">返回题库</text>
+      </view>
+    </view>
+  </view>
+</view>

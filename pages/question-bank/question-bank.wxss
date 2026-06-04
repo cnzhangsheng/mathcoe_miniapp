@@ -1,0 +1,196 @@
+.page {
+  padding: 16rpx 32rpx;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* 搜索框 */
+.search-bar {
+  margin-bottom: 16rpx;
+}
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 48rpx;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+}
+.search-icon { font-size: 28rpx; margin-right: 12rpx; }
+.search-input { flex: 1; font-size: 28rpx; height: 40rpx; }
+.search-clear { font-size: 28rpx; color: #999; padding: 0 8rpx; }
+.search-btn {
+  background: #6366F1;
+  border-radius: 32rpx;
+  padding: 8rpx 24rpx;
+  margin-left: 8rpx;
+  flex-shrink: 0;
+}
+.search-btn-text {
+  font-size: 26rpx;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 历史记录 */
+.history-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+}
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.history-title {
+  font-size: 26rpx;
+  color: #333;
+  font-weight: 600;
+}
+.history-clear {
+  font-size: 24rpx;
+  color: #999;
+}
+.history-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+.history-tag {
+  background: #f0f2f5;
+  border-radius: 8rpx;
+  padding: 10rpx 20rpx;
+}
+.history-tag-text {
+  font-size: 24rpx;
+  color: #666;
+  display: inline-block;
+  max-width: 200rpx;      
+  overflow: hidden;       
+  white-space: nowrap;    
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* 筛选栏 */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+.filter-scroll {
+  white-space: nowrap;
+}
+.filter-group {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  color: #666;
+  background: #fff;
+  border-radius: 8rpx;
+  border: 2rpx solid rgba(0,0,0,0.04);
+  white-space: nowrap;
+}
+.filter-btn.active {
+  color: #6366F1;
+  border-color: #6366F1;
+  background: rgba(99,102,241,0.06);
+  font-weight: 600;
+}
+
+/* 欢迎提示 */
+.welcome-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 160rpx 0;
+  gap: 24rpx;
+}
+.welcome-icon { font-size: 80rpx; }
+.welcome-text { font-size: 28rpx; color: #999; }
+
+/* 搜索结果 */
+.section-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+.search-results {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 16rpx 24rpx;
+}
+.question-item {
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.question-item:last-child { border-bottom: none; }
+
+.qi-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+  flex-wrap: wrap;
+}
+.qi-id {
+  font-size: 22rpx;
+  color: #909399;
+  background: #f0f2f5;
+  padding: 0 8rpx;
+  border-radius: 4rpx;
+  line-height: 32rpx;
+}
+
+.qi-topic {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  font-weight: 600;
+}
+.qi-topic.topic-yunsuan { background: #FFF0D6; color: #FF8A00; }
+.qi-topic.topic-luoji { background: #DCFFE4; color: #10B981; }
+.qi-topic.topic-tuxing { background: #FFE8EC; color: #FF6B8A; }
+.qi-topic.topic-yingyong { background: #E0F7E9; color: #38D9A9; }
+.qi-topic.topic-default { background: #f0f2f5; color: #666; }
+
+.qi-level {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  background: #FEF3C7;
+  color: #D97706;
+  font-weight: 600;
+}
+
+.qi-content {
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.5;
+}
+.qi-content p { margin: 0; }
+.qi-content img { max-width: 100%; border-radius: 4rpx; }
+
+.load-more {
+  text-align: center;
+  padding: 20rpx;
+  font-size: 26rpx;
+  color: #667eea;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 60rpx 0;
+  font-size: 28rpx;
+  color: #999;
+}
