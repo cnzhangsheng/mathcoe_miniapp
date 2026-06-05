@@ -77,12 +77,9 @@ Page({
   },
 
   async loadData() {
-    wx.showLoading({ title: '加载中...', mask: true })
-
     try {
       const token = wx.getStorageSync('token')
       if (!token) {
-        wx.hideLoading()
         this.setData({ loading: false })
         return
       }
@@ -116,10 +113,8 @@ Page({
         })
       }
 
-      wx.hideLoading()
       this.setData({ loading: false })
     } catch (err) {
-      wx.hideLoading()
       console.error('Load data failed:', err)
       this.setData({ loading: false })
     }

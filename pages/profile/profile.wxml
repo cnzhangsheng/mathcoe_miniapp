@@ -1,16 +1,6 @@
 <!--pages/profile/profile.wxml - 我的页面（设置页面） -->
 <view class="profile-page">
 
-  <!-- 加载状态 -->
-  <view wx:if="{{loading}}" class="loading-state">
-    <view class="loading-card">
-      <view class="loading-icon-box">
-        <text class="loading-icon">🔄</text>
-      </view>
-      <text class="loading-text text-small">正在加载...</text>
-    </view>
-  </view>
-
   <block wx:if="{{!loading}}">
     <!-- 用户信息 -->
     <view class="user-card card">

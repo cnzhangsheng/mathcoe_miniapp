@@ -43,8 +43,6 @@ Page({
   },
 
   async loadQuestions(ids) {
-    wx.showLoading({ title: '加载中...', mask: true })
-
     try {
       // 获取收藏列表
       const favorites = await reviewService.getAllFavorites() || []
@@ -91,14 +89,10 @@ Page({
         this.updateQuestionMeta(questions[0])
         this.checkFavoriteStatus(questions[0].question_id)
       } else {
-        wx.hideLoading()
         wx.showToast({ title: '未找到题目', icon: 'none' })
         this.setData({ loading: false })
       }
-
-      wx.hideLoading()
     } catch (err) {
-      wx.hideLoading()
       console.error('Load questions failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
       this.setData({ loading: false })

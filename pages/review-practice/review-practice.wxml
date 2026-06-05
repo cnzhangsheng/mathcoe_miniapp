@@ -1,13 +1,5 @@
 <!--pages/review-practice/review-practice.wxml - 错题复习练习页面（Swiper滑动版） -->
 <view class="review-practice-page">
-  <!-- 加载状态 -->
-  <view wx:if="{{loading}}" class="loading-state">
-    <view class="loading-card">
-      <text class="loading-icon">🔄</text>
-      <text class="loading-text">正在加载题目...</text>
-    </view>
-  </view>
-
   <!-- 练习内容 -->
   <block wx:if="{{!loading && !completed && questions.length > 0}}">
     <swiper current="{{swiperCurrent}}" duration="300" bindchange="onSwiperChange" class="review-swiper">

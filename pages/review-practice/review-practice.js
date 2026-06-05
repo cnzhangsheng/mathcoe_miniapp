@@ -48,8 +48,6 @@ Page({
   },
 
   async loadQuestions(ids) {
-    wx.showLoading({ title: '加载中...', mask: true })
-
     try {
       // 获取错题列表
       const wrongQuestions = await reviewService.getAllWrongQuestions() || []
@@ -140,17 +138,13 @@ Page({
         })
         this.updateQuestionMeta(questions[startIdx])
       } else {
-        wx.hideLoading()
         wx.showToast({ title: '错题已全部完成', icon: 'success' })
         setTimeout(() => {
           wx.switchTab({ url: '/pages/review/review' })
         }, 1500)
         return
       }
-
-      wx.hideLoading()
     } catch (err) {
-      wx.hideLoading()
       console.error('Load questions failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
       this.setData({ loading: false })
@@ -225,8 +219,6 @@ Page({
   },
 
   async loadLatestWrongQuestions() {
-    wx.showLoading({ title: '加载中...', mask: true })
-
     try {
       // 获取错题列表
       const wrongQuestions = await reviewService.getAllWrongQuestions() || []
@@ -238,7 +230,6 @@ Page({
       }
 
       if (filtered.length === 0) {
-        wx.hideLoading()
         wx.showToast({ title: '该专题暂无错题', icon: 'none' })
         setTimeout(() => {
           wx.switchTab({ url: '/pages/review/review' })
@@ -291,10 +282,7 @@ Page({
         completed: false
       })
       this.updateQuestionMeta(questions[0])
-
-      wx.hideLoading()
     } catch (err) {
-      wx.hideLoading()
       console.error('Load questions failed:', err)
       wx.showToast({ title: '加载失败', icon: 'none' })
       this.setData({ loading: false })

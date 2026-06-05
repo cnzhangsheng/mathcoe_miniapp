@@ -1,14 +1,6 @@
 <!--pages/favorite-practice/favorite-practice.wxml - 收藏练习页面 -->
 <view class="practice-page">
 
-  <!-- 加载状态 -->
-  <view wx:if="{{loading}}" class="loading-state">
-    <view class="loading-card">
-      <text class="loading-icon">🔄</text>
-      <text class="loading-text">正在加载题目...</text>
-    </view>
-  </view>
-
   <!-- 练习内容 -->
   <block wx:if="{{!loading && currentQuestion}}">
     <!-- Question Card -->

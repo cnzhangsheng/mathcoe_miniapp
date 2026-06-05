@@ -15,8 +15,6 @@ Page({
   },
 
   async loadData() {
-    wx.showLoading({ title: '加载中...', mask: true })
-
     try {
       const wrongQuestions = await reviewService.getAllWrongQuestions() || []
 
@@ -37,10 +35,8 @@ Page({
         wrongQuestions: processed,
         filteredQuestions: processed
       })
-
-      wx.hideLoading()
     } catch (err) {
-      wx.hideLoading()
+      console.error('Load data failed:', err)
       this.setData({ loading: false })
     }
   },

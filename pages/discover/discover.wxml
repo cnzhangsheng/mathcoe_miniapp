@@ -1,16 +1,6 @@
 <!-- pages/discover/discover.wxml - Swiper 滑动浏览 -->
 <view class="discover-page">
 
-  <!-- 加载状态 -->
-  <view class="loading-state" wx:if="{{loading && !swiperList.length}}">
-    <view class="loading-card">
-      <view class="loading-icon-box">
-        <text class="loading-icon">🔄</text>
-      </view>
-      <text class="loading-text text-small">正在加载题目...</text>
-    </view>
-  </view>
-
   <!-- 无题目状态 -->
   <view class="empty-state" wx:if="{{!loading && !swiperList.length}}">
     <view class="empty-card">

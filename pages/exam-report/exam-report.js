@@ -40,9 +40,7 @@ Page({
   // 从后端 API 加载测试报告
   async loadTestReport(testId) {
     try {
-      wx.showLoading({ title: '加载中...', mask: true })
       const report = await examPaperService.getTestReport(testId)
-      wx.hideLoading()
 
       if (report) {
         // 格式化时间
@@ -69,7 +67,6 @@ Page({
         this.setData({ loading: false })
       }
     } catch (err) {
-      wx.hideLoading()
       console.error('Load test report failed:', err)
       wx.showToast({ title: '加载失败，请登录', icon: 'none' })
       this.setData({ loading: false })

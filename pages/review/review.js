@@ -110,12 +110,9 @@ Page({
 
   // 初始化加载：专题列表 + 当前 tab 第一页
   async loadInitialData() {
-    wx.showLoading({ title: '加载中...' })
-
     try {
       const token = wx.getStorageSync('token')
       if (!token) {
-        wx.hideLoading()
         this.setData({ loading: false })
         return
       }
@@ -143,10 +140,7 @@ Page({
           this.loadWrongQuestions(1),
         ])
       }
-
-      wx.hideLoading()
     } catch (err) {
-      wx.hideLoading()
       console.error('Load data failed:', err)
       this.setData({ loading: false })
     }
