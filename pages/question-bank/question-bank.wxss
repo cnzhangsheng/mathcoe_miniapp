@@ -143,6 +143,7 @@
   margin-bottom: 12rpx;
   flex-wrap: wrap;
 }
+.qi-topic {
   font-size: 22rpx;
   padding: 4rpx 12rpx;
   border-radius: 8rpx;
