@@ -69,11 +69,19 @@ Page({
     wx.setStorageSync('swipeHintDismissed', true)
   },
 
+  // 收集当前 swiperList 中已加载的题目 ID
+  _getSeenIds() {
+    return this.data.swiperList
+      .filter(item => item.id && typeof item.id === 'number')
+      .map(item => item.id)
+  },
+
   // 加载随机题目（首次或重试）
   async loadRandomQuestion() {
     this.setData({ loading: true })
     try {
-      const question = await discoverService.getRandomQuestion()
+      const excludeIds = this._getSeenIds()
+      const question = await discoverService.getRandomQuestion(excludeIds)
       if (question) {
         const item = await this.buildSwiperItem(question)
         this.setData({
@@ -125,7 +133,8 @@ Page({
     this.setData({ ['swiperList[' + list.length + ']']: placeholder })
 
     try {
-      const question = await discoverService.getRandomQuestion()
+      const excludeIds = this._getSeenIds()
+      const question = await discoverService.getRandomQuestion(excludeIds)
       if (question) {
         const item = await this.buildSwiperItem(question)
         const idx = this.data.swiperList.findIndex(s => s.id === placeholder.id)

@@ -4,10 +4,15 @@
 const { request } = require('./api')
 
 /**
- * 获取随机题目
+ * 获取随机题目（加权随机，新题更高概率）
+ * @param {number[]} [excludeIds] - 本次会话已看过的题目ID列表，用于去重
  */
-const getRandomQuestion = async () => {
-  return request('/discover/random')
+const getRandomQuestion = async (excludeIds) => {
+  let url = '/discover/random'
+  if (excludeIds && excludeIds.length > 0) {
+    url += '?exclude_ids=' + excludeIds.join(',')
+  }
+  return request(url)
 }
 
 /**
